@@ -6,7 +6,12 @@ import OtpCode from "./components/pages/OtpCode/OtpCode"; // đảm bảo đư�
 import PasswordAuthen from "./components/pages/PasswordAuthen/PasswordAuthen"; // đảm bảo đường dẫn đúng
 import Home from "./components/pages/Home/Home";
 import Dashboard from "./components/pages/dashboard/dashboard"; // đảm bảo đường dẫn đúng
-
+import DashboardSection from "./components/pages/dashboardSection/DashboardSection";
+import ListNewItem from "./components/pages/ListNewItem/MainContenSection";
+import MainContentSection from "./components/pages/ListNewItem/MainContenSection";
+import SelectNewItem from "./components/pages/selectNewItem/selectItem";
+import PricingAvailability from "./components/pages/PricingAvailability/PricingAvailabilitySection";
+import  ReviewPublish  from "./components/pages/ReviewPublish/ReviewPublishSection";
 const App = () => {
   return (
     <Router>
@@ -17,6 +22,12 @@ const App = () => {
         <Route path="/password-authen" element={<PasswordAuthen />} />
         <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboardSection" element={<DashboardSection />} />
+        <Route path="/ListNewItem" element={<MainContentSection />} />
+        <Route path="/SelectNewItem" element={<SelectNewItem />} />
+        <Route path="/PricingAvailability" element={<PricingAvailability />} />
+        <Route path="/ReviewPublish" element={<ReviewPublish />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>
