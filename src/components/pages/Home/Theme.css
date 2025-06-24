@@ -90,44 +90,15 @@
   cursor: pointer;
 }
 
-.group1-header-content {
-  position: relative; /* Contains absolute positioning for buttons */
-}
-
 .group1-button10 {
-  background-color: #A9BBA9 !important; /* Luôn hiện màu */
-  color: #ffffff !important;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* tạo hiệu ứng nổi nhẹ */
+  background-color: var(--primary-color);
+  color: white;
 }
-
-.group1-button10:hover {
-  background-color: #97ac97 !important;
-}
-
 
 .group1-button11 {
   background-color: #E3D5BE;
-  color: #2b2b2b;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  color: #000000;
 }
-
-.group1-button11:hover {
-  background-color: #d7c9af; /* Tối hơn 1 chút khi hover */
-}
-
 
 /* Categories Section */
 .group1-section2 {
@@ -530,79 +501,20 @@
   margin-top: 10px;
 }
 
-.group1-social-icons span {
-  font-size: 20px;
-  margin: 0 10px;
-  color: #A0AEC0;
-  cursor: pointer;
-}
-
-.group1-social-icons span:hover {
-  color: #CBD5E0;
-}
-
-.group1-text-copyright {
-  font-size: 12px;
-  color: #718096;
-  margin-top: 20px;
-}
-
-/* Notification */
-.group1-notification {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.group1-social-button {
   background: none;
   border: none;
-  padding: 8px;
+  padding: 0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: inline-block;
 }
 
-.group1-notification:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 50%;
+.group1-social-button.facebook img {
+  width: 50px;
+  height: 50px;
+  transition: opacity 0.3s;
 }
 
-.group1-icon-notification {
-  width: 24px;
-  height: 24px;
-  display: block;
+.group1-social-button.facebook:hover img {
+  opacity: 0.8;
 }
-
-.notification-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: #e53e3e;
-  color: white;
-  font-size: 9px;
-  padding: 2px 5px;
-  border-radius: 999px;
-  font-weight: 600;
-}
-
-/* New style for List Your Item button */
-.custom-list-button {
-  background-color: #c3d8cd !important; /* Màu nền luôn hiển thị */
-  color: #ffffff !important;
-  border: none !important;
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  outline: none;
-  transition: background-color 0.2s ease;
-}
-
-.custom-list-button:hover {
-  background-color: #b2c8bd !important; /* Tối hơn chút khi hover */
-}
-
-.custom-list-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-}
-
