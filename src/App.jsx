@@ -12,6 +12,8 @@ import MainContentSection from "./components/pages/ListNewItem/MainContenSection
 import SelectNewItem from "./components/pages/selectNewItem/selectItem";
 import PricingAvailability from "./components/pages/PricingAvailability/PricingAvailabilitySection";
 import  ReviewPublish  from "./components/pages/ReviewPublish/ReviewPublishSection";
+import Succes from "./components/pages/Succesfull/Succes";
+import ListItem from "./components/pages/ListItem/ListItem";
 const App = () => {
   return (
     <Router>
@@ -28,6 +30,8 @@ const App = () => {
         <Route path="/SelectNewItem" element={<SelectNewItem />} />
         <Route path="/PricingAvailability" element={<PricingAvailability />} />
         <Route path="/ReviewPublish" element={<ReviewPublish />} />
+        <Route path="/succes" element={<Succes />} />
+        <Route path="/ListItem" element={<ListItem />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>
