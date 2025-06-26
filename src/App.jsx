@@ -11,14 +11,15 @@ import ListNewItem from "./components/pages/ListNewItem/MainContenSection";
 import MainContentSection from "./components/pages/ListNewItem/MainContenSection";
 import SelectNewItem from "./components/pages/selectNewItem/selectItem";
 import PricingAvailability from "./components/pages/PricingAvailability/PricingAvailabilitySection";
-import  ReviewPublish  from "./components/pages/ReviewPublish/ReviewPublishSection";
+import ReviewPublish from "./components/pages/ReviewPublish/ReviewPublishSection";
 import Succes from "./components/pages/Succesfull/Succes";
 import ListItem from "./components/pages/ListItem/ListItem";
+import Login from "./components/pages/login/login"; // đảm bảo đường dẫn đúng
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        {/* <Route path="/" element={<LoginPage />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/otp" element={<OtpCode />} />
         <Route path="/password-authen" element={<PasswordAuthen />} />
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/ReviewPublish" element={<ReviewPublish />} />
         <Route path="/succes" element={<Succes />} />
         <Route path="/ListItem" element={<ListItem />} />
+        <Route path="/" element={<Login />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>
