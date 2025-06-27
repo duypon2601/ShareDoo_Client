@@ -14,6 +14,9 @@ import PricingAvailability from "./components/pages/PricingAvailability/PricingA
 import  ReviewPublish  from "./components/pages/ReviewPublish/ReviewPublishSection";
 import Succes from "./components/pages/Succesfull/Succes";
 import ListItem from "./components/pages/ListItem/ListItem";
+import RentalRequestsSection from "./components/pages/RentalRequest/Request";
+import DashBoardRental from "./components/pages/RentalRequest/DashBoardRental";
+import Profile from "./components/pages/profile/Profile";
 const App = () => {
   return (
     <Router>
@@ -32,6 +35,9 @@ const App = () => {
         <Route path="/ReviewPublish" element={<ReviewPublish />} />
         <Route path="/succes" element={<Succes />} />
         <Route path="/ListItem" element={<ListItem />} />
+        <Route path="/rental-requests" element={<RentalRequestsSection />} />
+        <Route path="/dashboard-rental" element={<DashBoardRental />} />
+        <Route path="/profile" element={<Profile />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>
