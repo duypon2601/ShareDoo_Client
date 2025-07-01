@@ -31,7 +31,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await api.post("/api/login", { username, password });
-      dispatch(login(res.data)); // Giả sử res.data chứa { user, role }
+      dispatch(login(res.data));
+      localStorage.setItem("token", res.data.token);
       alert("Đăng nhập thành công!");
       if (res.data.role === "admin") {
         navigate("/admin");
