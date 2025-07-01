@@ -17,14 +17,33 @@ import {
   TwitterOutlined,
   InstagramOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setItemName,
+  setCategory,
+  setDescription,
+} from "../../redux/productCreateSlice";
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
 const MainContentSection = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { itemName, category, description } = useSelector(
+    (state) => state.productCreate
+  );
+  console.log("📦 Redux data:", { itemName, category, description });
+
   return (
-    <Layout style={{ minHeight: "100vh", backgroundColor: "#f5f5f5", overflowX: "hidden" }}>
-      {/* ✅ HEADER */}
+    <Layout
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+        overflowX: "hidden",
+      }}
+    >
       <Header
         style={{
           backgroundColor: "#ffffff",
@@ -33,7 +52,6 @@ const MainContentSection = () => {
           display: "flex",
           alignItems: "center",
           height: "72px",
-          overflowX: "hidden",
         }}
       >
         <Row align="middle" gutter={12} style={{ flex: 1 }}>
@@ -54,7 +72,6 @@ const MainContentSection = () => {
         <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
       </Header>
 
-      {/* ✅ CONTENT */}
       <Content style={{ padding: "24px 20px", flex: 1 }}>
         <Row>
           <Col span={24}>
@@ -72,17 +89,7 @@ const MainContentSection = () => {
           </Col>
         </Row>
         <Row justify="center" style={{ marginTop: 28 }}>
-          <Col
-            xs={24}
-            sm={20}
-            md={16}
-            lg={12}
-            style={{
-              width: "100%",
-              overflowX: "hidden",
-              boxSizing: "border-box",
-            }}
-          >
+          <Col xs={24} sm={20} md={16} lg={12}>
             <div
               style={{
                 background: "#fff",
@@ -94,34 +101,28 @@ const MainContentSection = () => {
             >
               <Title level={4}>Basic Information</Title>
               <Form layout="vertical">
-                <Form.Item
-                  label="Item Name"
-                  required
-                  tooltip="This is a required field"
-                >
-                  <Input placeholder="Enter item name" style={{ width: "100%" }} />
+                <Form.Item label="Item Name" required>
+                  <Input
+                    placeholder="Enter item name"
+                    value={itemName}
+                    onChange={(e) => dispatch(setItemName(e.target.value))}
+                  />
                 </Form.Item>
-                <Form.Item
-                  label="Category"
-                  required
-                  tooltip="This is a required field"
-                >
+                <Form.Item label="Category" required>
                   <Input
                     placeholder="Select a category"
                     suffix={<RightOutlined />}
-                    style={{ width: "100%" }}
+                    value={category}
+                    onChange={(e) => dispatch(setCategory(e.target.value))}
                   />
                 </Form.Item>
-                <Form.Item
-                  label="Description"
-                  required
-                  tooltip="This is a required field"
-                >
+                <Form.Item label="Description" required>
                   <Input.TextArea
                     placeholder="Describe your item (max 500 characters)"
                     maxLength={500}
                     showCount
-                    style={{ width: "100%" }}
+                    value={description}
+                    onChange={(e) => dispatch(setDescription(e.target.value))}
                   />
                 </Form.Item>
                 <Row justify="space-between" align="middle">
@@ -129,7 +130,11 @@ const MainContentSection = () => {
                     <Button type="text">Cancel</Button>
                   </Col>
                   <Col>
-                    <Button type="primary" icon={<RightOutlined />}>
+                    <Button
+                      type="primary"
+                      icon={<RightOutlined />}
+                      onClick={() => navigate("/SelectNewItem")}
+                    >
                       Next
                     </Button>
                   </Col>
@@ -140,77 +145,91 @@ const MainContentSection = () => {
         </Row>
       </Content>
 
-      {/* ✅ FOOTER */}
       <Footer
-  style={{
-    backgroundColor: "#1f2937",
-    color: "#9ca3af",
-    padding: "40px 0",
-    overflowX: "hidden",
-  }}
->
-  <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-    <Row gutter={[32, 24]} justify="space-between">
-      {/* Các Col không đổi */}
-      {/* Cột 1 */}
-      <Col xs={24} sm={12} md={6}>
-        <Title level={4} style={{ color: "#fff" }}>
-          About
-        </Title>
-        <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>How It Works</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
-      </Col>
+        style={{
+          backgroundColor: "#1f2937",
+          color: "#9ca3af",
+          padding: "40px 0",
+        }}
+      >
+        <div
+          style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}
+        >
+          <Row gutter={[32, 24]} justify="space-between">
+            <Col xs={24} sm={12} md={6}>
+              <Title level={4} style={{ color: "#fff" }}>
+                About
+              </Title>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                About Us
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                How It Works
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Careers
+              </Text>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Title level={4} style={{ color: "#fff" }}>
+                Support
+              </Title>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Help Center
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Safety Center
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Contact Us
+              </Text>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Title level={4} style={{ color: "#fff" }}>
+                Legal
+              </Title>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Terms of Service
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Privacy Policy
+              </Text>
+              <Text style={{ display: "block", color: "#9ca3af" }}>
+                Cookie Policy
+              </Text>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Title level={4} style={{ color: "#fff" }}>
+                Follow Us
+              </Title>
+              <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
+                <FacebookOutlined
+                  style={{ fontSize: "20px", color: "#9ca3af" }}
+                />
+                <TwitterOutlined
+                  style={{ fontSize: "20px", color: "#9ca3af" }}
+                />
+                <InstagramOutlined
+                  style={{ fontSize: "20px", color: "#9ca3af" }}
+                />
+              </div>
+            </Col>
+          </Row>
 
-      {/* Cột 2 */}
-      <Col xs={24} sm={12} md={6}>
-        <Title level={4} style={{ color: "#fff" }}>
-          Support
-        </Title>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Help Center</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Safety Center</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Contact Us</Text>
-      </Col>
-
-      {/* Cột 3 */}
-      <Col xs={24} sm={12} md={6}>
-        <Title level={4} style={{ color: "#fff" }}>
-          Legal
-        </Title>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Terms of Service</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Privacy Policy</Text>
-        <Text style={{ display: "block", color: "#9ca3af" }}>Cookie Policy</Text>
-      </Col>
-
-      {/* Cột 4 */}
-      <Col xs={24} sm={12} md={6}>
-        <Title level={4} style={{ color: "#fff" }}>
-          Follow Us
-        </Title>
-        <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-          <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-          <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-          <InstagramOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
+          <Row
+            justify="center"
+            style={{
+              marginTop: 32,
+              borderTop: "1px solid #374151",
+              paddingTop: 16,
+            }}
+          >
+            <Text style={{ color: "#9ca3af", fontSize: 14 }}>
+              © 2025 ShareDoo. All rights reserved.
+            </Text>
+          </Row>
         </div>
-      </Col>
-    </Row>
-
-    <Row
-      justify="center"
-      style={{
-        marginTop: "32px",
-        borderTop: "1px solid #374151",
-        paddingTop: "16px",
-        textAlign: "center",
-      }}
-    >
-      <Text style={{ color: "#9ca3af", fontSize: "14px" }}>
-        © 2025 ShareDoo. All rights reserved.
-      </Text>
-    </Row>
-  </div>
-</Footer>
-
+      </Footer>
     </Layout>
   );
 };

@@ -3,6 +3,10 @@ import axios from "axios";
 const baseUrl = "http://localhost:8080/";
 // const baseUrl = "https://swd392-server-vakx.onrender.com/";
 
+// const lay api google 
+
+
+
 const api = axios.create({
   baseURL: baseUrl,
   timeout: 3000000,

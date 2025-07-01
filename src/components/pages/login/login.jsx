@@ -32,6 +32,7 @@ const Login = () => {
     try {
       const res = await api.post("/api/login", { username, password });
       dispatch(login(res.data));
+      localStorage.setItem("token", res.data.token);
       alert("Đăng nhập thành công!");
       navigate("/home");
     } catch (err) {
