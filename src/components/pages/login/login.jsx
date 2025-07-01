@@ -17,7 +17,7 @@ import { FaFacebook } from "react-icons/fa";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false); // 👁
+  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -34,7 +34,11 @@ const Login = () => {
       dispatch(login(res.data));
       localStorage.setItem("token", res.data.token);
       alert("Đăng nhập thành công!");
-      navigate("/home");
+      if (res.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
     } catch (err) {
       alert("Đăng nhập thất bại!");
     }
