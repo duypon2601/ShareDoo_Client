@@ -1,0 +1,129 @@
+import { MessageOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Image, Row, Tag, Typography } from "antd";
+import React from "react";
+
+const { Title, Text } = Typography;
+
+const OrderDetailsSection = () => {
+  return (
+    <div style={{ width: "100vw", margin: 0, padding: 0, backgroundColor: "#fff" }}>
+      <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
+        <Col span={24}>
+          <Title level={2}>Order Details</Title>
+          <Text>Order #RNT-2025-0123</Text>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
+        <Col span={16}>
+          <Card style={{ width: "100%" }}>
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Image
+                  width="100%"
+                  src="https://c.animaapp.com/mNiQn72F/img/img@2x.png"
+                  alt="Product"
+                />
+              </Col>
+              <Col span={16}>
+                <Title level={3}>Demo Product</Title>
+                <Tag color="green">Active</Tag>
+                <Row>
+                  <Col span={12}><Text>Start Date</Text></Col>
+                  <Col span={12}><Text>Jan 15, 2025</Text></Col>
+                </Row>
+                <Row>
+                  <Col span={12}><Text>End Date</Text></Col>
+                  <Col span={12}><Text>Jan 22, 2025</Text></Col>
+                </Row>
+              </Col>
+            </Row>
+          </Card>
+
+          <Card style={{ width: "100%", marginTop: 16 }}>
+            <Title level={4}>Price Breakdown</Title>
+            <Row><Col span={12}><Text>Rental Fee (7 days)</Text></Col><Col span={12}><Text>$350.00</Text></Col></Row>
+            <Row><Col span={12}><Text>Service Fee</Text></Col><Col span={12}><Text>$35.00</Text></Col></Row>
+            <Row><Col span={12}><Text strong>Total</Text></Col><Col span={12}><Text strong>$385.00</Text></Col></Row>
+          </Card>
+
+          <Card style={{ width: "100%", marginTop: 16 }}>
+            <Title level={4}>Order Timeline</Title>
+            <Row>
+              <Col span={2}>
+                <Image width={32} src="https://c.animaapp.com/mNiQn72F/img/frame.svg" alt="Order Placed" />
+              </Col>
+              <Col span={22}>
+                <Text>Order Placed</Text><br />
+                <Text type="secondary">Jan 14, 2025 - 2:30 PM</Text>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={2}>
+                <Image width={32} src="https://c.animaapp.com/mNiQn72F/img/frame-1.svg" alt="Owner Confirmed" />
+              </Col>
+              <Col span={22}>
+                <Text>Owner Confirmed</Text><br />
+                <Text type="secondary">Jan 14, 2025 - 4:15 PM</Text>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={2}>
+                <Image width={32} src="https://c.animaapp.com/mNiQn72F/img/frame-2.svg" alt="Item Picked Up" />
+              </Col>
+              <Col span={22}>
+                <Text>Item Picked Up</Text><br />
+                <Text type="secondary">Jan 15, 2025 - 10:00 AM</Text>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={2}>
+                <Image width={32} src="https://c.animaapp.com/mNiQn72F/img/frame-3.svg" alt="Ongoing" />
+              </Col>
+              <Col span={22}>
+                <Text>Ongoing</Text><br />
+                <Text type="secondary">Current Status</Text>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+<Col span={8}>
+  <Card style={{ width: "100%" }}>
+    <Title level={4}>Owner Details</Title>
+    <Row gutter={[16, 16]}>
+      <Col span={4}>
+        <Image
+          width={48}
+          src="https://c.animaapp.com/mNiQn72F/img/img-1@2x.png"
+          alt="Owner"
+          style={{ borderRadius: "50%" }}
+        />
+      </Col>
+      <Col span={20}>
+        <Text>Michael Chen</Text><br />
+        <Text type="secondary">
+          <Image
+            width={16}
+            src="https://c.animaapp.com/mNiQn72F/img/frame-4.svg"
+            alt="Rating"
+          />
+          4.9 (120 reviews)
+        </Text>
+      </Col>
+    </Row>
+
+    <Button type="primary" block style={{ marginTop: 16 }}>
+      Extend Rental
+    </Button>
+    <Button type="default" block style={{ marginTop: 16 }}>
+      Cancel Order
+    </Button>
+  </Card>
+</Col>
+      </Row>
+    </div>
+  );
+};
+
+export default OrderDetailsSection;

@@ -1,6 +1,14 @@
-
 import React from "react";
-import { Avatar, Badge, Col, Dropdown, Row, Space, Tooltip, Typography } from "antd";
+import {
+  Avatar,
+  Badge,
+  Col,
+  Dropdown,
+  Row,
+  Space,
+  Tooltip,
+  Typography,
+} from "antd";
 import {
   BellOutlined,
   CloseOutlined,
@@ -12,9 +20,19 @@ import { Link } from "react-router-dom";
 const { Text } = Typography;
 
 const menu = (
-  <div style={{ backgroundColor: "white", borderRadius: 4, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-    <div style={{ padding: 8, cursor: "pointer" }}>Profile</div>
-    <div style={{ padding: 8, cursor: "pointer" }}>Logout</div>
+  <div
+    style={{
+      backgroundColor: "white",
+      borderRadius: 4,
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    }}
+  >
+    <Link to="/profile" style={{ display: "block", padding: 8, color: "black" }}>
+      Profile
+    </Link>
+   <Link to="/" style={{ display: "block", padding: 8, color: "black" }}>
+  Logout
+</Link>
   </div>
 );
 
@@ -31,6 +49,7 @@ const HeaderProfile = () => {
         justifyContent: "space-between",
       }}
     >
+      {/* Logo & Brand */}
       <Link to="/home" style={{ textDecoration: "none" }}>
         <Row align="middle" gutter={12}>
           <Col>
@@ -44,6 +63,7 @@ const HeaderProfile = () => {
         </Row>
       </Link>
 
+      {/* Navigation Menu */}
       <Space size="large">
         <Link to="/home" style={{ color: "#374151", fontWeight: 500 }}>
           Home
@@ -62,6 +82,7 @@ const HeaderProfile = () => {
         </Link>
       </Space>
 
+      {/* Icons and Profile */}
       <Space size="large">
         <Tooltip title="Notifications">
           <Badge dot>

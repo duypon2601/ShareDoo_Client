@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   LeftOutlined,
   RightOutlined,
@@ -30,10 +30,8 @@ import {
 } from "../../redux/productCreateSlice";
 import { useNavigate } from "react-router-dom";
 
-
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
-
 
 const LocationPicker = ({ onMapClick }) => {
   useMapEvents({
@@ -50,7 +48,6 @@ const PricingAvailabilitySection = () => {
     (state) => state.productCreate
   );
   const navigate = useNavigate();
-
   const [addressInput, setAddressInput] = useState(location.address || "");
 
   const handleSearchAddress = async () => {
@@ -66,7 +63,7 @@ const PricingAvailabilitySection = () => {
         `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`
       );
       const data = await response.json();
-      if (data && data.display_name) {
+      if (data?.display_name) {
         dispatch(
           setLocation({
             lat: latlng.lat,
@@ -172,7 +169,6 @@ const PricingAvailabilitySection = () => {
                 onChange={(e) => dispatch(setDeposit(e.target.value))}
               />
 
-              {/* Location input */}
               <div style={{ marginTop: 24 }}>
                 <Text>Pickup Location</Text>
                 <Input.Search
@@ -183,7 +179,6 @@ const PricingAvailabilitySection = () => {
                 />
               </div>
 
-              {/* Map */}
               <div
                 style={{
                   marginTop: 16,
@@ -216,7 +211,9 @@ const PricingAvailabilitySection = () => {
               </div>
 
               <Row justify="space-between" style={{ marginTop: 24 }}>
-                <Button icon={<LeftOutlined />}>Back</Button>
+                <Button icon={<LeftOutlined />} onClick={() => navigate(-1)}>
+                  Back
+                </Button>
                 <Button
                   icon={<RightOutlined />}
                   type="primary"
@@ -285,13 +282,9 @@ const PricingAvailabilitySection = () => {
               Follow Us
             </Title>
             <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-              <FacebookOutlined
-                style={{ fontSize: "20px", color: "#9ca3af" }}
-              />
+              <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
               <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-              <InstagramOutlined
-                style={{ fontSize: "20px", color: "#9ca3af" }}
-              />
+              <InstagramOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
             </div>
           </Col>
         </Row>
