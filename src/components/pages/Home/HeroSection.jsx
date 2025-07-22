@@ -1,9 +1,14 @@
-// HeroSection.jsx
 import React from "react";
 import "./Home.css";
-
+import { useNavigate } from "react-router-dom"; //
 
 const HeroSection = () => {
+  const navigate = useNavigate(); //
+
+  const handleExploreClick = () => {
+    navigate("/products"); // ✅ Điều hướng đến trang Product List
+  };
+
   return (
     <section className="group1-section1">
       <div className="group1-img1" />
@@ -17,14 +22,13 @@ const HeroSection = () => {
             Join thousands of students saving money through smart sharing.
           </p>
           <div className="group1-div14">
-  <button className="group1-button10">
-    <span className="group1-text12">Explore Now</span>
-  </button>
-  <button className="group1-button11">
-    <span className="group1-text13">List Your Item</span>
-  </button>
-</div>
-
+            <button className="group1-button10" onClick={handleExploreClick}>
+              <span className="group1-text12">Explore Now</span>
+            </button>
+            <button className="group1-button11">
+              <span className="group1-text13">List Your Item</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
