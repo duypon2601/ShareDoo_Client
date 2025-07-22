@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { DownOutlined } from "@ant-design/icons";
 
 import {
   AppstoreOutlined,
@@ -31,9 +32,21 @@ const Header = () => {
   const navigate = useNavigate();
 
   const menu = (
-    <Menu>
+    <Menu
+      onClick={({ key }) => {
+        if (key === "profile") {
+          navigate("/profile");
+        } else if (key === "logout") {
+          // Thêm xử lý logout nếu cần
+          console.log("Logout clicked");
+        } else if (key === "Dashboard") {
+          navigate("/dashboard-rental");
+        }
+      }}
+    >
       <Menu.Item key="profile">Profile</Menu.Item>
       <Menu.Item key="logout">Logout</Menu.Item>
+      <Menu.Item key="Dashboard">Dashboard</Menu.Item>
     </Menu>
   );
 
@@ -53,11 +66,23 @@ const Header = () => {
   const handleSearchInputKeyDown = (e) => {
     if (e.key === "Enter") {
       if (searchValue.trim() !== "") {
-        navigate(`/searchitems?keyword=${encodeURIComponent(searchValue.trim())}`);
+        navigate(
+          `/searchitems?keyword=${encodeURIComponent(searchValue.trim())}`
+        );
       }
       setShowSearch(false);
       setSearchValue("");
     }
+  };
+
+  const menuItemStyle = {
+    display: "flex",
+    alignItems: "center",
+    height: "100%",
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: 500,
+    color: "#374151",
   };
 
   return (
@@ -86,29 +111,48 @@ const Header = () => {
           />
         </Col>
         <Col>
-          <Text strong style={{ fontSize: "20px", color: "#1f1f1f" }}>
+          <Text
+            strong
+            style={{ fontSize: "20px", color: "#1f1f1f" }}
+            onclick={() => navigate("/Home")}
+          >
             ShareDoo
           </Text>
         </Col>
       </Row>
 
       {/* 🔷 Navigation Menu */}
-      <Space size="large">
-        <a href="#" style={{ color: "#374151", fontWeight: 500 }}>
+      <Space size="large" align="center">
+        <div style={menuItemStyle} onClick={() => navigate("/Home")}>
           Home
-        </a>
-        <a href="#" style={{ color: "#374151", fontWeight: 500 }}>
-          Request
-        </a>
-        <a href="#" style={{ color: "#374151", fontWeight: 500 }}>
-          Listings
-        </a>
-        <a href="#" style={{ color: "#374151", fontWeight: 500 }}>
-          Review
-        </a>
-        <a href="#" style={{ color: "#374151", fontWeight: 500 }}>
-          Dashboard
-        </a>
+        </div>
+
+        <div style={menuItemStyle} onClick={() => navigate("/SearchItems")}>
+          Search Help
+        </div>
+        <Dropdown
+          overlay={
+            <Menu
+              onClick={({ key }) => {
+                if (key === "listItem") navigate("/listItem");
+                else if (key === "List New Item") navigate("/ListNewItem");
+                else if (key === "rental-requests")
+                  navigate("/rental-requests");
+              }}
+            >
+              <Menu.Item key="listItem">List-Item</Menu.Item>
+              <Menu.Item key="List New Item">List-New-Item</Menu.Item>
+              <Menu.Item key="rental-requests">Rental-Requests</Menu.Item>
+            </Menu>
+          }
+          trigger={["hover"]}
+          placement="bottom"
+        >
+          <div style={menuItemStyle}>
+            Product
+            <DownOutlined style={{ fontSize: 10, marginLeft: 4 }} />
+          </div>
+        </Dropdown>
       </Space>
 
       {/* 🔷 Notification + Messages + Avatar + Search */}
@@ -177,7 +221,6 @@ const Header = () => {
             style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }}
           />
         </Dropdown>
-        <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
       </Space>
     </header>
   );
