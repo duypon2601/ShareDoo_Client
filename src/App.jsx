@@ -37,7 +37,7 @@
             <Route path="/password-authen" element={<PasswordAuthen />} />
             <Route path="/home" element={<Home />} />
             <Route path="/SearchItems" element={<SearchItems />} />
-            <Route path="/ProductList" element={<ProductListSection />} />
+            <Route path="/products" element={<ProductListSection />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/payment" element={<Payment />} />
