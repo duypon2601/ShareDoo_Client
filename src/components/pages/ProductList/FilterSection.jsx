@@ -31,7 +31,7 @@ ShareDoo
 <Row gutter={32} align="middle">
 <Col><Text>Home</Text></Col>
 <Col><Text>My Orders</Text></Col>
-<Col><Link to="/product-list"><Text>Products</Text></Link></Col>
+<Col><Link to="/products"><Text>Products</Text></Link></Col>
 <Col><Text>Support</Text></Col>
 <Col><BellOutlined style={{ fontSize: "24px" }} /></Col>
 <Col><ShoppingCartOutlined style={{ fontSize: "24px" }} /></Col>
