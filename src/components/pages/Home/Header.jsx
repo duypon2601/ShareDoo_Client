@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   AppstoreOutlined,
   BellOutlined,
@@ -26,6 +28,7 @@ const { Text } = Typography;
 const Header = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
 
   const menu = (
     <Menu>
@@ -49,8 +52,9 @@ const Header = () => {
 
   const handleSearchInputKeyDown = (e) => {
     if (e.key === "Enter") {
-      // Thực hiện tìm kiếm ở đây (ví dụ chuyển trang hoặc log)
-      console.log("Tìm kiếm:", searchValue);
+      if (searchValue.trim() !== "") {
+        navigate(`/searchitems?keyword=${encodeURIComponent(searchValue.trim())}`);
+      }
       setShowSearch(false);
       setSearchValue("");
     }
