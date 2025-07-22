@@ -23,39 +23,11 @@ import {
 const { Header, Content, Footer } = Layout;
 const { Title, Text, Paragraph } = Typography;
 
-const SelectItem = () => {
+const selectItem = () => {
   return (
     <Layout style={{ minHeight: "100vh", backgroundColor: "#f5f5f5" }}>
-      {/* ✅ HEADER */}
-      <Header
-        style={{
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e0e0e0",
-          padding: "0 24px",
-          display: "flex",
-          alignItems: "center",
-          height: "72px",
-        }}
-      >
-        <Row align="middle" gutter={12} style={{ flex: 1 }}>
-          <Col>
-            <Avatar
-              src="/img/ShareDoo.png"
-              size={48}
-              shape="circle"
-              style={{ backgroundColor: "#fff" }}
-            />
-          </Col>
-          <Col>
-            <Text strong style={{ fontSize: "20px", color: "#1f1f1f" }}>
-              ShareDoo
-            </Text>
-          </Col>
-        </Row>
-        {/* Bạn có thể thay đổi hoặc bỏ icon đóng bên phải nếu muốn */}
-        < CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-      </Header>
-
+    
+     
       {/* ✅ CONTENT */}
       <Content style={{ padding: "24px 20px", flex: 1 }}>
         <Row justify="center" style={{ marginTop: 32 }}>
@@ -144,80 +116,8 @@ const SelectItem = () => {
         </Row>
       </Content>
 
-      {/* ✅ FOOTER */}
-   <Footer
-           style={{
-             backgroundColor: "#1f2937",
-             color: "#9ca3af",
-             padding: "40px 0",
-           }}
-         >
-           <Row justify="center" gutter={[32, 16]}>
-             <Col xs={24} sm={12} md={6}>
-               <Title level={4} style={{ color: "#fff" }}>
-                 About
-               </Title>
-               <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 How It Works
-               </Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
-             </Col>
-             <Col xs={24} sm={12} md={6}>
-               <Title level={4} style={{ color: "#fff" }}>
-                 Support
-               </Title>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Help Center
-               </Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Safety Center
-               </Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Contact Us
-               </Text>
-             </Col>
-             <Col xs={24} sm={12} md={6}>
-               <Title level={4} style={{ color: "#fff" }}>
-                 Legal
-               </Title>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Terms of Service
-               </Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Privacy Policy
-               </Text>
-               <Text style={{ display: "block", color: "#9ca3af" }}>
-                 Cookie Policy
-               </Text>
-             </Col>
-             <Col xs={24} sm={12} md={6}>
-               <Title level={4} style={{ color: "#fff" }}>
-                 Follow Us
-               </Title>
-               <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-                 <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-                 <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-                 <InstagramOutlined
-                   style={{ fontSize: "20px", color: "#9ca3af" }}
-                 />
-               </div>
-             </Col>
-           </Row>
-           <Row
-             justify="center"
-             style={{
-               marginTop: "32px",
-               borderTop: "1px solid #374151",
-               paddingTop: "16px",
-             }}
-           >
-             <Text style={{ color: "#9ca3af", fontSize: "14px" }}>
-               © 2025 ShareDoo. All rights reserved.
-             </Text>
-           </Row>
-         </Footer>
+      
        </Layout>
      );
    };
-export default SelectItem;
+export default selectItem;

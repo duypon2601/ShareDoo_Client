@@ -25,21 +25,46 @@ import {
   TwitterOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
 
-const menu = (
-  <Menu>
-    <Menu.Item key="1">Profile</Menu.Item>
-    <Menu.Item key="3">Logout</Menu.Item>
-  </Menu>
-);
 
 const RentalRequestsSection = () => {
+  const navigate = useNavigate();
+    
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // nếu có token lưu localStorage
+    navigate("/"); // chuyển về trang login
+     
+  };
+ const menu = (
+        <Menu>
+          <Menu.Item key="profile" onClick={handleProfileClick}>
+            Profile
+          </Menu.Item>
+          <Menu.Item key="logout" onClick={handleLogout}>
+            Logout
+          </Menu.Item>
+        </Menu>
+      );
   return (
-    <Layout style={{ minHeight: "100vh", overflowX: "hidden" }}>
+    <Layout
+      style={{
+        minHeight: "100vh",
+        overflowX: "hidden",
+        padding: 0,
+        margin: 0,
+        width: "100vw",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
       {/* ✅ HEADER */}
       <Header
         style={{
@@ -95,10 +120,7 @@ const RentalRequestsSection = () => {
             </Badge>
           </Tooltip>
           <Dropdown overlay={menu} placement="bottomRight">
-            <Avatar
-              icon={<UserOutlined />}
-              style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }}
-            />
+            <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }} />
           </Dropdown>
           <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
         </Space>
@@ -106,14 +128,10 @@ const RentalRequestsSection = () => {
 
       {/* ✅ CONTENT */}
       <Content style={{ padding: "24px" }}>
-        <Row justify="center" style={{ marginTop: 20 }}>
-          <Col span={20}>
-            <Title level={2}>Rental Requests</Title>
-            <Text>Manage your incoming rental requests</Text>
-          </Col>
-        </Row>
+        <Title level={2}>Rental Requests</Title>
+        <Text>Manage your incoming rental requests</Text>
 
-        <Row justify="center" gutter={[16, 16]} style={{ marginTop: 20 }}>
+        <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
           {[
             {
               name: "Sarah Mitchell",
@@ -166,11 +184,7 @@ const RentalRequestsSection = () => {
                           <Text style={{ marginLeft: 8 }}>{item.rating}</Text>
                         </Row>
                       </div>
-                      <Button
-                        type="primary"
-                        shape="round"
-                        style={{ marginLeft: "auto" }}
-                      >
+                      <Button type="primary" shape="round" style={{ marginLeft: "auto" }}>
                         {item.status}
                       </Button>
                     </Row>
@@ -210,9 +224,7 @@ const RentalRequestsSection = () => {
                       <Button type="primary" style={{ width: "48%" }}>
                         Message Renter
                       </Button>
-                      <Button style={{ width: "48%" }}>
-                        View Meeting Location
-                      </Button>
+                      <Button style={{ width: "48%" }}>View Meeting Location</Button>
                     </>
                   ) : (
                     <>
@@ -240,36 +252,28 @@ const RentalRequestsSection = () => {
           overflowX: "hidden",
         }}
       >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ width: "100%", padding: "0 24px" }}>
           <Row gutter={[32, 24]} justify="space-between">
             <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>
-                About
-              </Title>
+              <Title level={4} style={{ color: "#fff" }}>About</Title>
               <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>How It Works</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>
-                Support
-              </Title>
+              <Title level={4} style={{ color: "#fff" }}>Support</Title>
               <Text style={{ display: "block", color: "#9ca3af" }}>Help Center</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>Safety Center</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>Contact Us</Text>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>
-                Legal
-              </Title>
+              <Title level={4} style={{ color: "#fff" }}>Legal</Title>
               <Text style={{ display: "block", color: "#9ca3af" }}>Terms of Service</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>Privacy Policy</Text>
               <Text style={{ display: "block", color: "#9ca3af" }}>Cookie Policy</Text>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>
-                Follow Us
-              </Title>
+              <Title level={4} style={{ color: "#fff" }}>Follow Us</Title>
               <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
                 <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
                 <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
@@ -277,15 +281,7 @@ const RentalRequestsSection = () => {
               </div>
             </Col>
           </Row>
-          <Row
-            justify="center"
-            style={{
-              marginTop: "32px",
-              borderTop: "1px solid #374151",
-              paddingTop: "16px",
-              textAlign: "center",
-            }}
-          >
+          <Row justify="center" style={{ marginTop: "32px", borderTop: "1px solid #374151", paddingTop: "16px", textAlign: "center" }}>
             <Text style={{ color: "#9ca3af", fontSize: "14px" }}>
               © 2025 ShareDoo. All rights reserved.
             </Text>

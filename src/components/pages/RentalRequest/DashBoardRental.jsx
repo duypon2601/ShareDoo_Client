@@ -20,16 +20,26 @@ import {
   TwitterOutlined,
   InstagramOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
 
 const DashBoardRental = () => {
   const [range, setRange] = useState("6");
+  const navigate = useNavigate();
 
   const handleRangeChange = (value) => {
     setRange(value);
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // nếu có token lưu localStorage
+    navigate("/"); // chuyển về trang login
   };
 
   const earningsData = {
@@ -52,8 +62,12 @@ const DashBoardRental = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="1">Profile</Menu.Item>
-      <Menu.Item key="2">Logout</Menu.Item>
+      <Menu.Item key="profile" onClick={handleProfileClick}>
+        Profile
+      </Menu.Item>
+      <Menu.Item key="logout" onClick={handleLogout}>
+        Logout
+      </Menu.Item>
     </Menu>
   );
 
@@ -89,7 +103,7 @@ const DashBoardRental = () => {
           <Link to="/rental-requests" style={{ color: "#374151", fontWeight: 500 }}>Request</Link>
           <Link to="/ListItem" style={{ color: "#374151", fontWeight: 500 }}>Listings</Link>
           <Link to="/ReviewPublish" style={{ color: "#374151", fontWeight: 500 }}>Review</Link>
-          <Link to="/dashboard" style={{ color: "#374151", fontWeight: 500 }}>Dashboard</Link>
+          <Link to="/dashboard-rental" style={{ color: "#374151", fontWeight: 500 }}>Dashboard</Link>
         </Space>
 
         <Space size="large">
@@ -118,38 +132,28 @@ const DashBoardRental = () => {
 
           {/* Earnings Summary Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
-            {[
-              {
-                title: "Total Earnings",
-                value: "$24,509.00",
-                subtitle: "Last updated: Today 13:45",
-                color: "#10b981",
-                badge: "+12.5%",
-              },
-              {
-                title: "Monthly Earnings",
-                value: "$4,203.00",
-                subtitle: "March 2025",
-                color: "#10b981",
-                badge: "+8.2%",
-              },
-              {
-                title: "Pending Payments",
-                value: "$1,829.00",
-                subtitle: "To be processed",
-                color: "#f59e0b",
-                badge: "3 pending",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  backgroundColor: "#a1bfa7",
-                  borderRadius: 16,
-                  padding: 20,
-                  color: "white",
-                }}
-              >
+            {[{
+              title: "Total Earnings",
+              value: "$24,509.00",
+              subtitle: "Last updated: Today 13:45",
+              color: "#10b981",
+              badge: "+12.5%",
+            },
+            {
+              title: "Monthly Earnings",
+              value: "$4,203.00",
+              subtitle: "March 2025",
+              color: "#10b981",
+              badge: "+8.2%",
+            },
+            {
+              title: "Pending Payments",
+              value: "$1,829.00",
+              subtitle: "To be processed",
+              color: "#f59e0b",
+              badge: "3 pending",
+            }].map((item, index) => (
+              <div key={index} style={{ backgroundColor: "#a1bfa7", borderRadius: 16, padding: 20, color: "white" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ color: "#e0e0e0", fontSize: 14 }}>{item.title}</span>
                   <div style={{
@@ -166,7 +170,7 @@ const DashBoardRental = () => {
             ))}
           </div>
 
-          {/* Earnings Overview Chart */}
+          {/* Earnings Overview */}
           <div style={{ backgroundColor: "#a1bfa7", borderRadius: 16, padding: 20, marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <h3 style={{ color: "#fff", margin: 0 }}>Earnings Overview</h3>
@@ -197,19 +201,16 @@ const DashBoardRental = () => {
                 justifyContent: "space-around"
               }}>
                 {earningsData[range].map((item, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      flex: 1,
-                      maxWidth: `${100 / earningsData[range].length - 2}%`,
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                      position: "relative",
-                    }}
-                  >
+                  <div key={index} style={{
+                    flex: 1,
+                    maxWidth: `${100 / earningsData[range].length - 2}%`,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    position: "relative",
+                  }}>
                     <div style={{
                       width: "100%",
                       height: "100%",
