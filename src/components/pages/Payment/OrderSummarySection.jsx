@@ -1,3 +1,6 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../config/axios";
 import {
   CreditCardOutlined,
   LockOutlined,
@@ -13,12 +16,70 @@ import {
   Radio,
   Row,
   Typography,
+  message,
+  Spin,
 } from "antd";
-import React from "react";
 
 const { Title, Text, Paragraph } = Typography;
 
 const OrderSummarySection = () => {
+  const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState(null);
+  const [paymentLink, setPaymentLink] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
+  const [confirming, setConfirming] = useState(false);
+  const navigate = useNavigate();
+
+  // Dummy order data, cần lấy từ props hoặc redux thực tế
+  const orderData = {
+    productId: 1,
+    quantity: 1,
+    totalPrice: 328.9,
+    // ... các trường khác nếu cần
+  };
+
+  const handlePayNow = async () => {
+    setLoading(true);
+    try {
+      // 1. Tạo order
+      let createdOrderId = orderId;
+      if (!orderId) {
+        const resOrder = await api.post("/api/payment/orders", {
+          productId: orderData.productId,
+          quantity: orderData.quantity,
+          totalPrice: orderData.totalPrice,
+        });
+        createdOrderId = resOrder.data.data.id || resOrder.data.data.orderId;
+        setOrderId(createdOrderId);
+      }
+      // 2. Tạo payment link
+      const resLink = await api.post(`/api/payment/create-payment-link/${createdOrderId}`);
+      setPaymentLink(resLink.data.data.checkoutUrl);
+      setQrCode(resLink.data.data.qrCode);
+      message.success("Vui lòng quét mã QR hoặc nhấn vào link để thanh toán!");
+    } catch (err) {
+      message.error("Không thể tạo đơn hàng hoặc link thanh toán!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!orderId && !paymentLink) return;
+    setConfirming(true);
+    try {
+      // Lấy orderCode từ paymentLink hoặc backend (giả sử orderCode là orderId ở đây)
+      const orderCode = orderId;
+      await api.post(`/api/payment/confirm?orderCode=${orderCode}`);
+      message.success("Thanh toán thành công!");
+      navigate("/pages/SuccessPayment");
+    } catch (err) {
+      message.error("Chưa xác nhận được thanh toán. Vui lòng thử lại sau!");
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   return (
     <Row gutter={[16, 16]} style={{ padding: "16px" }}>
       <Col span={16}>
@@ -69,45 +130,10 @@ const OrderSummarySection = () => {
           <Radio.Group style={{ width: "100%" }}>
             <Radio
               style={{ display: "block", height: "58px", lineHeight: "58px" }}
-              value="card"
+              value="payos"
+              checked
             >
-              <CreditCardOutlined style={{ marginRight: "8px" }} />
-              Credit/Debit Card
-              <span style={{ float: "right" }}>
-                <img
-                  src="https://c.animaapp.com/LMGcYQ4G/img/frame.svg"
-                  alt="Visa"
-                  style={{ width: "27px", marginRight: "8px" }}
-                />
-                <img
-                  src="https://c.animaapp.com/LMGcYQ4G/img/frame-1.svg"
-                  alt="MasterCard"
-                  style={{ width: "27px", marginRight: "8px" }}
-                />
-                <img
-                  src="https://c.animaapp.com/LMGcYQ4G/img/frame-2.svg"
-                  alt="Amex"
-                  style={{ width: "27px" }}
-                />
-              </span>
-            </Radio>
-            <Radio
-              style={{ display: "block", height: "58px", lineHeight: "58px" }}
-              value="paypal"
-            >
-              <DollarOutlined style={{ marginRight: "8px" }} />
-              PayPal
-              <img
-                src="https://c.animaapp.com/LMGcYQ4G/img/frame-3.svg"
-                alt="PayPal"
-                style={{ float: "right", width: "18px" }}
-              />
-            </Radio>
-            <Radio
-              style={{ display: "block", height: "58px", lineHeight: "58px" }}
-              value="cash"
-            >
-              Cash on Pickup
+              PayOS (QR/Link)
             </Radio>
           </Radio.Group>
         </Card>
@@ -119,9 +145,33 @@ const OrderSummarySection = () => {
             backgroundColor: "#a1bfa7",
             borderColor: "#a1bfa7",
           }}
+          loading={loading}
+          onClick={handlePayNow}
+          disabled={!!paymentLink}
         >
-          Pay Now $328.90
+          {paymentLink ? "Đã tạo link thanh toán" : "Pay Now $328.90"}
         </Button>
+        {paymentLink && (
+          <div style={{ marginTop: 24, textAlign: "center" }}>
+            <Title level={5}>Quét mã QR để thanh toán</Title>
+            {qrCode && (
+              <img src={qrCode} alt="QR Code" style={{ width: 200, margin: "16px auto" }} />
+            )}
+            <div>
+              <a href={paymentLink} target="_blank" rel="noopener noreferrer">
+                Hoặc nhấn vào đây để thanh toán
+              </a>
+            </div>
+            <Button
+              type="primary"
+              style={{ marginTop: 16, backgroundColor: "#52c41a", borderColor: "#52c41a" }}
+              loading={confirming}
+              onClick={handleConfirmPayment}
+            >
+              Xác nhận đã thanh toán
+            </Button>
+          </div>
+        )}
         <Row justify="center" align="middle" style={{ marginTop: "16px" }}>
           <SafetyOutlined style={{ fontSize: "24px", marginRight: "8px" }} />
           <LockOutlined style={{ fontSize: "24px", marginRight: "8px" }} />

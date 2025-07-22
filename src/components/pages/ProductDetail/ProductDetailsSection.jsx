@@ -1,17 +1,58 @@
-import { Button, Col, Image, Rate, Row, Tag, Typography } from "antd";
-import React from "react";
+import { Button, Col, Image, Rate, Row, Tag, Typography, Spin, message } from "antd";
+import React, { useState, useEffect } from "react";
+import api from "../../config/axios";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text, Paragraph } = Typography;
 
-export const ProductDetailsSection = () => {
+export const ProductDetailsSection = ({ productId }) => {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (productId) {
+      fetchProductDetails();
+    }
+  }, [productId]);
+
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/api/products/${productId}`);
+      setProduct(response.data);
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+      message.error('Failed to load product details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px 0' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px 0' }}>
+        <Text type="secondary">Product not found</Text>
+      </div>
+    );
+  }
+
   return (
     <div style={{ width: "100%", position: "relative" }}>
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <div style={{ borderRadius: "8px", overflow: "hidden" }}>
             <Image
-              src="https://c.animaapp.com/raHFUeD0/img/img.png"
-              alt="Product"
+              src={product.imageUrl || "https://c.animaapp.com/raHFUeD0/img/img.png"}
+              alt={product.name}
               preview={false}
               style={{ width: "100%", height: "auto" }}
             />
@@ -32,15 +73,16 @@ export const ProductDetailsSection = () => {
           </Row>
         </Col>
         <Col span={12}>
-          <Title level={2}>Demo Product</Title>
+          <Title level={2}>{product.name}</Title>
           <Paragraph>
-            Complete photography kit including camera body, 3 lenses, and
-            accessories
+            {product.description}
           </Paragraph>
           <Title level={3} style={{ color: "#a1bfa7" }}>
-            $45/day
+            ${product.pricePerDay}/day
           </Title>
-          <Tag color="green">In Stock</Tag>
+          <Tag color={product.availabilityStatus === 'AVAILABLE' ? 'green' : 'red'}>
+            {product.availabilityStatus === 'AVAILABLE' ? 'In Stock' : 'Not Available'}
+          </Tag>
           <div
             style={{
               backgroundColor: "#f5f5f5",
@@ -81,7 +123,7 @@ export const ProductDetailsSection = () => {
           </div>
           <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
             <Col span={12}>
-              <Button type="primary" block>
+              <Button type="primary" block onClick={() => navigate('/booking', { state: { product } })}>
                 Rent Now
               </Button>
             </Col>

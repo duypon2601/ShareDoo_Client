@@ -1,18 +1,31 @@
-import { BellOutlined, MessageOutlined } from "@ant-design/icons";
-import { Col, Image, Layout, Row, Typography } from "antd";
+import { BellOutlined, MessageOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Col, Image, Layout, Row, Typography, Button } from "antd";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const { Header } = Layout;
 const { Text, Title } = Typography;
 
 export const HeaderSection = () => {
+  const navigate = useNavigate();
+  
   return (
     <Header
       style={{ background: "#fffffff2", boxShadow: "0px 1px 2px #0000000d" }}
     >
       <Row justify="space-between" align="middle">
         <Col>
-          <Row align="middle">
+          <Row align="middle" gutter={16}>
+            <Col>
+              <Button 
+                type="text" 
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate('/ListItem')}
+                style={{ marginRight: 8 }}
+              >
+                Back to Listings
+              </Button>
+            </Col>
             <Col>
               <Image
                 width={56}
