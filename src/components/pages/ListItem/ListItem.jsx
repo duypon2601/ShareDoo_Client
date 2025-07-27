@@ -1,7 +1,4 @@
-import {
-  AppstoreOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { AppstoreOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -104,7 +101,7 @@ const ListItem = () => {
     <Layout
       style={{
         minHeight: "100vh",
-        width: "99vw",
+        width: "100vw",
         overflowX: "hidden",
         background: "#fdf6ed",
       }}
@@ -117,7 +114,11 @@ const ListItem = () => {
             <Title level={2}>Lender Dashboard</Title>
           </Col>
           <Col span={4} style={{ textAlign: "right" }}>
-            <Button type="default" size="large" onClick={() => navigate("/home")}>
+            <Button
+              type="default"
+              size="large"
+              onClick={() => navigate("/home")}
+            >
               Back to Home
             </Button>
           </Col>
