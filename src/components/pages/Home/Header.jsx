@@ -30,12 +30,10 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="profile">Profile</Menu.Item>
-      <Menu.Item key="logout">Logout</Menu.Item>
-    </Menu>
-  );
+  const menuItems = [
+    { key: "profile", label: "Profile" },
+    { key: "logout", label: "Logout" }
+  ];
 
   const handleSearchIconClick = () => {
     setShowSearch(true);
@@ -171,7 +169,7 @@ const Header = () => {
             <MessageOutlined style={{ fontSize: "18px", color: "#374151" }} />
           </Badge>
         </Tooltip>
-        <Dropdown overlay={menu} placement="bottomRight">
+        <Dropdown menu={{ items: menuItems }} placement="bottomRight">
           <Avatar
             icon={<UserOutlined />}
             style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }}

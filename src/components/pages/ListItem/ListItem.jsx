@@ -22,6 +22,12 @@ import Header from "../Home/Header";
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
+// Thêm hàm định dạng VND
+function formatVND(amount) {
+  if (!amount && amount !== 0) return "";
+  return amount.toLocaleString("vi-VN") + "₫";
+}
+
 const ListItem = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -61,7 +67,7 @@ const ListItem = () => {
   };
 
   const formatPrice = (price) => {
-    return `$${price}/day`;
+    return `${formatVND(price)}/ngày`;
   };
 
   const getStatusColor = (status) => {

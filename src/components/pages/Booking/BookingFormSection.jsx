@@ -1,26 +1,40 @@
 import { CalendarOutlined, StarOutlined } from "@ant-design/icons";
 import { Button, Col, DatePicker, Input, Radio, Row, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../config/axios";
 import { message } from "antd";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
-export const BookingFormSection = ({ product }) => {
-  // State cho các trường form
+export const BookingFormSection = (props) => {
+  const { productId: paramProductId } = useParams();
+  const [product, setProduct] = useState(props.product || null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [deliveryMethod, setDeliveryMethod] = useState(1);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Lấy productId từ prop product nếu có
-  const productId = product?.id || 1; // fallback nếu không có product
+  // Fetch product thật nếu chưa có
+  useEffect(() => {
+    if (!product && paramProductId) {
+      api.get(`/api/products/${paramProductId}`)
+        .then(res => setProduct(res.data.data))
+        .catch(() => setProduct(null));
+    }
+  }, [paramProductId, product]);
+
+  const productId = product?.productId;
   const quantity = 1;
 
   const handleProceedToPayment = async () => {
+    if (!product) {
+      message.error("Product information is missing. Cannot proceed.");
+      return;
+    }
     if (!startDate || !endDate) {
       message.error("Please select rental duration.");
       return;
@@ -35,18 +49,37 @@ export const BookingFormSection = ({ product }) => {
             notes,
           },
         ],
-        description: `Rental from ${startDate?.format("YYYY-MM-DD")} to ${endDate?.format("YYYY-MM-DD")}, Delivery: ${deliveryMethod === 1 ? "Self Pickup" : "Delivery Service"}`,
+        description: `Rental for ${product.name} from ${startDate?.format("YYYY-MM-DD")} to ${endDate?.format("YYYY-MM-DD")}`,
+        returnUrl: "https://yourdomain.com/payment/success",
+        cancelUrl: "https://yourdomain.com/payment/cancel"
       };
-      await api.post("/api/payment/orders", payload);
-      message.success("Order created! Redirecting to payment...");
-      // Chuyển hướng sang trang thanh toán hoặc hiển thị tiếp
-      // window.location.href = "/payment";
-    } catch {
-      message.error("Failed to create order/payment!");
+      const response = await api.post("/api/payment/orders", payload);
+      if (response.data && response.data.data) {
+        const order = response.data.data;
+        if (order.paymentUrl) {
+          window.location.href = order.paymentUrl;
+        } else if (order.id) {
+          navigate('/payment', { state: { product, order } });
+        } else {
+          message.success("Order created! But no payment URL or order ID returned.");
+        }
+      } else {
+        message.error("Order created but no payment info returned.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        message.error("You do not have permission to perform this action. Please log in as a user.");
+      } else {
+        message.error("Failed to create order. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  if (!product) {
+    return <Title level={4}>Đang tải thông tin sản phẩm...</Title>;
+  }
 
   return (
     <Row gutter={16} style={{ width: "100%", position: "relative" }}>
@@ -103,7 +136,7 @@ export const BookingFormSection = ({ product }) => {
                 style={{ display: "block", height: "30px", lineHeight: "30px" }}
                 value={2}
               >
-                <Text strong>Delivery Service (+$10)</Text>{" "}
+                <Text strong>Delivery Service (+10.000 ₫)</Text>{" "}
                 <Text type="secondary">Get it delivered to your doorstep</Text>
               </Radio>
             </Radio.Group>
@@ -145,7 +178,7 @@ export const BookingFormSection = ({ product }) => {
             style={{ display: "flex", alignItems: "center", marginTop: "8px" }}
           >
             <Title level={3} style={{ margin: 0 }}>
-              ${product?.pricePerDay || 75}
+              {product?.pricePerDay || 75}
             </Title>
             <Text type="secondary" style={{ marginLeft: "8px" }}>
               / day
@@ -174,7 +207,7 @@ export const BookingFormSection = ({ product }) => {
                 }}
               >
                 <StarOutlined style={{ color: "#faad14" }} />
-                <Text style={{ marginLeft: "8px" }}>{product?.ownerRating ? `${product.ownerRating} (${product.ownerReviewCount} reviews)` : "4.9 (124 reviews)"}</Text>
+                <Text style={{ marginLeft: "8px" }}>{product?.ownerRating ? `${product.ownerRating} (${product.ownerReviewCount} đánh giá)` : "4.9 (124 đánh giá)"}</Text>
               </div>
             </div>
           </div>
@@ -191,7 +224,7 @@ export const BookingFormSection = ({ product }) => {
                 <Text>3 days rental</Text>
               </Col>
               <Col span={12} style={{ textAlign: "right" }}>
-                <Text>$225.00</Text>
+                <Text>225.000 ₫</Text>
               </Col>
             </Row>
             <Row style={{ marginTop: "8px" }}>
@@ -199,7 +232,7 @@ export const BookingFormSection = ({ product }) => {
                 <Text>Service fee</Text>
               </Col>
               <Col span={12} style={{ textAlign: "right" }}>
-                <Text>$22.50</Text>
+                <Text>22.500 ₫</Text>
               </Col>
             </Row>
             <Row style={{ marginTop: "8px" }}>
@@ -207,7 +240,7 @@ export const BookingFormSection = ({ product }) => {
                 <Text>Delivery fee</Text>
               </Col>
               <Col span={12} style={{ textAlign: "right" }}>
-                <Text>$10.00</Text>
+                <Text>10.000 ₫</Text>
               </Col>
             </Row>
             <Row
@@ -222,7 +255,7 @@ export const BookingFormSection = ({ product }) => {
               </Col>
               <Col span={12} style={{ textAlign: "right" }}>
                 <Title level={4} style={{ margin: 0 }}>
-                  $257.50
+                  257.500 ₫
                 </Title>
               </Col>
             </Row>

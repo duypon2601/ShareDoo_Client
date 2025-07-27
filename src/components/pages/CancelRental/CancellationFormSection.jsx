@@ -2,13 +2,35 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { Alert, Button, Card, Col, Input, Row, Select, Typography } from "antd";
+import { Alert, Button, Card, Col, Input, Row, Select, Typography, message } from "antd";
 import React from "react";
+import { useLocation } from "react-router-dom";
+import axios from "../../config/axios";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CancellationFormSection = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const orderCode = params.get("orderCode");
+
+  const handleCancel = async () => {
+    if (!orderCode) {
+      message.error("Không tìm thấy mã đơn hàng!");
+      return;
+    }
+    try {
+      const res = await axios.post(`/api/rentals/cancel?orderCode=${orderCode}`);
+      message.success(res.data || "Đã hủy đơn hàng thành công!");
+      // Có thể chuyển hướng hoặc reload lại trang lịch sử đơn hàng ở đây
+    } catch (err) {
+      message.error(
+        err?.response?.data || "Hủy đơn hàng thất bại, vui lòng thử lại!"
+      );
+    }
+  };
+
   return (
     <div
       style={{
@@ -43,7 +65,7 @@ const CancellationFormSection = () => {
               <Text style={{ display: "block" }}>
                 Order #: RNT-2025-0123
               </Text>
-              <Text strong style={{ display: "block" }}>Total: $249.99</Text>
+              <Text strong style={{ display: "block" }}>Total: 249.990 ₫</Text>
             </Col>
             <Col>
               <Button
@@ -87,7 +109,7 @@ const CancellationFormSection = () => {
             </Col>
 
             <Col span={24}>
-              <Button type="primary" block>
+              <Button type="primary" block onClick={handleCancel}>
                 Confirm Cancellation
               </Button>
             </Col>

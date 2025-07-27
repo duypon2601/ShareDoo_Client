@@ -21,7 +21,7 @@ const { Title, Text, Paragraph } = Typography;
             <Col>
               <Title level={4}>Canon EOS R5 Camera</Title>
               <Paragraph>Current Period: Jan 15 - Jan 22, 2025</Paragraph>
-              <Text>Total Price: $245.00</Text>
+              <Text>Total Price: 245.000 ₫</Text>
               <Badge
                 count="Active"
                 style={{
@@ -85,7 +85,7 @@ const { Title, Text, Paragraph } = Typography;
             </Row>
             <Row justify="space-between" style={{ marginTop: 16 }}>
               <Text>Daily Rate</Text>
-              <Text strong>$35.00</Text>
+              <Text strong>35.000 ₫</Text>
             </Row>
             <Row
               justify="space-between"
@@ -97,7 +97,7 @@ const { Title, Text, Paragraph } = Typography;
             >
               <Text>Total Extension Cost</Text>
               <Text strong style={{ color: "#a1bfa7" }}>
-                $245.00
+                245.000 ₫
               </Text>
             </Row>
           </Card>

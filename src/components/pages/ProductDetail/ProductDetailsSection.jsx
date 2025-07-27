@@ -5,6 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 const { Title, Text, Paragraph } = Typography;
 
+// Thêm hàm định dạng VND
+function formatVND(amount) {
+  if (!amount && amount !== 0) return "";
+  return amount.toLocaleString("vi-VN") + "₫";
+}
+
 export const ProductDetailsSection = ({ productId }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,10 +19,17 @@ export const ProductDetailsSection = ({ productId }) => {
   useEffect(() => {
     if (productId) {
       fetchProductDetails();
+    } else {
+      setLoading(false); // If no ID, stop loading
     }
   }, [productId]);
 
   const fetchProductDetails = async () => {
+    // Redundant check, but good for safety
+    if (!productId) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const response = await api.get(`/api/products/${productId}`);
@@ -78,7 +91,7 @@ export const ProductDetailsSection = ({ productId }) => {
             {product.description}
           </Paragraph>
           <Title level={3} style={{ color: "#a1bfa7" }}>
-            ${product.pricePerDay}/day
+            {formatVND(product.pricePerDay)}/ngày
           </Title>
           <Tag color={product.availabilityStatus === 'AVAILABLE' ? 'green' : 'red'}>
             {product.availabilityStatus === 'AVAILABLE' ? 'In Stock' : 'Not Available'}
@@ -254,7 +267,7 @@ export const ProductDetailsSection = ({ productId }) => {
                   <Title level={5} style={{ margin: 0 }}>
                     Demo Product
                   </Title>
-                  <Text style={{ color: "#a1bfa7" }}>$35/day</Text>
+                  <Text style={{ color: "#a1bfa7" }}>{formatVND(35000)}/ngày</Text>
                 </div>
               </div>
             </Col>

@@ -134,21 +134,21 @@ const DashBoardRental = () => {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
             {[{
               title: "Total Earnings",
-              value: "$24,509.00",
+              value: "24.509.000 ₫",
               subtitle: "Last updated: Today 13:45",
               color: "#10b981",
               badge: "+12.5%",
             },
             {
               title: "Monthly Earnings",
-              value: "$4,203.00",
+              value: "4.203.000 ₫",
               subtitle: "March 2025",
               color: "#10b981",
               badge: "+8.2%",
             },
             {
               title: "Pending Payments",
-              value: "$1,829.00",
+              value: "1.829.000 ₫",
               subtitle: "To be processed",
               color: "#f59e0b",
               badge: "3 pending",
@@ -287,10 +287,10 @@ const DashBoardRental = () => {
               ))}
             </div>
             {[
-              { date: "Mar 15, 2025", item: "Demo Product", amount: "$350.00", status: "Completed", color: "#10b981" },
-              { date: "Mar 14, 2025", item: "Demo Product", amount: "$280.00", status: "Pending", color: "#f59e0b" },
-              { date: "Mar 12, 2025", item: "Demo Product", amount: "$420.00", status: "Completed", color: "#10b981" },
-              { date: "Mar 10, 2025", item: "Demo Product", amount: "$295.00", status: "Failed", color: "#ef4444" },
+              { date: "Mar 15, 2025", item: "Demo Product", amount: "350.000 ₫", status: "Completed", color: "#10b981" },
+              { date: "Mar 14, 2025", item: "Demo Product", amount: "280.000 ₫", status: "Pending", color: "#f59e0b" },
+              { date: "Mar 12, 2025", item: "Demo Product", amount: "420.000 ₫", status: "Completed", color: "#10b981" },
+              { date: "Mar 10, 2025", item: "Demo Product", amount: "295.000 ₫", status: "Failed", color: "#ef4444" },
             ].map((txn, idx) => (
               <div key={idx} style={{
                 display: "grid",

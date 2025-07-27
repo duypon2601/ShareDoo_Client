@@ -100,9 +100,9 @@ const DashboardSection = () => {
             <Card>
               <Row justify="space-between" align="middle">
                 <Text>Total Earnings</Text>
-                <DollarOutlined />
+                {/* Có thể thay DollarOutlined bằng icon tiền Việt nếu muốn */}
               </Row>
-              <Title level={1}>$2,458</Title>
+              <Title level={1}>{(2458000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
             </Card>
           </Col>
           <Col span={6}>
@@ -138,7 +138,7 @@ const DashboardSection = () => {
                   >
                     <Title level={4}>Canon EOS R5</Title>
                     <Row justify="space-between">
-                      <Text>$75/day</Text>
+                      <Text>75.000 ₫/ngày</Text>
                       <Text type="success">Available</Text>
                     </Row>
                   </Card>
@@ -161,7 +161,7 @@ const DashboardSection = () => {
                   >
                     <Title level={4}>DJI Mavic Air 2</Title>
                     <Row justify="space-between">
-                      <Text>$85/day</Text>
+                      <Text>85.000 ₫/ngày</Text>
                       <Text type="danger">Rented</Text>
                     </Row>
                   </Card>
@@ -184,7 +184,7 @@ const DashboardSection = () => {
                   >
                     <Title level={4}>MacBook Pro 16"</Title>
                     <Row justify="space-between">
-                      <Text>$95/day</Text>
+                      <Text>95.000 ₫/ngày</Text>
                       <Text type="success">Available</Text>
                     </Row>
                   </Card>
@@ -242,20 +242,20 @@ const DashboardSection = () => {
             <Card title="Earnings Summary">
               <Row justify="space-between">
                 <Text>Monthly Goal</Text>
-                <Text>$3,000</Text>
+                <Text>3.000.000 ₫</Text>
               </Row>
               <Progress percent={82} showInfo={false} />
               <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
                 <Col span={12}>
                   <Card>
                     <Text>Total Earnings</Text>
-                    <Title level={2}>$2,458</Title>
+                    <Title level={2}>{(2458000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
                   </Card>
                 </Col>
                 <Col span={12}>
                   <Card>
                     <Text>Pending Payouts</Text>
-                    <Title level={2}>$542</Title>
+                    <Title level={2}>{(542000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
                   </Card>
                 </Col>
               </Row>

@@ -1,16 +1,31 @@
 import { MessageOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Image, Row, Tag, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "../../config/axios";
 
 const { Title, Text } = Typography;
 
 const OrderDetailsSection = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id");
+  const orderCode = params.get("orderCode");
+  const [order, setOrder] = useState(null);
+  useEffect(() => {
+    if (id || orderCode) {
+      axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+        .then(res => setOrder(res.data))
+        .catch(() => setOrder(null));
+    }
+  }, [id, orderCode]);
+
   return (
     <div style={{ width: "100vw", margin: 0, padding: 0, backgroundColor: "#fff" }}>
       <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
         <Col span={24}>
           <Title level={2}>Order Details</Title>
-          <Text>Order #RNT-2025-0123</Text>
+          <Text>Order #{order?.orderCode || order?.id || "-"}</Text>
         </Col>
       </Row>
 
@@ -21,20 +36,22 @@ const OrderDetailsSection = () => {
               <Col span={8}>
                 <Image
                   width="100%"
-                  src="https://c.animaapp.com/mNiQn72F/img/img@2x.png"
+                  src={order?.product?.imageUrl || "https://c.animaapp.com/mNiQn72F/img/img@2x.png"}
                   alt="Product"
                 />
               </Col>
               <Col span={16}>
-                <Title level={3}>Demo Product</Title>
-                <Tag color="green">Active</Tag>
+                <Title level={3}>{order?.product?.name || "Product"}</Title>
+                <Tag color={order?.status === "paid" ? "green" : order?.status === "pending" ? "orange" : "default"}>
+                  {order?.status || "Unknown"}
+                </Tag>
                 <Row>
                   <Col span={12}><Text>Start Date</Text></Col>
-                  <Col span={12}><Text>Jan 15, 2025</Text></Col>
+                  <Col span={12}><Text>{order?.startDate?.slice(0, 10) || "-"}</Text></Col>
                 </Row>
                 <Row>
                   <Col span={12}><Text>End Date</Text></Col>
-                  <Col span={12}><Text>Jan 22, 2025</Text></Col>
+                  <Col span={12}><Text>{order?.endDate?.slice(0, 10) || "-"}</Text></Col>
                 </Row>
               </Col>
             </Row>
@@ -42,9 +59,9 @@ const OrderDetailsSection = () => {
 
           <Card style={{ width: "100%", marginTop: 16 }}>
             <Title level={4}>Price Breakdown</Title>
-            <Row><Col span={12}><Text>Rental Fee (7 days)</Text></Col><Col span={12}><Text>$350.00</Text></Col></Row>
-            <Row><Col span={12}><Text>Service Fee</Text></Col><Col span={12}><Text>$35.00</Text></Col></Row>
-            <Row><Col span={12}><Text strong>Total</Text></Col><Col span={12}><Text strong>$385.00</Text></Col></Row>
+            <Row><Col span={12}><Text>Rental Fee</Text></Col><Col span={12}><Text>{order?.totalPrice?.toLocaleString() || "-"} ₫</Text></Col></Row>
+            {/* Có thể bổ sung các khoản phí khác nếu backend trả về */}
+            <Row><Col span={12}><Text strong>Total</Text></Col><Col span={12}><Text strong>{order?.totalPrice?.toLocaleString() || "-"} ₫</Text></Col></Row>
           </Card>
 
           <Card style={{ width: "100%", marginTop: 16 }}>

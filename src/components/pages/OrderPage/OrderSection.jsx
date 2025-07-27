@@ -1,9 +1,17 @@
 import { Badge, Button, Card, Col, Row, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../../config/axios";
 
 const { Title, Text } = Typography;
 
 const OrdersSection = () => {
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    axios.get("/api/rentals/list")
+      .then(res => setOrders(res.data))
+      .catch(() => setOrders([]));
+  }, []);
+
   return (
     <div style={{ width: "100%", position: "relative" }}>
       <div style={{ width: "100%", padding: "24px 20px" }}>
@@ -39,182 +47,66 @@ const OrdersSection = () => {
         </Row>
 
         <Row style={{ marginTop: "24px" }} gutter={[0, 24]}>
-          <Col span={24}>
-            <Card
-              style={{
-                borderRadius: "8px",
-                boxShadow: "0px 1px 2px #0000000d",
-              }}
-              bodyStyle={{ padding: "24px" }}
-            >
-              <Row gutter={16}>
-                <Col>
-                  <div
-                    style={{
-                      width: "96px",
-                      height: "96px",
-                      backgroundImage: "url(/img-3.png)",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </Col>
-                <Col flex="auto">
-                  <Row justify="space-between">
-                    <Col>
-                      <Title level={4}>Demo Product</Title>
-                      <Text type="secondary">Order #ORD-2025-001</Text>
-                    </Col>
-                    <Col>
-                      <Badge
-                        count="Active"
-                        style={{
-                          backgroundColor: "#f6ffed",
-                          color: "#52c41a",
-                          borderRadius: "12px",
-                          padding: "0 8px",
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                  <Row style={{ marginTop: "16px" }} justify="space-between">
-                    <Col>
-                      <Text type="secondary">Rental Period</Text>
-                      <br />
-                      <Text>Jan 15 - Jan 22, 2025</Text>
-                    </Col>
-                    <Col>
-                      <Text type="secondary">Total Price</Text>
-                      <br />
-                      <Text>$349.00</Text>
-                    </Col>
-                    <Col>
-                      <Button type="primary">View Details</Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-
-          <Col span={24}>
-            <Card
-              style={{
-                borderRadius: "8px",
-                boxShadow: "0px 1px 2px #0000000d",
-              }}
-              bodyStyle={{ padding: "24px" }}
-            >
-              <Row gutter={16}>
-                <Col>
-                  <div
-                    style={{
-                      width: "96px",
-                      height: "96px",
-                      backgroundImage: "url(/image.png)",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </Col>
-                <Col flex="auto">
-                  <Row justify="space-between">
-                    <Col>
-                      <Title level={4}>Demo Product</Title>
-                      <Text type="secondary">Order #ORD-2025-002</Text>
-                    </Col>
-                    <Col>
-                      <Badge
-                        count="Pending"
-                        style={{
-                          backgroundColor: "#fff7e6",
-                          color: "#fa8c16",
-                          borderRadius: "12px",
-                          padding: "0 8px",
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                  <Row style={{ marginTop: "16px" }} justify="space-between">
-                    <Col>
-                      <Text type="secondary">Rental Period</Text>
-                      <br />
-                      <Text>Jan 15 - Jan 18, 2025</Text>
-                    </Col>
-                    <Col>
-                      <Text type="secondary">Total Price</Text>
-                      <br />
-                      <Text>$189.00</Text>
-                    </Col>
-                    <Col>
-                      <Button type="primary">View Details</Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-
-          <Col span={24}>
-            <Card
-              style={{
-                borderRadius: "8px",
-                boxShadow: "0px 1px 2px #0000000d",
-              }}
-              bodyStyle={{ padding: "24px" }}
-            >
-              <Row gutter={16}>
-                <Col>
-                  <div
-                    style={{
-                      width: "96px",
-                      height: "96px",
-                      backgroundImage: "url(/img-2.png)",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </Col>
-                <Col flex="auto">
-                  <Row justify="space-between">
-                    <Col>
-                      <Title level={4}>Demo Product</Title>
-                      <Text type="secondary">Order #ORD-2025-003</Text>
-                    </Col>
-                    <Col>
-                      <Badge
-                        count="Active"
-                        style={{
-                          backgroundColor: "#f6ffed",
-                          color: "#52c41a",
-                          borderRadius: "12px",
-                          padding: "0 8px",
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                  <Row style={{ marginTop: "16px" }} justify="space-between">
-                    <Col>
-                      <Text type="secondary">Rental Period</Text>
-                      <br />
-                      <Text>Jan 16 - Jan 19, 2025</Text>
-                    </Col>
-                    <Col>
-                      <Text type="secondary">Total Price</Text>
-                      <br />
-                      <Text>$129.00</Text>
-                    </Col>
-                    <Col>
-                      <Button type="primary">View Details</Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
+          {orders.map((order, idx) => (
+            <Col span={24} key={order.id || idx}>
+              <Card
+                style={{
+                  borderRadius: "8px",
+                  boxShadow: "0px 1px 2px #0000000d",
+                }}
+                bodyStyle={{ padding: "24px" }}
+              >
+                <Row gutter={16}>
+                  <Col>
+                    <div
+                      style={{
+                        width: "96px",
+                        height: "96px",
+                        backgroundImage: `url(${order.product?.imageUrl || "/img-3.png"})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </Col>
+                  <Col flex="auto">
+                    <Row justify="space-between">
+                      <Col>
+                        <Title level={4}>{order.product?.name || "Product"}</Title>
+                        <Text type="secondary">Order #{order.orderCode || order.id}</Text>
+                      </Col>
+                      <Col>
+                        <Badge
+                          count={order.status || "Unknown"}
+                          style={{
+                            backgroundColor: order.status === "paid" ? "#f6ffed" : order.status === "pending" ? "#fff7e6" : "#f0f0f0",
+                            color: order.status === "paid" ? "#52c41a" : order.status === "pending" ? "#fa8c16" : "#999",
+                            borderRadius: "12px",
+                            padding: "0 8px",
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row style={{ marginTop: "16px" }} justify="space-between">
+                      <Col>
+                        <Text type="secondary">Rental Period</Text>
+                        <br />
+                        <Text>{order.startDate?.slice(0, 10)} - {order.endDate?.slice(0, 10)}</Text>
+                      </Col>
+                      <Col>
+                        <Text type="secondary">Total Price</Text>
+                        <br />
+                        <Text>{order.totalPrice?.toLocaleString()} ₫</Text>
+                      </Col>
+                      <Col>
+                        <Button type="primary">View Details</Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          ))}
         </Row>
       </div>
     </div>

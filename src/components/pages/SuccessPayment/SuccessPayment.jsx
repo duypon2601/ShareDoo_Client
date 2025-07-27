@@ -121,7 +121,7 @@ const SuccessPayment = () => {
                 <Col span={12}>
                   <Text>Total Price</Text>
                   <br />
-                  <Text strong>$750.00</Text>
+                  <Text strong>{(750000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Text>
                 </Col>
                 <Col span={12}>
                   <Text>Booking ID</Text>

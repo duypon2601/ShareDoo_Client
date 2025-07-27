@@ -178,7 +178,7 @@ const ReviewPublishSection = () => {
                 </Col>
                 <Col span={12}>
                   <Text type="secondary">Price</Text>
-                  <Paragraph strong>${product.rentalPrice}</Paragraph>
+                  <Paragraph strong>{Number(product.rentalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Paragraph>
                 </Col>
                 <Col span={12}>
                   <Text type="secondary">Pickup Location</Text>

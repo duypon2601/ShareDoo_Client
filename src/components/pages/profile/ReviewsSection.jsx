@@ -33,7 +33,7 @@ export const ReviewsSection = () => {
                     title="Computer Science Textbooks"
                     description={
                       <>
-                        <div>$15/week</div>
+                        <div>15.000 ₫/tuần</div>
                         <Tag color="green">Available</Tag>
                       </>
                     }
@@ -57,7 +57,7 @@ export const ReviewsSection = () => {
                     title="DSLR Camera Kit"
                     description={
                       <>
-                        <div>$30/day</div>
+                        <div>30.000 ₫/ngày</div>
                         <Tag color="red">Rented</Tag>
                       </>
                     }
@@ -81,7 +81,7 @@ export const ReviewsSection = () => {
                     title="Engineering Calculator"
                     description={
                       <>
-                        <div>$8/week</div>
+                        <div>8.000 ₫/tuần</div>
                         <Tag color="green">Available</Tag>
                       </>
                     }

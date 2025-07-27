@@ -143,7 +143,7 @@ const PricingAvailabilitySection = () => {
                 Rental Price
               </Text>
               <Input
-                prefix="$"
+                prefix="₫"
                 placeholder="Enter price per day"
                 value={rentalPrice}
                 onChange={(e) => dispatch(setRentalPrice(e.target.value))}
@@ -162,7 +162,7 @@ const PricingAvailabilitySection = () => {
                 </Col>
               </Row>
               <Input
-                prefix="$"
+                prefix="₫"
                 placeholder="Enter deposit amount"
                 style={{ marginTop: 8 }}
                 value={deposit}

@@ -15,8 +15,14 @@ const ProductDetail = () => {
     <Layout>
       <HeaderSection />
       <Content style={{ padding: "40px 80px", background: "#fff" }}>
+        {id ? (
+          <>
         <ProductDetailsSection productId={id} />
         <UserReviewsSection />
+          </>
+        ) : (
+          <div>Product ID is missing.</div>
+        )}
       </Content>
       <FooterSection />
     </Layout>
