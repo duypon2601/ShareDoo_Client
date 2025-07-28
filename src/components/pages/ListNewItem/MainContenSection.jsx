@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -17,6 +17,7 @@ import {
   setItemName,
   setCategory,
   setDescription,
+  setRentalPrice,
 } from "../../redux/productCreateSlice";
 
 const { Title, Text } = Typography;
@@ -24,12 +25,29 @@ const { Title, Text } = Typography;
 const MainContentSection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { itemName, category, description } = useSelector(
+  const { itemName, category, description, rentalPrice } = useSelector(
     (state) => state.productCreate
   );
+  const [isPriceFocused, setIsPriceFocused] = useState(false);
 
   const handleCategoryChange = (value) => {
     dispatch(setCategory(value));
+  };
+
+  // Format số tiền theo định dạng Việt Nam (1.000.000)
+  const formatCurrency = (value) => {
+    if (!value) return "";
+    return Number(value).toLocaleString("vi-VN");
+  };
+
+  // Xử lý khi focus vào ô giá
+  const handlePriceFocus = () => {
+    setIsPriceFocused(true);
+  };
+
+  // Xử lý khi blur khỏi ô giá
+  const handlePriceBlur = () => {
+    setIsPriceFocused(false);
   };
 
   // Ngăn scroll ngang toàn bộ trang
@@ -99,19 +117,38 @@ const MainContentSection = () => {
             tooltip="You can select multiple categories or type your own"
           >
             <Select
-              mode="tags"
-              placeholder="Select or type categories"
+              mode="multiple"
+              placeholder="Select categories"
               style={{ width: "100%" }}
               value={category}
               onChange={handleCategoryChange}
               options={[
-                { label: "Books", value: "books" },
-                { label: "Electronics", value: "electronics" },
-                { label: "Clothing", value: "clothing" },
-                { label: "Event Supplies", value: "event_supplies" },
-                { label: "Sports Equipment", value: "sports_equipment" },
-                { label: "Other", value: "other" },
+                { label: "Camping", value: "CAMPING" },
+                { label: "Hiking", value: "HIKING" },
+                { label: "Fishing", value: "FISHING" },
+                { label: "Bicycling", value: "BICYCLING" },
+                { label: "City", value: "CITY" },
+                { label: "Beach", value: "BEACH" },
+                { label: "Mountains", value: "MOUNTAINS" },
+                { label: "Forest", value: "FOREST" },
+                { label: "Skiing", value: "SKIING" },
+                { label: "Snowboarding", value: "SNOWBOARDING" },
+                { label: "Other", value: "OTHER" },
               ]}
+            />
+          </Form.Item>
+
+          <Form.Item label="Rental Price" required>
+            <Input
+              placeholder="Enter price per day"
+              value={isPriceFocused ? rentalPrice : formatCurrency(rentalPrice)}
+              onChange={(e) => {
+                const numeric = e.target.value.replace(/\D/g, "");
+                dispatch(setRentalPrice(numeric));
+              }}
+              onFocus={handlePriceFocus}
+              onBlur={handlePriceBlur}
+              suffix="đồng"
             />
           </Form.Item>
 
