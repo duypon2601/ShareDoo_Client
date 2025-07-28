@@ -1,6 +1,6 @@
 import React from "react";
-import HeaderProfile from "./HeaderProfile";
-import FooterProfile from "./FooterProfile";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import PricingAvailabilitySection from "./PricingAvailabilitySection";
 
 const PricingPage = () => {
@@ -15,11 +15,11 @@ const PricingPage = () => {
         flexDirection: "column",
       }}
     >
-      <HeaderProfile />
+      <Header />
       <main style={{ flex: 1 }}>
         <PricingAvailabilitySection />
       </main>
-      <FooterProfile />
+      <Footer />
     </div>
   );
 };

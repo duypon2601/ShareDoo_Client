@@ -1,36 +1,16 @@
 import React, { useState } from "react";
-import {
-  LeftOutlined,
-  RightOutlined,
-  CloseOutlined,
-  FacebookOutlined,
-  TwitterOutlined,
-  InstagramOutlined,
-} from "@ant-design/icons";
-import {
-  Avatar,
-  Button,
-  Col,
-  Input,
-  Layout,
-  Progress,
-  Row,
-  Switch,
-  Typography,
-} from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Button, Col, Input, Progress, Row, Switch, Typography } from "antd";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { getCoordinatesFromAddress } from "../../../service/geocoding";
-import {
-  setRentalPrice,
-  setDeposit,
-  setLocation,
-} from "../../redux/productCreateSlice";
+import { setLocation } from "../../redux/productCreateSlice";
 import { useNavigate } from "react-router-dom";
 
-const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
 
 const LocationPicker = ({ onMapClick }) => {
@@ -44,9 +24,7 @@ const LocationPicker = ({ onMapClick }) => {
 
 const PricingAvailabilitySection = () => {
   const dispatch = useDispatch();
-  const { rentalPrice, deposit, location } = useSelector(
-    (state) => state.productCreate
-  );
+  const { location } = useSelector((state) => state.productCreate);
   const navigate = useNavigate();
   const [addressInput, setAddressInput] = useState(location.address || "");
 
@@ -85,223 +63,102 @@ const PricingAvailabilitySection = () => {
   });
 
   return (
-    <Layout style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
-      <Header
+    <>
+      <Header />
+      <div
         style={{
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e0e0e0",
-          padding: "0 24px",
+          minHeight: "100vh",
+          width: "99vw",
+          background: "#f9fafb",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "space-between",
-          height: "72px",
-        }}
-      >
-        <Row align="middle" gutter={12}>
-          <Col>
-            <Avatar
-              src="/img/ShareDoo.png"
-              size={48}
-              shape="circle"
-              style={{ backgroundColor: "#fff" }}
-            />
-          </Col>
-          <Col>
-            <Text strong style={{ fontSize: "20px", color: "#1f1f1f" }}>
-              ShareDoo
-            </Text>
-          </Col>
-        </Row>
-        <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-      </Header>
-
-      <Content style={{ padding: "40px 20px", flex: 1 }}>
-        <Row justify="center">
-          <Col xs={24} sm={20} md={16} lg={12}>
-            <Row justify="space-between" style={{ marginBottom: 12 }}>
-              <Col>
-                <Title level={4}>List Your Item</Title>
-              </Col>
-              <Col>
-                <Text type="secondary">Step 3 of 4</Text>
-              </Col>
-            </Row>
-            <Progress percent={75} showInfo={false} strokeColor="#10b981" />
-
-            <div
-              style={{
-                background: "#ffffff",
-                padding: 24,
-                borderRadius: 12,
-                boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-                marginTop: 24,
-              }}
-            >
-              <Title level={4}>Pricing & Availability</Title>
-
-              <Text style={{ display: "block", marginBottom: 8 }}>
-                Rental Price
-              </Text>
-              <Input
-                prefix="₫"
-                placeholder="Enter price per day"
-                value={rentalPrice}
-                onChange={(e) => dispatch(setRentalPrice(e.target.value))}
-              />
-
-              <Row
-                justify="space-between"
-                align="middle"
-                style={{ marginTop: 24 }}
-              >
-                <Col>
-                  <Text>Security Deposit</Text>
-                </Col>
-                <Col>
-                  <Text type="secondary">Required</Text> <Switch />
-                </Col>
-              </Row>
-              <Input
-                prefix="₫"
-                placeholder="Enter deposit amount"
-                style={{ marginTop: 8 }}
-                value={deposit}
-                onChange={(e) => dispatch(setDeposit(e.target.value))}
-              />
-
-              <div style={{ marginTop: 24 }}>
-                <Text>Pickup Location</Text>
-                <Input.Search
-                  value={addressInput}
-                  onChange={(e) => setAddressInput(e.target.value)}
-                  onSearch={handleSearchAddress}
-                  enterButton="Find"
-                />
-              </div>
-
-              <div
-                style={{
-                  marginTop: 16,
-                  height: 300,
-                  borderRadius: 8,
-                  overflow: "hidden",
-                }}
-              >
-                <MapContainer
-                  center={
-                    location.lat && location.lng
-                      ? [location.lat, location.lng]
-                      : [10.762622, 106.660172]
-                  }
-                  zoom={15}
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  {location.lat && location.lng && (
-                    <Marker
-                      position={[location.lat, location.lng]}
-                      icon={markerIcon}
-                    />
-                  )}
-                  <LocationPicker onMapClick={handleMapClick} />
-                </MapContainer>
-              </div>
-
-              <Row justify="space-between" style={{ marginTop: 24 }}>
-                <Button icon={<LeftOutlined />} onClick={() => navigate(-1)}>
-                  Back
-                </Button>
-                <Button
-                  icon={<RightOutlined />}
-                  type="primary"
-                  style={{
-                    backgroundColor: "#10b981",
-                    borderColor: "#10b981",
-                  }}
-                  onClick={() => navigate("/ReviewPublish")}
-                >
-                  Next
-                </Button>
-              </Row>
-            </div>
-          </Col>
-        </Row>
-      </Content>
-
-      <Footer
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#9ca3af",
           padding: "40px 0",
         }}
       >
-        <Row justify="center" gutter={[32, 16]}>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              About
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              How It Works
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Support
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Help Center
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Safety Center
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Contact Us
-            </Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Legal
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Terms of Service
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Privacy Policy
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Cookie Policy
-            </Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Follow Us
-            </Title>
-            <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-              <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-              <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-              <InstagramOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-            </div>
-          </Col>
-        </Row>
-        <Row
-          justify="center"
+        <div
           style={{
-            marginTop: "32px",
-            borderTop: "1px solid #374151",
-            paddingTop: "16px",
+            background: "#ffffff",
+            padding: 32,
+            borderRadius: 12,
+            boxShadow:
+              "0px 4px 10px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.05)",
+            width: "100%",
+            maxWidth: 800,
+            boxSizing: "border-box",
           }}
         >
-          <Text style={{ color: "#9ca3af", fontSize: "14px" }}>
-            © 2025 ShareDoo. All rights reserved.
-          </Text>
-        </Row>
-      </Footer>
-    </Layout>
+          <Row justify="space-between" style={{ marginBottom: 12 }}>
+            <Col>
+              <Title level={4}>List Your Item</Title>
+            </Col>
+            <Col>
+              <Text type="secondary">Step 3 of 4</Text>
+            </Col>
+          </Row>
+          <Progress percent={75} showInfo={false} strokeColor="#10b981" />
+          <Title level={4} style={{ marginTop: 24 }}>
+            Pricing & Availability
+          </Title>
+          <div style={{ marginTop: 24 }}>
+            <Text>Pickup Location</Text>
+            <Input.Search
+              value={addressInput}
+              onChange={(e) => setAddressInput(e.target.value)}
+              onSearch={handleSearchAddress}
+              enterButton="Find"
+            />
+          </div>
+          <div
+            style={{
+              marginTop: 16,
+              height: 300,
+              borderRadius: 8,
+              overflow: "hidden",
+            }}
+          >
+            <MapContainer
+              center={
+                location.lat && location.lng
+                  ? [location.lat, location.lng]
+                  : [10.762622, 106.660172]
+              }
+              zoom={15}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {location.lat && location.lng && (
+                <Marker
+                  position={[location.lat, location.lng]}
+                  icon={markerIcon}
+                />
+              )}
+              <LocationPicker onMapClick={handleMapClick} />
+            </MapContainer>
+          </div>
+          <Row justify="space-between" style={{ marginTop: 24 }}>
+            <Button icon={<LeftOutlined />} onClick={() => navigate(-1)}>
+              Back
+            </Button>
+            <Button
+              icon={<RightOutlined />}
+              type="primary"
+              style={{
+                backgroundColor: "#10b981",
+                borderColor: "#10b981",
+              }}
+              onClick={() => navigate("/ReviewPublish")}
+            >
+              Next
+            </Button>
+          </Row>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

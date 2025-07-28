@@ -1,11 +1,23 @@
 import { CheckOutlined } from "@ant-design/icons";
-import { Button, Col, Row, Typography } from "antd";
+import { Button, Col, Row, Typography, message } from "antd";
 import React from "react";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 const { Title, Text } = Typography;
 
 const Succes = () => {
+  // Hiển thị message thành công khi component mount
+  React.useEffect(() => {
+    console.log("Success component mounted - showing message");
+
+    // Sử dụng Ant Design message
+    message.success(
+      "🎉 Success! Your product has been published successfully!",
+      6
+    );
+    console.log("Ant Design message shown");
+  }, []);
+
   return (
     <>
       <Header />
