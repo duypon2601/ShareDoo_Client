@@ -19,8 +19,8 @@ const ReviewPublishSection = () => {
         name: product.itemName,
         description: product.description,
         imageUrl:
-          Array.isArray(product.images) && product.images.length > 0
-            ? product.images[0]
+          Array.isArray(product.imageUrls) && product.imageUrls.length > 0
+            ? product.imageUrls[0]
             : "",
         location: product.location.address,
         category: Array.isArray(product.category)
@@ -121,8 +121,8 @@ const ReviewPublishSection = () => {
                       Edit
                     </Button>
                   </Col>
-                  {product.images?.length > 0 ? (
-                    product.images.map((img, idx) => (
+                  {product.imageUrls?.length > 0 ? (
+                    product.imageUrls.map((img, idx) => (
                       <Col key={idx} span={8}>
                         <Image
                           src={img}
