@@ -133,7 +133,21 @@ const OrderDetailsSection = () => {
     <Button type="primary" block style={{ marginTop: 16 }}>
       Extend Rental
     </Button>
-    <Button type="default" block style={{ marginTop: 16 }}>
+    <Button
+      type="default"
+      block
+      style={{ marginTop: 16 }}
+      onClick={async () => {
+        if (!order?.orderCode) return;
+        try {
+          const res = await axios.post('/api/rentals/cancel', null, { params: { orderCode: order.orderCode } });
+          alert(res.data || 'Rental cancelled');
+          window.location.reload();
+        } catch (e) {
+          alert(e?.response?.data || 'Cancel failed');
+        }
+      }}
+    >
       Cancel Order
     </Button>
   </Card>
