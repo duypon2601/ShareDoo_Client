@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 import React from "react";
-import HeaderProfile from "./HeaderProfile";
-import FooterProfile from "./FooterProfile";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import MainContentSection from "./MainContenSection";
 const ListNewItemPage = () => {
   return (
@@ -17,7 +17,7 @@ const ListNewItemPage = () => {
     >
       <Row>
         <Col span={24}>
-          <HeaderProfile />
+          <Header />
         </Col>
       </Row>
       <Row>
@@ -27,7 +27,7 @@ const ListNewItemPage = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <FooterProfile />
+          <Footer />
         </Col>
       </Row>
     </div>

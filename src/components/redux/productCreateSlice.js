@@ -5,7 +5,7 @@ const initialState = {
   itemName: '',
   category: '',
   description: '',
-  images: [],
+  imageUrls: [], // Đổi từ images thành imageUrls
   rentalPrice: '',
   deposit: '',
   location: {
@@ -28,8 +28,8 @@ const productCreateSlice = createSlice({
     setDescription: (state, action) => {
       state.description = action.payload;
     },
-    setImages: (state, action) => {
-      state.images = action.payload;
+    setImageUrls: (state, action) => {
+      state.imageUrls = action.payload;
     },
     setRentalPrice: (state, action) => {
       state.rentalPrice = action.payload;
@@ -40,6 +40,10 @@ const productCreateSlice = createSlice({
     setLocation: (state, action) => {
       state.location = action.payload;
     },
+    // Thêm action setProductCreate để update nhiều field cùng lúc
+    setProductCreate: (state, action) => {
+      return { ...state, ...action.payload };
+    },
   },
 });
 
@@ -47,10 +51,11 @@ export const {
   setItemName,
   setCategory,
   setDescription,
-  setImages,
+  setImageUrls,
   setRentalPrice,
   setDeposit,
   setLocation,
+  setProductCreate,
 } = productCreateSlice.actions;
 
 export default productCreateSlice.reducer;

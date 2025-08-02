@@ -34,7 +34,7 @@ const Header = () => {
 
   const menuItems = [
     { key: "profile", label: "Profile" },
-    { key: "logout", label: "Logout" }
+    { key: "logout", label: "Logout" },
   ];
   const menu = (
     <Menu
@@ -107,7 +107,7 @@ const Header = () => {
       }}
     >
       {/* 🔷 Logo + Title */}
-      <Row align="middle" gutter={12}>
+      <Row align="middle" gutter={12} onClick={() => navigate("/home")}>
         <Col>
           <Avatar
             src="/img/ShareDoo.png"

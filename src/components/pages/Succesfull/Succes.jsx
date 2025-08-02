@@ -1,191 +1,143 @@
-import {
-  FacebookOutlined,
-  TwitterOutlined,
-  InstagramOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
-
-import { Avatar, Button, Col, Layout, Row, Typography } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
+import { Button, Col, Row, Typography, message } from "antd";
 import React from "react";
-
-const { Header, Footer, Content } = Layout;
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 const { Title, Text } = Typography;
 
 const Succes = () => {
+  // Hiển thị message thành công khi component mount
+  React.useEffect(() => {
+    console.log("Success component mounted - showing message");
+
+    // Sử dụng Ant Design message
+    message.success(
+      "🎉 Success! Your product has been published successfully!",
+      6
+    );
+    console.log("Ant Design message shown");
+  }, []);
+
   return (
-    <Layout style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
-      {/* ✅ HEADER */}
-      <Header
+    <>
+      <Header />
+      <div
         style={{
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e0e0e0",
-          padding: "0 24px",
+          minHeight: "91vh",
+          width: "99vw",
+          background: "#f5f5f5",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          height: "72px",
-        }}
-      >
-        <Row align="middle" gutter={12} style={{ flex: 1 }}>
-          <Col>
-            <Avatar
-              src="/img/ShareDoo.png"
-              size={48}
-              shape="circle"
-              style={{ backgroundColor: "#fff" }}
-            />
-          </Col>
-          <Col>
-            <Text strong style={{ fontSize: "20px", color: "#1f1f1f" }}>
-              ShareDoo
-            </Text>
-          </Col>
-        </Row>
-        <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-      </Header>
-
-      {/* ✅ CONTENT */}
-      <Content>
-        <Row
-          justify="center"
-          align="middle"
-          style={{ minHeight: "80vh", padding: "0 16px" }}
-        >
-          <Col style={{ textAlign: "center", maxWidth: "400px" }}>
-            <div
-              style={{
-                width: "64px",
-                height: "64px",
-                margin: "0 auto 24px",
-                backgroundColor: "#e6f4ea",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CheckOutlined style={{ fontSize: "28px", color: "#1f1f1f" }} />
-            </div>
-
-            <Title level={4} style={{ fontWeight: 700 }}>
-              Your item has been successfully listed!
-            </Title>
-            <Text
-              type="secondary"
-              style={{ display: "block", marginBottom: 32 }}
-            >
-              You can now manage your listing in your profile.
-            </Text>
-
-            <Button
-              type="primary"
-              block
-              size="large"
-              style={{
-                backgroundColor: "#a1bfa7",
-                borderColor: "#a1bfa7",
-                color: "#fff",
-                marginBottom: 12,
-                fontWeight: "bold",
-              }}
-            >
-              View My Listing
-            </Button>
-
-            <Button
-              type="default"
-              block
-              size="large"
-              style={{
-                borderColor: "#a1bfa7",
-                color: "#a1bfa7",
-                fontWeight: "bold",
-              }}
-            >
-              List Another Item
-            </Button>
-          </Col>
-        </Row>
-      </Content>
-
-      {/* ✅ FOOTER */}
-      <Footer
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#9ca3af",
+          justifyContent: "center",
           padding: "40px 0",
         }}
       >
-        <Row justify="center" gutter={[32, 16]}>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              About
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              How It Works
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Support
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Help Center
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Safety Center
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Contact Us
-            </Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Legal
-            </Title>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Terms of Service
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Privacy Policy
-            </Text>
-            <Text style={{ display: "block", color: "#9ca3af" }}>
-              Cookie Policy
-            </Text>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Title level={4} style={{ color: "#fff" }}>
-              Follow Us
-            </Title>
-            <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-              <FacebookOutlined
-                style={{ fontSize: "20px", color: "#9ca3af" }}
-              />
-              <TwitterOutlined
-                style={{ fontSize: "20px", color: "#9ca3af" }}
-              />
-              <InstagramOutlined
-                style={{ fontSize: "20px", color: "#9ca3af" }}
-              />
-            </div>
-          </Col>
-        </Row>
-        <Row
-          justify="center"
+        <div
           style={{
-            marginTop: "32px",
-            borderTop: "1px solid #374151",
-            paddingTop: "16px",
+            background: "#fff",
+            padding: 40,
+            borderRadius: 24,
+            boxShadow:
+              "0 8px 32px rgba(161,191,167,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+            width: "100%",
+            maxWidth: 420,
+            boxSizing: "border-box",
+            textAlign: "center",
+            transition: "box-shadow 0.3s",
           }}
         >
-          <Text style={{ color: "#9ca3af", fontSize: "14px" }}>
-            © 2025 ShareDoo. All rights reserved.
+          <div
+            style={{
+              width: "72px",
+              height: "72px",
+              margin: "0 auto 28px",
+              background: "linear-gradient(135deg, #a1bfa7 0%, #e6f4ea 100%)",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 16px rgba(161,191,167,0.18)",
+              animation: "pop 0.5s cubic-bezier(.68,-0.55,.27,1.55)",
+            }}
+          >
+            <CheckOutlined style={{ fontSize: "32px", color: "#1f1f1f" }} />
+          </div>
+          <Title
+            level={3}
+            style={{
+              fontWeight: 800,
+              marginBottom: 8,
+              color: "#1f1f1f",
+              letterSpacing: 1,
+            }}
+          >
+            Success!
+          </Title>
+          <Text
+            type="secondary"
+            style={{ display: "block", fontSize: 18, marginBottom: 12 }}
+          >
+            Your item has been successfully listed!
           </Text>
-        </Row>
-      </Footer>
-    </Layout>
+          <Text
+            style={{
+              display: "block",
+              color: "#7a7a7a",
+              marginBottom: 32,
+              fontSize: 15,
+            }}
+          >
+            You can now manage your listing in your profile or list another
+            item.
+          </Text>
+          <Button
+            type="primary"
+            block
+            size="large"
+            style={{
+              background: "linear-gradient(90deg, #a1bfa7 0%, #c3d8cd 100%)",
+              border: "none",
+              color: "#fff",
+              marginBottom: 14,
+              fontWeight: "bold",
+              boxShadow: "0 2px 8px rgba(161,191,167,0.12)",
+              transition: "background 0.2s, box-shadow 0.2s",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = "#8bb08e")}
+            onMouseOut={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #a1bfa7 0%, #c3d8cd 100%)")
+            }
+          >
+            View My Listing
+          </Button>
+          <Button
+            type="default"
+            block
+            size="large"
+            style={{
+              borderColor: "#a1bfa7",
+              color: "#a1bfa7",
+              fontWeight: "bold",
+              background: "#f5f5f5",
+              transition: "background 0.2s, color 0.2s",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#e6f4ea";
+              e.currentTarget.style.color = "#7a9c87";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#f5f5f5";
+              e.currentTarget.style.color = "#a1bfa7";
+            }}
+          >
+            List Another Item
+          </Button>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 
