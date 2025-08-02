@@ -99,7 +99,9 @@ const OrdersSection = () => {
                         <Text>{order.totalPrice?.toLocaleString()} ₫</Text>
                       </Col>
                       <Col>
-                        <Button type="primary">View Details</Button>
+                        <Button type="primary" onClick={() => {
+  window.location.href = `/Order-Detail?id=${order.id}`;
+}}>View Details</Button>
                       </Col>
                     </Row>
                   </Col>

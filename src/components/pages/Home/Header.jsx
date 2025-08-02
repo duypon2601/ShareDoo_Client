@@ -31,6 +31,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
 
+
   const menuItems = [
     { key: "profile", label: "Profile" },
     { key: "logout", label: "Logout" },
@@ -53,6 +54,7 @@ const Header = () => {
       <Menu.Item key="Dashboard">Dashboard</Menu.Item>
     </Menu>
   );
+
 
   const handleSearchIconClick = () => {
     setShowSearch(true);

@@ -41,36 +41,28 @@ export const BookingFormSection = (props) => {
     }
     setLoading(true);
     try {
+      // Chuẩn hóa payload đúng định dạng yêu cầu
       const payload = {
-        items: [
-          {
-            productId,
-            quantity,
-            notes,
-          },
-        ],
-        description: `Rental for ${product.name} from ${startDate?.format("YYYY-MM-DD")} to ${endDate?.format("YYYY-MM-DD")}`,
-        returnUrl: "https://yourdomain.com/payment/success",
-        cancelUrl: "https://yourdomain.com/payment/cancel"
+        userId: 4, // TODO: lấy userId thực tế từ context hoặc localStorage nếu có
+        productId: product.productId,
+        startDate: startDate.format("YYYY-MM-DDTHH:mm:ss"),
+        endDate: endDate.format("YYYY-MM-DDTHH:mm:ss"),
+        totalPrice: product.pricePerDay, // hoặc tính tổng giá trị nếu cần
+        status: "pending"
       };
-      const response = await api.post("/api/payment/orders", payload);
-      if (response.data && response.data.data) {
-        const order = response.data.data;
-        if (order.paymentUrl) {
-          window.location.href = order.paymentUrl;
-        } else if (order.id) {
-          navigate('/payment', { state: { product, order } });
-        } else {
-          message.success("Order created! But no payment URL or order ID returned.");
-        }
+      const response = await api.post("/api/rentals", payload);
+      if (response.data && response.data.paymentUrl) {
+        window.location.href = response.data.paymentUrl;
+      } else if (response.data && response.data.id) {
+        message.success("Rental created! But no payment URL returned.");
       } else {
-        message.error("Order created but no payment info returned.");
+        message.error("Rental created but no payment info returned.");
       }
     } catch (error) {
       if (error.response && error.response.status === 403) {
         message.error("You do not have permission to perform this action. Please log in as a user.");
       } else {
-        message.error("Failed to create order. Please try again.");
+        message.error("Failed to create rental. Please try again.");
       }
     } finally {
       setLoading(false);

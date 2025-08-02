@@ -36,7 +36,7 @@ import ReportPage from "./components/pages/ReportIssue/ReportPage";
 import ChatPage from "./components/pages/Chat/ChatPage";
 import ChatDetailPage from "./components/pages/Chat/ChatDetailPage";
 
-// E-commerce Flow
+import Wallet from "./components/pages/WalletPage/Wallet";
 import SearchItems from "./components/pages/SearchItems/Body";
 import { ProductListSection } from "./components/pages/ProductList/ProductListSection";
 import ProductDetail from "./components/pages/ProductDetail/ProductDetail";
@@ -90,11 +90,18 @@ const App = () => {
         <Route path="/SearchItems" element={<SearchItems />} />
         <Route path="/products" element={<ProductListSection />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/booking" element={<Booking />} />
+
+        {/* da keo api nhung chua fix request chuan*/}
+        <Route path="/booking" element={<Booking />} />  
+
+        {/* da keo api */}
         <Route path="/payment" element={<Payment />} />
+
+        {/* da keo api */}
         <Route path="/successpayment" element={<SuccessPayment />} />
         <Route path="/orderpage" element={<OrdersSection />} />
         <Route path="/confirm" element={<ConfirmPage />} />
+        <Route path="/wallet" element={<Wallet />} />
       </Routes>
     </Router>
   );

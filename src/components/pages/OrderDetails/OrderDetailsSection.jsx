@@ -20,6 +20,21 @@ const OrderDetailsSection = () => {
     }
   }, [id, orderCode]);
 
+  // Tự động reload khi quay lại tab
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && (id || orderCode)) {
+        axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+          .then(res => setOrder(res.data))
+          .catch(() => setOrder(null));
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [id, orderCode]);
+
   return (
     <div style={{ width: "100vw", margin: 0, padding: 0, backgroundColor: "#fff" }}>
       <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
@@ -133,7 +148,21 @@ const OrderDetailsSection = () => {
     <Button type="primary" block style={{ marginTop: 16 }}>
       Extend Rental
     </Button>
-    <Button type="default" block style={{ marginTop: 16 }}>
+    <Button
+      type="default"
+      block
+      style={{ marginTop: 16 }}
+      onClick={async () => {
+        if (!order?.orderCode) return;
+        try {
+          const res = await axios.post('/api/rentals/cancel', null, { params: { orderCode: order.orderCode } });
+          alert(res.data || 'Rental cancelled');
+          window.location.reload();
+        } catch (e) {
+          alert(e?.response?.data || 'Cancel failed');
+        }
+      }}
+    >
       Cancel Order
     </Button>
   </Card>
