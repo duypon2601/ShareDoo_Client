@@ -165,13 +165,16 @@ const MainContentSection = () => {
 
           <Row justify="space-between" align="middle">
             <Col>
-              <Button type="text">Cancel</Button>
+              <Button type="text" onClick={() => navigate("/Home")}>
+                Cancel
+              </Button>
             </Col>
             <Col>
               <Button
                 type="primary"
                 icon={<RightOutlined />}
                 onClick={() => navigate("/SelectNewItemPage")}
+                style={{ backgroundColor: "#a1bfa7", borderColor: "#a1bfa7" }}
               >
                 Next
               </Button>
