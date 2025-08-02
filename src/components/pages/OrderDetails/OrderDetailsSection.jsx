@@ -20,6 +20,21 @@ const OrderDetailsSection = () => {
     }
   }, [id, orderCode]);
 
+  // Tự động reload khi quay lại tab
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && (id || orderCode)) {
+        axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+          .then(res => setOrder(res.data))
+          .catch(() => setOrder(null));
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [id, orderCode]);
+
   return (
     <div style={{ width: "100vw", margin: 0, padding: 0, backgroundColor: "#fff" }}>
       <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
