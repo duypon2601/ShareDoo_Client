@@ -34,6 +34,7 @@ const Login = () => {
       dispatch(login(res.data));
       localStorage.setItem("token", res.data.token);
       alert("Đăng nhập thành công!");
+      console.log("Login response:", res.data);
       if (res.data.role === "admin") {
         navigate("/admin");
       } else {

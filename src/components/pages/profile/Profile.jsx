@@ -2,11 +2,11 @@ import React from "react";
 import { Button, Col, Row } from "antd";
 
 // ✅ Import đúng theo cấu trúc thư mục bạn cung cấp
-import  HeaderProfile  from "./HeaderProfile";
-import  MyListingsSection  from "./MyListingsSection";
-import  RentalHistorySection  from "./RentalHistorySection";
-import  ReviewsSection  from "./ReviewsSection";
-import FooterProfile from "./FooterProfile"; // ✅ Thêm Footer
+import Header from "../Home/Header";
+import MyListingsSection from "./MyListingsSection";
+import RentalHistorySection from "./RentalHistorySection";
+import ReviewsSection from "./ReviewsSection";
+import Footer from "../Home/Footer"; // ✅ Thêm Footer
 
 const Profile = () => {
   return (
@@ -17,7 +17,7 @@ const Profile = () => {
     >
       <Row>
         <Col span={24}>
-          <HeaderProfile />
+          <Header />
         </Col>
       </Row>
       <Row>
@@ -35,22 +35,10 @@ const Profile = () => {
           <ReviewsSection />
         </Col>
       </Row>
-      <Row justify="center" style={{ padding: "24px 0" }}>
-        <Col>
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: "#a1bfa7",
-              borderColor: "#a1bfa7",
-            }}
-          >
-            Logout
-          </Button>
-        </Col>
-      </Row>
+
       <Row>
         <Col span={24}>
-          <FooterProfile /> {/* ✅ Thêm Footer vào cuối */}
+          <Footer /> {/* ✅ Thêm Footer vào cuối */}
         </Col>
       </Row>
     </div>
