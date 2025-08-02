@@ -17,7 +17,34 @@ import {
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
 
+import { useEffect } from "react";
+import axios from "axios";
+
 const SuccessPayment = () => {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderCodeParam = urlParams.get('orderCode');
+    const statusParam = urlParams.get('status');
+    if (orderCodeParam && statusParam === 'PAID') {
+      console.log('[PAYMENT-STATUS] Gọi API cập nhật trạng thái:', { orderCode: orderCodeParam, status: 'PAID' });
+      // Lấy token từ localStorage
+      const token = localStorage.getItem('token');
+      axios.post('/api/rentals/payment-status', {
+        orderCode: orderCodeParam,
+        status: 'PAID'
+      }, {
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      })
+      .then(res => {
+        console.log('[PAYMENT-STATUS] Kết quả:', res.data);
+      })
+      .catch(err => {
+        console.error('[PAYMENT-STATUS] Lỗi:', err);
+      });
+    }
+  }, []);
+
   return (
     <Layout>
       <Header

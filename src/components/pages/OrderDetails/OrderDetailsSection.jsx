@@ -1,5 +1,6 @@
 import { MessageOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Image, Row, Tag, Typography } from "antd";
+import OrderStatusBar from "./OrderStatusBar";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "../../config/axios";
@@ -22,17 +23,42 @@ const OrderDetailsSection = () => {
 
   // Tự động reload khi quay lại tab
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && (id || orderCode)) {
-        axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
-          .then(res => setOrder(res.data))
-          .catch(() => setOrder(null));
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
+    // Nếu có orderCode và status=PAID trên URL (sau thanh toán), gọi API cập nhật trạng thái
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderCodeParam = urlParams.get('orderCode');
+    const statusParam = urlParams.get('status');
+    if (orderCodeParam && statusParam === 'PAID') {
+      console.log('[PAYMENT-STATUS] Gọi API cập nhật trạng thái:', { orderCode: orderCodeParam, status: 'PAID' });
+      axios.post('/api/rentals/payment-status', {
+        orderCode: orderCodeParam,
+        status: 'PAID'
+      })
+      .then(res => {
+        console.log('[PAYMENT-STATUS] Kết quả:', res.data);
+        // Sau khi cập nhật, refetch lại đơn hàng
+        if (id || orderCodeParam) {
+          axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCodeParam}`}`)
+            .then(res => setOrder(res.data))
+            .catch(() => setOrder(null));
+        }
+      })
+      .catch(err => {
+        console.error('[PAYMENT-STATUS] Lỗi:', err);
+      });
+    } else {
+      // Bình thường, chỉ refetch khi chuyển tab
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible" && (id || orderCode)) {
+          axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+            .then(res => setOrder(res.data))
+            .catch(() => setOrder(null));
+        }
+      };
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      return () => {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      };
+    }
   }, [id, orderCode]);
 
   return (
@@ -46,6 +72,7 @@ const OrderDetailsSection = () => {
 
       <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
         <Col span={16}>
+          {order && <OrderStatusBar status={order.status} />}
           <Card style={{ width: "100%" }}>
             <Row gutter={[16, 16]}>
               <Col span={8}>
@@ -57,7 +84,7 @@ const OrderDetailsSection = () => {
               </Col>
               <Col span={16}>
                 <Title level={3}>{order?.product?.name || "Product"}</Title>
-                <Tag color={order?.status === "paid" ? "green" : order?.status === "pending" ? "orange" : "default"}>
+                <Tag color={(order?.status !== 'cancelled' && order?.status !== 'rejected' && order?.status !== 'completed') ? "orange" : "default"}>
                   {order?.status || "Unknown"}
                 </Tag>
                 <Row>
@@ -122,51 +149,8 @@ const OrderDetailsSection = () => {
 
 <Col span={8}>
   <Card style={{ width: "100%" }}>
-    <Title level={4}>Owner Details</Title>
-    <Row gutter={[16, 16]}>
-      <Col span={4}>
-        <Image
-          width={48}
-          src="https://c.animaapp.com/mNiQn72F/img/img-1@2x.png"
-          alt="Owner"
-          style={{ borderRadius: "50%" }}
-        />
-      </Col>
-      <Col span={20}>
-        <Text>Michael Chen</Text><br />
-        <Text type="secondary">
-          <Image
-            width={16}
-            src="https://c.animaapp.com/mNiQn72F/img/frame-4.svg"
-            alt="Rating"
-          />
-          4.9 (120 reviews)
-        </Text>
-      </Col>
-    </Row>
-
-    <Button type="primary" block style={{ marginTop: 16 }}>
-      Extend Rental
-    </Button>
-    <Button
-      type="default"
-      block
-      style={{ marginTop: 16 }}
-      onClick={async () => {
-        if (!order?.orderCode) return;
-        try {
-          const res = await axios.post('/api/rentals/cancel', null, { params: { orderCode: order.orderCode } });
-          alert(res.data || 'Rental cancelled');
-          window.location.reload();
-        } catch (e) {
-          alert(e?.response?.data || 'Cancel failed');
-        }
-      }}
-    >
-      Cancel Order
-    </Button>
-  </Card>
-</Col>
+          </Card>
+        </Col>
       </Row>
     </div>
   );
