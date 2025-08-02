@@ -1,4 +1,5 @@
 import { Badge, Button, Card, Col, Row, Typography } from "antd";
+import OrderStatusBar from "./OrderStatusBar";
 import React, { useEffect, useState } from "react";
 import axios from "../../config/axios";
 
@@ -6,11 +7,29 @@ const { Title, Text } = Typography;
 
 const OrdersSection = () => {
   const [orders, setOrders] = useState([]);
+  const [activeTab, setActiveTab] = useState('ongoing');
   useEffect(() => {
     axios.get("/api/rentals/list")
       .then(res => setOrders(res.data))
       .catch(() => setOrders([]));
   }, []);
+
+  // Phân loại đơn hàng
+  const ongoingStatus = ["pending", "paid", "confirmed", "packed", "received", "return_wait"];
+  const completedStatus = ["returned"];
+  const cancelledStatus = ["cancelled", "rejected"];
+
+  const filteredOrders = orders.filter(order => {
+    if (activeTab === 'ongoing') return ongoingStatus.includes(order.status);
+    if (activeTab === 'completed') return completedStatus.includes(order.status);
+    if (activeTab === 'cancelled') return cancelledStatus.includes(order.status);
+    return true;
+  });
+
+  // Tính số lượng từng loại
+  const ongoingCount = orders.filter(order => ongoingStatus.includes(order.status)).length;
+  const completedCount = orders.filter(order => completedStatus.includes(order.status)).length;
+  const cancelledCount = orders.filter(order => cancelledStatus.includes(order.status)).length;
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
@@ -26,19 +45,19 @@ const OrdersSection = () => {
           <Col span={24}>
             <Row gutter={16} style={{ borderBottom: "1px solid #d9d9d9" }}>
               <Col>
-                <Badge count={3} style={{ backgroundColor: "#a1bfa7" }}>
+                <Badge count={ongoingCount} style={{ backgroundColor: "#a1bfa7" }}>
                   <Text strong style={{ color: "#a1bfa7" }}>
                     Ongoing
                   </Text>
                 </Badge>
               </Col>
               <Col>
-                <Badge count={12} style={{ backgroundColor: "#f0f0f0" }}>
+                <Badge count={completedCount} style={{ backgroundColor: "#f0f0f0" }}>
                   <Text type="secondary">Completed</Text>
                 </Badge>
               </Col>
               <Col>
-                <Badge count={1} style={{ backgroundColor: "#f0f0f0" }}>
+                <Badge count={cancelledCount} style={{ backgroundColor: "#f0f0f0" }}>
                   <Text type="secondary">Cancelled</Text>
                 </Badge>
               </Col>
@@ -46,8 +65,21 @@ const OrdersSection = () => {
           </Col>
         </Row>
 
+        {/* Tabs filter */}
+        <Row style={{ marginTop: 24, marginBottom: 16 }} gutter={16}>
+          <Col>
+            <Button type={activeTab === 'ongoing' ? 'primary' : 'default'} onClick={() => setActiveTab('ongoing')}>Ongoing</Button>
+          </Col>
+          <Col>
+            <Button type={activeTab === 'completed' ? 'primary' : 'default'} onClick={() => setActiveTab('completed')}>Completed</Button>
+          </Col>
+          <Col>
+            <Button type={activeTab === 'cancelled' ? 'primary' : 'default'} onClick={() => setActiveTab('cancelled')}>Cancelled</Button>
+          </Col>
+        </Row>
+
         <Row style={{ marginTop: "24px" }} gutter={[0, 24]}>
-          {orders.map((order, idx) => (
+          {filteredOrders.map((order, idx) => (
             <Col span={24} key={order.id || idx}>
               <Card
                 style={{
@@ -58,6 +90,8 @@ const OrdersSection = () => {
               >
                 <Row gutter={16}>
                   <Col>
+                    {/* Thanh trạng thái tiến trình đơn hàng */}
+                    <OrderStatusBar status={order.status} />
                     <div
                       style={{
                         width: "96px",
