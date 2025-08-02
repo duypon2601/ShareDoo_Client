@@ -11,12 +11,19 @@ import {
   message,
 } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const RentalHistorySection = () => {
   const navigate = useNavigate();
+
+  // Lấy thông tin user từ Redux store
+  const user = useSelector((state) => state.user);
+
+  // Log ra console để kiểm tra
+  console.log("user", user);
 
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [description, setDescription] = useState(
@@ -55,7 +62,10 @@ const RentalHistorySection = () => {
               <Image
                 width={100}
                 height={100}
-                src="https://c.animaapp.com/LQrXRuVX/img/img@2x.png"
+                src={
+                  user?.imageUrl ||
+                  "https://c.animaapp.com/LQrXRuVX/img/img@2x.png"
+                }
                 style={{ borderRadius: "50%", objectFit: "cover" }}
                 preview={false}
               />
@@ -63,12 +73,18 @@ const RentalHistorySection = () => {
 
             <Col flex="auto">
               <Title level={4} style={{ margin: 0, color: "#111827" }}>
-                Sarah Johnson
+                {user?.username || user?.name || "User Name"}
               </Title>
 
               {!isEditingDesc ? (
                 <div>
-                  <Text style={{ color: "#6b7280", display: "block", marginBottom: 12 }}>
+                  <Text
+                    style={{
+                      color: "#6b7280",
+                      display: "block",
+                      marginBottom: 12,
+                    }}
+                  >
                     {description}
                   </Text>
                   <Button
