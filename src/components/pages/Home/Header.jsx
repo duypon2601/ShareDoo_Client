@@ -22,6 +22,7 @@ import {
   Space,
   Typography,
   Tooltip,
+  message,
 } from "antd";
 
 const { Text } = Typography;
@@ -31,30 +32,23 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
 
-
   const menuItems = [
     { key: "profile", label: "Profile" },
     { key: "logout", label: "Logout" },
   ];
-  const menu = (
-    <Menu
-      onClick={({ key }) => {
-        if (key === "profile") {
-          navigate("/profile");
-        } else if (key === "logout") {
-          // Thêm xử lý logout nếu cần
-          console.log("Logout clicked");
-        } else if (key === "Dashboard") {
-          navigate("/dashboard-rental");
-        }
-      }}
-    >
-      <Menu.Item key="profile">Profile</Menu.Item>
-      <Menu.Item key="logout">Logout</Menu.Item>
-      <Menu.Item key="Dashboard">Dashboard</Menu.Item>
-    </Menu>
-  );
 
+  const handleLogout = () => {
+    // Xóa thông tin user khỏi localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userInfo");
+
+    // Hiển thị thông báo logout thành công
+    message.success("Đăng xuất thành công!");
+
+    // Chuyển về trang login
+    navigate("/");
+  };
 
   const handleSearchIconClick = () => {
     setShowSearch(true);
@@ -221,7 +215,21 @@ const Header = () => {
             <MessageOutlined style={{ fontSize: "18px", color: "#374151" }} />
           </Badge>
         </Tooltip>
-        <Dropdown menu={{ items: menuItems }} placement="bottomRight">
+        <Dropdown
+          menu={{
+            items: menuItems,
+            onClick: ({ key }) => {
+              if (key === "profile") {
+                navigate("/profile");
+              } else if (key === "logout") {
+                handleLogout();
+              } else if (key === "Dashboard") {
+                navigate("/dashboard-rental");
+              }
+            },
+          }}
+          placement="bottomRight"
+        >
           <Avatar
             icon={<UserOutlined />}
             style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }}
