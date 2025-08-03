@@ -1,23 +1,37 @@
 import React from "react";
 import { Layout } from "antd";
-import { HeaderSection } from "./HeaderSection";
-import { FooterSection } from "./FooterSection";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import { BookingFormSection } from "./BookingFormSection";
 import { useLocation } from "react-router-dom";
-
-const { Content } = Layout;
 
 const Booking = () => {
   const location = useLocation();
   const product = location.state?.product;
+
   return (
-    <Layout>
-      <HeaderSection />
-      <Content style={{ padding: "40px 80px", background: "#f9f9f9" }}>
+    <div
+      style={{
+        width: "99vw",
+        minHeight: "100vh",
+        overflowX: "hidden",
+        backgroundColor: "#f5f5f5",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div>
+        <Header />
+      </div>
+
+      <div style={{ flex: 1 }}>
         <BookingFormSection product={product} />
-      </Content>
-      <FooterSection />
-    </Layout>
+      </div>
+
+      <div>
+        <Footer />
+      </div>
+    </div>
   );
 };
 

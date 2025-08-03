@@ -4,8 +4,11 @@ import React from "react";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 const { Title, Text } = Typography;
+import { useNavigate } from "react-router-dom";
 
 const Succes = () => {
+  const navigate = useNavigate();
+
   // Hiển thị message thành công khi component mount
   React.useEffect(() => {
     console.log("Success component mounted - showing message");
@@ -109,6 +112,7 @@ const Succes = () => {
               (e.currentTarget.style.background =
                 "linear-gradient(90deg, #a1bfa7 0%, #c3d8cd 100%)")
             }
+            onClick={() => navigate("/Listitem")}
           >
             View My Listing
           </Button>
@@ -131,6 +135,7 @@ const Succes = () => {
               e.currentTarget.style.background = "#f5f5f5";
               e.currentTarget.style.color = "#a1bfa7";
             }}
+            onClick={() => navigate("/ListNewItem")}
           >
             List Another Item
           </Button>

@@ -2,7 +2,6 @@ import { Button, Col, Image, Rate, Row, Tag, Typography, Spin, message } from "a
 import React, { useState, useEffect } from "react";
 import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
-
 const { Title, Text, Paragraph } = Typography;
 
 // Thêm hàm định dạng VND
