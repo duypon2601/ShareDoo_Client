@@ -57,14 +57,31 @@ const WalletMainSection = () => {
   const handleDeposit = async () => {
     setActionLoading(true);
     try {
-      const res = await createDepositLink(amount, desc);
-      window.open(res.data, "_blank");
+      const depositRes = await createDepositLink(amount, desc);
+      window.open(depositRes.data, "_blank");
       setDepositModal(false);
       setAmount(0);
       setDesc("");
-      message.success("Redirected to payment page");
+      Modal.success({
+        title: 'Deposit Link Created',
+        content: (
+          <div>
+            <p>Click <a href={depositRes.data} target="_blank" rel="noopener noreferrer">here</a> to proceed to the payment page.</p>
+            <p>After payment, your balance will be updated automatically.</p>
+          </div>
+        ),
+        onOk: () => {
+          setDepositModal(false);
+          setAmount(0);
+          setDesc("");
+          fetchData();
+        }
+      });
     } catch (err) {
-      message.error("Failed to create deposit link");
+      Modal.error({
+        title: 'Deposit Failed',
+        content: 'Could not create deposit link. Please try again later.'
+      });
     }
     setActionLoading(false);
   };
@@ -76,10 +93,22 @@ const WalletMainSection = () => {
       setWithdrawModal(false);
       setAmount(0);
       setDesc("");
-      message.success("Withdrawal request sent");
-      fetchData();
+      await requestWithdraw(amount, desc);
+      Modal.success({
+        title: 'Withdrawal Request Sent',
+        content: 'Your withdrawal request has been submitted and is pending admin approval.',
+        onOk: () => {
+          setWithdrawModal(false);
+          setAmount(0);
+          setDesc("");
+          fetchData();
+        }
+      });
     } catch (err) {
-      message.error("Failed to request withdrawal");
+      Modal.error({
+        title: 'Withdrawal Failed',
+        content: 'Could not request withdrawal. Please try again later.'
+      });
     }
     setActionLoading(false);
   };
@@ -88,8 +117,72 @@ const WalletMainSection = () => {
     return <Spin size="large" style={{ margin: 40 }} />;
   }
 
+  // Popup xác nhận nạp tiền
+  const DepositModal = (
+    <Modal
+      title="Add Funds"
+      open={depositModal}
+      onOk={handleDeposit}
+      onCancel={() => setDepositModal(false)}
+      confirmLoading={actionLoading}
+      okText="Create Deposit Link"
+    >
+      <Input
+        type="number"
+        min={10000}
+        step={10000}
+        value={amount}
+        onChange={e => setAmount(Number(e.target.value))}
+        placeholder="Amount (VND)"
+        style={{ marginBottom: 12 }}
+      />
+      <Input.TextArea
+        value={desc}
+        onChange={e => setDesc(e.target.value)}
+        placeholder="Description (optional)"
+        rows={2}
+      />
+      <div style={{ marginTop: 10, color: '#888', fontSize: 13 }}>
+        Minimum deposit: 10,000 VND
+      </div>
+    </Modal>
+  );
+
+  // Popup xác nhận rút tiền
+  const WithdrawModal = (
+    <Modal
+      title="Withdraw Funds"
+      open={withdrawModal}
+      onOk={handleWithdraw}
+      onCancel={() => setWithdrawModal(false)}
+      confirmLoading={actionLoading}
+      okText="Send Withdrawal Request"
+    >
+      <Input
+        type="number"
+        min={10000}
+        step={10000}
+        value={amount}
+        onChange={e => setAmount(Number(e.target.value))}
+        placeholder="Amount (VND)"
+        style={{ marginBottom: 12 }}
+      />
+      <Input.TextArea
+        value={desc}
+        onChange={e => setDesc(e.target.value)}
+        placeholder="Description (optional)"
+        rows={2}
+      />
+      <div style={{ marginTop: 10, color: '#888', fontSize: 13 }}>
+        Minimum withdrawal: 10,000 VND
+      </div>
+    </Modal>
+  );
+
   return (
     <div style={{ width: "100%", position: "relative" }}>
+      {DepositModal}
+      {WithdrawModal}
       <Row gutter={[16, 16]} style={{ marginTop: 65, marginLeft: 20 }}>
         <Col span={24}>
           <Title level={2}>My Wallet</Title>
@@ -126,6 +219,24 @@ const WalletMainSection = () => {
               <Image src="https://c.animaapp.com/kNAtk3lJ/img/vector-1.svg" preview={false} />
             </Space>
             <Text type="secondary">Available for withdrawal</Text>
+            <div style={{ marginTop: 20, display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <Button
+                type="primary"
+                icon={<ArrowDownOutlined />}
+                style={{ borderRadius: 12, background: '#52c41a', borderColor: '#52c41a', fontWeight: 600 }}
+                onClick={() => setDepositModal(true)}
+              >
+                Nạp tiền
+              </Button>
+              <Button
+                type="primary"
+                icon={<ArrowUpOutlined />}
+                style={{ borderRadius: 12, background: '#ff4d4f', borderColor: '#ff4d4f', fontWeight: 600 }}
+                onClick={() => setWithdrawModal(true)}
+              >
+                Rút tiền
+              </Button>
+            </div>
           </Card>
         </Col>
         <Col span={8}>
