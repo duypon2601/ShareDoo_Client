@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BellOutlined,
   CheckCircleOutlined,
@@ -13,38 +13,141 @@ import {
   Row,
   Typography,
 } from "antd";
+import axios from "axios";
 
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
 
-import { useEffect } from "react";
-import axios from "axios";
-
 const SuccessPayment = () => {
+  const [isWalletDeposit, setIsWalletDeposit] = useState(false);
+  const [walletDepositStatus, setWalletDepositStatus] = useState(null);
+  const [walletDepositMessage, setWalletDepositMessage] = useState("");
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const orderCodeParam = urlParams.get('orderCode');
-    const statusParam = urlParams.get('status');
-    if (orderCodeParam && statusParam === 'PAID') {
-      console.log('[PAYMENT-STATUS] Gọi API cập nhật trạng thái:', { orderCode: orderCodeParam, status: 'PAID' });
-      // Lấy token từ localStorage
-      const token = localStorage.getItem('token');
-      axios.post('/api/rentals/payment-status', {
-        orderCode: orderCodeParam,
-        status: 'PAID'
-      }, {
-        withCredentials: true,
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      })
-      .then(res => {
-        console.log('[PAYMENT-STATUS] Kết quả:', res.data);
-      })
-      .catch(err => {
-        console.error('[PAYMENT-STATUS] Lỗi:', err);
-      });
+    const orderCodeParam = urlParams.get("orderCode");
+    const statusParam = urlParams.get("status");
+    const amountParam = urlParams.get("amount");
+    // Nhận diện giao dịch nạp tiền vào ví
+    const isDeposit =
+      urlParams.get("type") === "wallet" ||
+      urlParams.get("isWalletDeposit") === "true" ||
+      window.location.pathname.includes("wallet");
+
+    if (orderCodeParam && statusParam === "PAID" && isDeposit) {
+      setIsWalletDeposit(true);
+      const token = localStorage.getItem("token");
+      axios
+        .post(
+          "/api/wallet/credit-by-ordercode",
+          {
+            orderCode: orderCodeParam,
+            status: statusParam,
+            amount: amountParam ? Number(amountParam) : undefined,
+          },
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
+        )
+        .then((res) => {
+          setWalletDepositStatus("success");
+          setWalletDepositMessage(res.data || "Nạp tiền vào ví thành công!");
+        })
+        .catch((err) => {
+          setWalletDepositStatus("error");
+          setWalletDepositMessage(
+            err?.response?.data || "Có lỗi khi cộng tiền vào ví"
+          );
+        });
+    } else if (orderCodeParam && statusParam === "PAID") {
+      // Logic cũ cho thuê đồ
+      const token = localStorage.getItem("token");
+      axios
+        .post(
+          "/api/rentals/payment-status",
+          {
+            orderCode: orderCodeParam,
+            status: "PAID",
+          },
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
+        )
+        .then((res) => {})
+        .catch((err) => {});
     }
   }, []);
 
+  if (isWalletDeposit) {
+    return (
+      <Layout>
+        <Header
+          style={{
+            background: "#fffffff2",
+            boxShadow: "0px 1px 2px #0000000d",
+            padding: "0 32px",
+          }}
+        >
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Row align="middle" gutter={16}>
+                <Col>
+                  <Image
+                    width={56}
+                    height={56}
+                    src="https://c.animaapp.com/BFVbQzCQ/img/11zon-cropped-1@2x.png"
+                    preview={false}
+                  />
+                </Col>
+                <Col>
+                  <Title level={3} style={{ margin: 0 }}>
+                    ShareDoo
+                  </Title>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Header>
+        <Content style={{ padding: "50px 20px", background: "#f0f2f5" }}>
+          <Row justify="center">
+            <Col>
+              <CheckCircleOutlined
+                style={{
+                  fontSize: 72,
+                  color:
+                    walletDepositStatus === "success"
+                      ? "#a1bfa7"
+                      : walletDepositStatus === "error"
+                      ? "#faad14"
+                      : "#1890ff",
+                }}
+              />
+            </Col>
+          </Row>
+          <Row justify="center" style={{ marginTop: 16 }}>
+            <Col>
+              <Title level={2}>
+                {walletDepositStatus === "success"
+                  ? "Nạp tiền thành công!"
+                  : walletDepositStatus === "error"
+                  ? "Có lỗi!"
+                  : "Đang xử lý..."}
+              </Title>
+            </Col>
+          </Row>
+          <Row justify="center" style={{ marginTop: 8 }}>
+            <Col>
+              <Text>
+                {walletDepositMessage || "Đang xác nhận giao dịch nạp tiền..."}
+              </Text>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Header
