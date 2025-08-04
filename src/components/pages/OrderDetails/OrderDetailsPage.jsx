@@ -1,8 +1,8 @@
 import { Col, Row } from "antd";
 import React from "react";
 import  OrderDetailsSection  from "./OrderDetailsSection";
-import HeaderProfile from "./HeaderProfile";
-import FooterProfile from "./FooterProfile";
+import Header from "../Home/Header";  
+import Footer from "../Home/Footer";
 const OrderDetailsPage = () => {
   return (
     <div
@@ -11,7 +11,7 @@ const OrderDetailsPage = () => {
     >
       <Row>
         <Col span={24}>
-          <HeaderProfile />
+          <Header />
         </Col>
       </Row>
       <Row>
@@ -21,7 +21,7 @@ const OrderDetailsPage = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <FooterProfile />
+          <Footer />
         </Col>
       </Row>
     </div>
