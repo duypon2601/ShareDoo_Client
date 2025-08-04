@@ -12,16 +12,20 @@ export const getWalletTransactions = () => {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
-export const createDepositLink = (amount, description) => {
+
+// Tạo link nạp tiền vào ví (dành riêng cho ví)
+export const createDepositWalletLink = (amount, description) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/deposit-link', null, {
+  return axios.post('/api/wallet/deposit-link-wallet', null, {
     params: { amount, description },
     headers: { Authorization: `Bearer ${token}` }
   });
 };
-export const depositByOrderCode = ({ orderCode, status, amount }) => {
+
+// Cộng tiền vào ví cho user nhận tiền (credit-by-ordercode)
+export const creditByOrderCode = ({ orderCode, status, amount, receiverUserId }) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/deposit-by-ordercode', { orderCode, status, amount }, {
+  return axios.post('/api/wallet/credit-by-ordercode', { orderCode, status, amount, receiverUserId }, {
     headers: { Authorization: `Bearer ${token}` }
   });
 };

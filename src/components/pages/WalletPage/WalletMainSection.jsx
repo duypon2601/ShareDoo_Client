@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input } from "antd";
 import React, { useEffect, useState } from "react";
-import { getWalletInfo, getWalletTransactions, createDepositLink, requestWithdraw } from "../../../api/wallet";
+import { getWalletInfo, getWalletTransactions, createDepositWalletLink, requestWithdraw } from "../../../api/wallet";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -57,7 +57,8 @@ const WalletMainSection = () => {
   const handleDeposit = async () => {
     setActionLoading(true);
     try {
-      const depositRes = await createDepositLink(amount, desc);
+      // Sử dụng API mới dành riêng cho nạp ví
+      const depositRes = await createDepositWalletLink(amount, desc);
       window.open(depositRes.data, "_blank");
       setDepositModal(false);
       setAmount(0);
