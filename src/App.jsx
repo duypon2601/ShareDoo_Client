@@ -45,6 +45,7 @@ import Payment from "./components/pages/Payment/Payment";
 import SuccessPayment from "./components/pages/SuccessPayment/SuccessPayment";
 import OrdersSection from "./components/pages/OrderPage/OrderSection";
 import ConfirmPage from "./components/pages/Confirm/ConfirmPage";
+import OrderSectioPage from "./components/pages/OrderPage/OrderSectioPage";
 
 const App = () => {
   return (
@@ -92,14 +93,14 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetail />} />
 
         {/* da keo api nhung chua fix request chuan*/}
-        <Route path="/booking" element={<Booking />} />  
+        <Route path="/booking" element={<Booking />} />
 
         {/* da keo api */}
         <Route path="/payment" element={<Payment />} />
 
         {/* da keo api */}
         <Route path="/successpayment" element={<SuccessPayment />} />
-        <Route path="/orderpage" element={<OrdersSection />} />
+        <Route path="/orderpage" element={<OrderSectioPage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/wallet" element={<Wallet />} />
       </Routes>

@@ -1,4 +1,9 @@
-import { AppstoreOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -9,7 +14,9 @@ import {
   Typography,
   Spin,
   message,
+  Modal,
 } from "antd";
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios";
@@ -19,7 +26,6 @@ import Header from "../Home/Header";
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
-// Thêm hàm định dạng VND
 function formatVND(amount) {
   if (!amount && amount !== 0) return "";
   return amount.toLocaleString("vi-VN") + "₫";
@@ -54,6 +60,16 @@ const ListItem = () => {
     }
   };
 
+  const handleDelete = async (productId) => {
+    try {
+      await api.delete(`/api/products/${productId}`);
+      message.success("Đã xóa sản phẩm!");
+      fetchMyProducts(); // Refresh lại danh sách
+    } catch (error) {
+      console.error("Delete failed:", error);
+      message.error("Xóa sản phẩm thất bại!");
+    }
+  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -97,6 +113,16 @@ const ListItem = () => {
     navigate(`/product/${productId}`);
   };
 
+  const handleEditClick = (e, productId) => {
+    e.stopPropagation(); // Ngăn click vào card
+    navigate(`/edit-product/${productId}`);
+  };
+
+  const handleDeleteClick = (e, productId) => {
+    e.stopPropagation(); // Ngăn click vào card
+    handleDelete(productId);
+  };
+
   return (
     <Layout
       style={{
@@ -123,7 +149,12 @@ const ListItem = () => {
             </Button>
           </Col>
           <Col span={4} style={{ textAlign: "right" }}>
-            <Button type="primary" icon={<PlusOutlined />} size="large">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              onClick={() => navigate("/ListNewItem")}
+            >
               List a New Item
             </Button>
           </Col>
@@ -172,7 +203,7 @@ const ListItem = () => {
                 <Card
                   hoverable
                   onClick={() => handleProductClick(product.productId)}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", position: "relative" }}
                   cover={
                     <div
                       style={{
@@ -212,11 +243,20 @@ const ListItem = () => {
                     <Text strong style={{ color: "#a1bfa7" }}>
                       {formatPrice(product.pricePerDay)}
                     </Text>
-                    <Button
-                      shape="circle"
-                      icon={<Image preview={false} />}
-                      style={{ float: "right" }}
-                    />
+                    <div style={{ float: "right" }}>
+                      <Button
+                        icon={<EditOutlined />}
+                        shape="circle"
+                        style={{ marginRight: 8 }}
+                        onClick={(e) => handleEditClick(e, product.productId)}
+                      />
+                      <Button
+                        icon={<DeleteOutlined />}
+                        shape="circle"
+                        danger
+                        onClick={(e) => handleDeleteClick(e, product.productId)}
+                      />
+                    </div>
                   </div>
                 </Card>
               </Col>
