@@ -1,4 +1,13 @@
-import { Badge, Button, Card, Col, Row, Typography } from "antd";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Row,
+  Typography,
+  Segmented,
+  Image,
+} from "antd";
 import OrderStatusBar from "./OrderStatusBar";
 import React, { useEffect, useState } from "react";
 import axios from "../../config/axios";
@@ -7,144 +16,223 @@ const { Title, Text } = Typography;
 
 const OrdersSection = () => {
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState('ongoing');
+  const [activeTab, setActiveTab] = useState("ongoing");
+
   useEffect(() => {
-    axios.get("/api/rentals/list")
-      .then(res => setOrders(res.data))
+    axios
+      .get("/api/rentals/list")
+      .then((res) => setOrders(res.data))
       .catch(() => setOrders([]));
   }, []);
 
-  // Phân loại đơn hàng
-  const ongoingStatus = ["pending", "paid", "confirmed", "packed", "received", "return_wait"];
+  const ongoingStatus = [
+    "pending",
+    "paid",
+    "confirmed",
+    "packed",
+    "received",
+    "return_wait",
+  ];
   const completedStatus = ["returned"];
   const cancelledStatus = ["cancelled", "rejected"];
 
-  const filteredOrders = orders.filter(order => {
-    if (activeTab === 'ongoing') return ongoingStatus.includes(order.status);
-    if (activeTab === 'completed') return completedStatus.includes(order.status);
-    if (activeTab === 'cancelled') return cancelledStatus.includes(order.status);
+  const filteredOrders = orders.filter((order) => {
+    if (activeTab === "ongoing") return ongoingStatus.includes(order.status);
+    if (activeTab === "completed")
+      return completedStatus.includes(order.status);
+    if (activeTab === "cancelled")
+      return cancelledStatus.includes(order.status);
     return true;
   });
 
-  // Tính số lượng từng loại
-  const ongoingCount = orders.filter(order => ongoingStatus.includes(order.status)).length;
-  const completedCount = orders.filter(order => completedStatus.includes(order.status)).length;
-  const cancelledCount = orders.filter(order => cancelledStatus.includes(order.status)).length;
-
   return (
-    <div style={{ width: "100%", position: "relative" }}>
-      <div style={{ width: "100%", padding: "24px 20px" }}>
-        <Row>
-          <Col span={24}>
-            <Title level={2}>My Orders</Title>
-            <Text type="secondary">Track and manage your rental orders</Text>
-          </Col>
-        </Row>
+    <div
+      style={{
+        width: "100%",
+        padding: "40px 245px",
+        background: "linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%)",
+        minHeight: "100vh",
+      }}
+    >
+      <Row justify="center">
+        <Col xs={24} sm={22} md={20} lg={20} style={{ maxWidth: 1400 }}>
+          <Title
+            level={2}
+            style={{ color: "#1a1a1a", marginBottom: 12, fontSize: 28 }}
+          >
+            My Orders
+          </Title>
+          <Text type="secondary" style={{ fontSize: 18 }}>
+            Track and manage your rental orders
+          </Text>
 
-        <Row style={{ marginTop: "24px" }}>
-          <Col span={24}>
-            <Row gutter={16} style={{ borderBottom: "1px solid #d9d9d9" }}>
-              <Col>
-                <Badge count={ongoingCount} style={{ backgroundColor: "#a1bfa7" }}>
-                  <Text strong style={{ color: "#a1bfa7" }}>
-                    Ongoing
-                  </Text>
-                </Badge>
-              </Col>
-              <Col>
-                <Badge count={completedCount} style={{ backgroundColor: "#f0f0f0" }}>
-                  <Text type="secondary">Completed</Text>
-                </Badge>
-              </Col>
-              <Col>
-                <Badge count={cancelledCount} style={{ backgroundColor: "#f0f0f0" }}>
-                  <Text type="secondary">Cancelled</Text>
-                </Badge>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+          <Segmented
+            style={{
+              marginTop: 32,
+              background: "#fff",
+              padding: "10px",
+              borderRadius: "10px",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+            }}
+            block
+            options={[
+              { label: `Ongoing`, value: "ongoing" },
+              { label: `Completed`, value: "completed" },
+              { label: `Cancelled`, value: "cancelled" },
+            ]}
+            value={activeTab}
+            onChange={(val) => setActiveTab(val)}
+          />
 
-        {/* Tabs filter */}
-        <Row style={{ marginTop: 24, marginBottom: 16 }} gutter={16}>
-          <Col>
-            <Button type={activeTab === 'ongoing' ? 'primary' : 'default'} onClick={() => setActiveTab('ongoing')}>Ongoing</Button>
-          </Col>
-          <Col>
-            <Button type={activeTab === 'completed' ? 'primary' : 'default'} onClick={() => setActiveTab('completed')}>Completed</Button>
-          </Col>
-          <Col>
-            <Button type={activeTab === 'cancelled' ? 'primary' : 'default'} onClick={() => setActiveTab('cancelled')}>Cancelled</Button>
-          </Col>
-        </Row>
-
-        <Row style={{ marginTop: "24px" }} gutter={[0, 24]}>
-          {filteredOrders.map((order, idx) => (
-            <Col span={24} key={order.id || idx}>
+          <div style={{ marginTop: 40 }}>
+            {filteredOrders.map((order, idx) => (
               <Card
+                key={order.id || idx}
                 style={{
-                  borderRadius: "8px",
-                  boxShadow: "0px 1px 2px #0000000d",
+                  borderRadius: "16px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  marginBottom: 32,
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  overflow: "hidden",
                 }}
-                bodyStyle={{ padding: "24px" }}
+                bodyStyle={{ padding: 32 }}
+                hoverable
               >
-                <Row gutter={16}>
+                <OrderStatusBar status={order.status} />
+                <Row gutter={[24, 24]} align="middle">
                   <Col>
-                    {/* Thanh trạng thái tiến trình đơn hàng */}
-                    <OrderStatusBar status={order.status} />
-                    <div
+                    <Image
+                      width={150}
+                      height={150}
+                      src={order.product?.imageUrl || "/img-3.png"}
+                      fallback="/img-3.png"
                       style={{
-                        width: "96px",
-                        height: "96px",
-                        backgroundImage: `url(${order.product?.imageUrl || "/img-3.png"})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        borderRadius: "8px",
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                        border: "1px solid #f0f0f0",
+                        transition: "transform 0.3s ease",
                       }}
+                      preview={false}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
                     />
                   </Col>
+
                   <Col flex="auto">
-                    <Row justify="space-between">
+                    <Row justify="space-between" align="middle">
                       <Col>
-                        <Title level={4}>{order.product?.name || "Product"}</Title>
-                        <Text type="secondary">Order #{order.orderCode || order.id}</Text>
+                        <Title
+                          level={4}
+                          style={{
+                            marginBottom: 8,
+                            color: "#1a1a1a",
+                            fontSize: 22,
+                          }}
+                        >
+                          {order.product?.name || "Product"}
+                        </Title>
+                        <Text type="secondary" style={{ fontSize: 16 }}>
+                          Order #{order.orderCode || order.id}
+                        </Text>
                       </Col>
                       <Col>
                         <Badge
                           count={order.status || "Unknown"}
                           style={{
-                            backgroundColor: order.status === "paid" ? "#f6ffed" : order.status === "pending" ? "#fff7e6" : "#f0f0f0",
-                            color: order.status === "paid" ? "#52c41a" : order.status === "pending" ? "#fa8c16" : "#999",
+                            backgroundColor:
+                              order.status === "paid"
+                                ? "#e6f7e9"
+                                : order.status === "pending"
+                                ? "#fff1e6"
+                                : order.status === "cancelled" ||
+                                  order.status === "rejected"
+                                ? "#ffe6e6"
+                                : "#f0f0f0",
+                            color:
+                              order.status === "paid"
+                                ? "#389e0d"
+                                : order.status === "pending"
+                                ? "#d46b08"
+                                : order.status === "cancelled" ||
+                                  order.status === "rejected"
+                                ? "#cf1322"
+                                : "#595959",
                             borderRadius: "12px",
-                            padding: "0 8px",
+                            padding: "6px 14px",
+                            fontSize: 14,
+                            fontWeight: 500,
+                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                           }}
                         />
                       </Col>
                     </Row>
-                    <Row style={{ marginTop: "16px" }} justify="space-between">
+
+                    <Row
+                      justify="space-between"
+                      style={{ marginTop: 24 }}
+                      gutter={[24, 24]}
+                    >
                       <Col>
-                        <Text type="secondary">Rental Period</Text>
+                        <Text type="secondary" style={{ fontSize: 16 }}>
+                          Rental Period
+                        </Text>
                         <br />
-                        <Text>{order.startDate?.slice(0, 10)} - {order.endDate?.slice(0, 10)}</Text>
+                        <Text style={{ fontSize: 16 }}>
+                          {order.startDate?.slice(0, 10)} -{" "}
+                          {order.endDate?.slice(0, 10)}
+                        </Text>
                       </Col>
                       <Col>
-                        <Text type="secondary">Total Price</Text>
+                        <Text type="secondary" style={{ fontSize: 16 }}>
+                          Total Price
+                        </Text>
                         <br />
-                        <Text>{order.totalPrice?.toLocaleString()} ₫</Text>
+                        <Text style={{ fontSize: 16 }}>
+                          {order.totalPrice?.toLocaleString()} ₫
+                        </Text>
                       </Col>
                       <Col>
-                        <Button type="primary" onClick={() => {
-                          window.location.href = `/Order-Detail?id=${order.id}`;
-                        }}>View Details</Button>
+                        <Button
+                          type="primary"
+                          onClick={() =>
+                            (window.location.href = `/Order-Detail?id=${order.id}`)
+                          }
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #1890ff 0%, #40c4ff 100%)",
+                            border: "none",
+                            borderRadius: "10px",
+                            padding: "8px 20px",
+                            height: 44,
+                            fontWeight: 500,
+                            fontSize: 16,
+                            transition: "all 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "scale(1.05)";
+                            e.target.style.boxShadow =
+                              "0 4px 12px rgba(24, 144, 255, 0.3)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "scale(1)";
+                            e.target.style.boxShadow = "none";
+                          }}
+                        >
+                          View Details
+                        </Button>
                       </Col>
                     </Row>
                   </Col>
                 </Row>
               </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
+            ))}
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };

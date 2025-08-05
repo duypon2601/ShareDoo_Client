@@ -1,9 +1,9 @@
 import { Col, Row } from "antd";
 import React from "react";
-import  OrderDetailsSection  from "./OrderDetailsSection";
-import Header from "../Home/Header";  
+import OrderSection from "./OrderSection";
+import Header from "../Home/Header";
 import Footer from "../Home/Footer";
-const OrderDetailsPage = () => {
+const OrderSectioPage = () => {
   return (
     <div
       className="inline-flex flex-col items-start relative bg-white border-2 border-solid border-[#ced4da]"
@@ -16,7 +16,7 @@ const OrderDetailsPage = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <OrderDetailsSection />
+          <OrderSection />
         </Col>
       </Row>
       <Row>
@@ -27,4 +27,4 @@ const OrderDetailsPage = () => {
     </div>
   );
 };
-export default OrderDetailsPage;
+export default OrderSectioPage;
