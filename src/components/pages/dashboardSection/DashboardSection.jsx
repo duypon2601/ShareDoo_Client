@@ -29,49 +29,6 @@ const { Title, Text } = Typography;
 const DashboardSection = () => {
   return (
     <Layout style={{ backgroundColor: "#e3d5be" }}>
-      <Header
-        style={{ backgroundColor: "white", borderBottom: "1px solid #d9d9d9" }}
-      >
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Row align="middle">
-              <Avatar src="/img.png" size="large" />
-              <Title level={3} style={{ margin: "0 16px" }}>
-                ShareDoo
-              </Title>
-            </Row>
-          </Col>
-          <Col>
-            <Menu
-              mode="horizontal"
-              defaultSelectedKeys={["dashboard"]}
-              style={{ borderBottom: "none" }}
-            >
-              <Menu.Item key="home" icon={<HomeOutlined />}>
-                Home
-              </Menu.Item>
-              <Menu.Item key="request" icon={<FileTextOutlined />}>
-                Request
-              </Menu.Item>
-              <Menu.Item key="listings" icon={<AppstoreOutlined />}>
-                Listings
-              </Menu.Item>
-              <Menu.Item key="review" icon={<StarOutlined />}>
-                Review
-              </Menu.Item>
-              <Menu.Item key="dashboard" icon={<AppstoreOutlined />}>
-                Dashboard
-              </Menu.Item>
-            </Menu>
-          </Col>
-          <Col>
-            <Row align="middle">
-              <BellOutlined style={{ fontSize: "20px", marginRight: "16px" }} />
-              <Avatar icon={<UserOutlined />} />
-            </Row>
-          </Col>
-        </Row>
-      </Header>
       <Content style={{ padding: "24px 50px" }}>
         <Row gutter={[16, 16]}>
           <Col span={24}>
@@ -102,7 +59,12 @@ const DashboardSection = () => {
                 <Text>Total Earnings</Text>
                 {/* Có thể thay DollarOutlined bằng icon tiền Việt nếu muốn */}
               </Row>
-              <Title level={1}>{(2458000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
+              <Title level={1}>
+                {(2458000).toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </Title>
             </Card>
           </Col>
           <Col span={6}>
@@ -249,13 +211,23 @@ const DashboardSection = () => {
                 <Col span={12}>
                   <Card>
                     <Text>Total Earnings</Text>
-                    <Title level={2}>{(2458000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
+                    <Title level={2}>
+                      {(2458000).toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </Title>
                   </Card>
                 </Col>
                 <Col span={12}>
                   <Card>
                     <Text>Pending Payouts</Text>
-                    <Title level={2}>{(542000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</Title>
+                    <Title level={2}>
+                      {(542000).toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </Title>
                   </Card>
                 </Col>
               </Row>

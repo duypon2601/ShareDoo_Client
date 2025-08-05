@@ -1,15 +1,14 @@
 import React from "react";
 import { Col, Row } from "antd";
-import HeaderProfile from "./HeaderProfile";
-import FooterProfile from "./FooterProfile";
-import ProfileSection from "./ProfileSection";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import UserDetailsSection from "./UserDetailsSection";
 
 const Main = () => {
   return (
     <div
       style={{
-        backgroundColor: "#ffffff", // Xóa viền bằng cách set nền trắng toàn màn
+        backgroundColor: "#ffffff",
         minHeight: "100vh",
         width: "100vw",
         overflowX: "hidden",
@@ -17,7 +16,7 @@ const Main = () => {
         padding: 0,
       }}
     >
-      <HeaderProfile />
+      <Header />
 
       <div
         style={{
@@ -28,15 +27,12 @@ const Main = () => {
       >
         <Row gutter={[0, 32]}>
           <Col span={24}>
-            <ProfileSection />
-          </Col>
-          <Col span={24}>
             <UserDetailsSection />
           </Col>
         </Row>
       </div>
 
-      <FooterProfile />
+      <Footer />
     </div>
   );
 };

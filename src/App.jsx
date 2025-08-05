@@ -46,6 +46,8 @@ import SuccessPayment from "./components/pages/SuccessPayment/SuccessPayment";
 import OrdersSection from "./components/pages/OrderPage/OrderSection";
 import ConfirmPage from "./components/pages/Confirm/ConfirmPage";
 import OrderSectioPage from "./components/pages/OrderPage/OrderSectioPage";
+import Dashboards from "./components/pages/dashboardSection/DashBoards";
+import Rental from "./components/pages/RentalRequest/Request";
 
 const App = () => {
   return (
@@ -60,7 +62,7 @@ const App = () => {
         {/* Main Pages */}
         <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboardSection" element={<DashboardSection />} />
+        <Route path="/dashboards" element={<Dashboards />} />
 
         {/* Item Listing Flow */}
         <Route path="/ListNewItem" element={<ListNewItemPage />} />
@@ -75,7 +77,7 @@ const App = () => {
         {/* Other Features */}
         <Route path="/ListItem" element={<ListItem />} />
         <Route path="/rental-requests" element={<RentalRequestsSection />} />
-        <Route path="/dashboard-rental" element={<DashBoardRental />} />
+        <Route path="/dashboard-rental" element={<Rental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/Rating" element={<Rating />} />

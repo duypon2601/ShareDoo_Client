@@ -1,155 +1,272 @@
-import { EyeInvisibleOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Input, Row, Switch } from "antd";
-import React from "react";
+// Full working version of UserDetailsSection with improved UI and validation
+
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Col,
+  Input,
+  Row,
+  Avatar,
+  message,
+  Typography,
+  Card,
+} from "antd";
+import { UploadOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import axios from "../../config/axios";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../config/firebase";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { getCoordinatesFromAddress } from "../../../service/geocoding";
+
+const { Title, Text } = Typography;
+
+const LocationPicker = ({ onMapClick }) => {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng);
+    },
+  });
+  return null;
+};
 
 const UserDetailsSection = () => {
+  const user = useSelector((state) => state.user);
+  console.log("User Details Section - User:", user);
+
+  const [formData, setFormData] = useState({
+    userId: user?.userId || null,
+    name: user?.name || "",
+    email: user?.email || "",
+    address: user?.address || "",
+    imageUrl: user?.imageUrl || "",
+    lat: null,
+    lng: null,
+  });
+
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    if (!user?.userId || user?.userId === 0) {
+      message.warning("User ID is invalid. Please login again.");
+    }
+  }, [user]);
+
+  const handleUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 2 * 1024 * 1024) {
+        message.error("File size must not exceed 2MB.");
+        return;
+      }
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setFile(null);
+    setPreviewUrl(null);
+    setFormData({ ...formData, imageUrl: "" });
+    message.info("Image removed.");
+  };
+
+  const handleSearchAddress = async () => {
+    try {
+      const coords = await getCoordinatesFromAddress(formData.address);
+      if (coords) {
+        setFormData({ ...formData, lat: coords.lat, lng: coords.lng });
+        message.success("Address found!");
+      } else {
+        message.error("Address not found!");
+      }
+    } catch {
+      message.error("Failed to find address!");
+    }
+  };
+
+  const handleMapClick = async (latlng) => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`
+      );
+      const data = await res.json();
+      if (data?.display_name) {
+        setFormData({
+          ...formData,
+          address: data.display_name,
+          lat: latlng.lat,
+          lng: latlng.lng,
+        });
+      }
+    } catch {
+      message.error("Failed to get address from map.");
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!formData.userId || formData.userId === 0) {
+        message.error("Invalid user ID. Cannot save.");
+        return;
+      }
+
+      let imageUrl = formData.imageUrl;
+      if (file) {
+        const storageRef = ref(
+          storage,
+          `avatars/${formData.userId}/${file.name}`
+        );
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      const payload = {
+        userId: formData.userId,
+        name: formData.name,
+        email: formData.email,
+        address: formData.address,
+        imageUrl,
+      };
+
+      await axios.put(`/api/users/${formData.userId}`, payload);
+      message.success("Profile updated successfully.");
+      setFile(null);
+      setPreviewUrl(null);
+      setFormData({ ...formData, imageUrl });
+    } catch {
+      message.error("Failed to update profile.");
+    }
+  };
+
+  const markerIcon = new L.Icon({
+    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
+
   return (
-    <div style={{ width: "100%", position: "relative" }}>
-      {/* Profile Picture */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col span={24}>
-          <div style={styles.card}>
-            <h2>Profile Picture</h2>
-            <Row gutter={[16, 16]} align="middle">
-              <Col>
-                <div style={styles.avatar} />
-              </Col>
-              <Col>
-                <Button icon={<UploadOutlined />} style={{ marginBottom: 8 }}>
-                  Upload New Picture
-                </Button>
-                <div>Maximum file size: 2MB</div>
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+    <div style={{ padding: 24, maxWidth: 1000, margin: "auto" }}>
+      <Title level={2}>User Profile</Title>
 
-      {/* Personal Information */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col span={24}>
-          <div style={styles.card}>
-            <h2>Personal Information</h2>
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <label>Full Name</label>
-                <Input placeholder="ABC" />
-              </Col>
-              <Col span={12}>
-                <label>Email</label>
-                <Input placeholder="ABC123@gmail.com" type="email" />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              <Col span={24}>
-                <label>Bio</label>
-                <Input.TextArea placeholder="ShareDoo wowww" rows={3} />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              <Col span={12}>
-                <label>Phone Number</label>
-                <Input placeholder="0584728995" />
-              </Col>
-              <Col span={12}>
-                <label>Location</label>
-                <Input
-                  placeholder="Select your location"
-                  suffix={
-                    <img
-                      src="https://c.animaapp.com/KqNKvGAg/img/frame-1.svg"
-                      alt="location icon"
-                    />
-                  }
-                />
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4}>Profile Picture</Title>
+        <Row gutter={16} align="middle">
+          <Col>
+            <Avatar
+              size={96}
+              src={previewUrl || formData.imageUrl || "/img/default-avatar.png"}
+            />
+          </Col>
+          <Col>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              id="upload-image"
+              onChange={handleUpload}
+            />
+            <label htmlFor="upload-image">
+              <Button icon={<UploadOutlined />} style={{ marginRight: 8 }}>
+                Upload Image
+              </Button>
+            </label>
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={handleDeleteImage}
+              danger
+            >
+              Delete
+            </Button>
+            <Text type="secondary" style={{ display: "block", marginTop: 8 }}>
+              Max size: 2MB
+            </Text>
+          </Col>
+        </Row>
+      </Card>
 
-      {/* Payment Methods */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col span={24}>
-          <div style={styles.card}>
-            <h2>Payment Methods</h2>
-            <Checkbox>Mobile Money</Checkbox>
-            <Checkbox>Bank Transfer</Checkbox>
-            <Checkbox>Cash</Checkbox>
-          </div>
-        </Col>
-      </Row>
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4}>Personal Information</Title>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Input
+              value={formData.name}
+              placeholder="Full Name"
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              size="large"
+            />
+          </Col>
+          <Col span={12}>
+            <Input
+              value={formData.email}
+              placeholder="Email"
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              size="large"
+              type="email"
+            />
+          </Col>
+        </Row>
 
-      {/* Password and Security */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col span={24}>
-          <div style={styles.card}>
-            <h2>Password & Security</h2>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <label>Current Password</label>
-                <Input.Password
-                  placeholder="Enter current password"
-                  iconRender={() => <EyeInvisibleOutlined />}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              <Col span={24}>
-                <label>New Password</label>
-                <Input.Password
-                  placeholder="Enter new password"
-                  iconRender={() => <EyeInvisibleOutlined />}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              <Col span={24}>
-                <div style={styles.twoFactorBox}>
-                  <h3>Two-Factor Authentication</h3>
-                  <p>Add an extra layer of security to your account</p>
-                  <Switch />
-                </div>
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+        <Input.Search
+          placeholder="Address"
+          value={formData.address}
+          onChange={(e) =>
+            setFormData({ ...formData, address: e.target.value })
+          }
+          onSearch={handleSearchAddress}
+          enterButton="Find"
+          size="large"
+          style={{ marginTop: 16 }}
+        />
 
-      {/* Buttons */}
-      <Row gutter={[16, 16]}>
+        <div
+          style={{
+            height: 300,
+            marginTop: 16,
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <MapContainer
+            center={
+              formData.lat && formData.lng
+                ? [formData.lat, formData.lng]
+                : [10.7626, 106.6602]
+            }
+            zoom={15}
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {formData.lat && formData.lng && (
+              <Marker
+                position={[formData.lat, formData.lng]}
+                icon={markerIcon}
+              />
+            )}
+            <LocationPicker onMapClick={handleMapClick} />
+          </MapContainer>
+        </div>
+      </Card>
+
+      <Row gutter={16} justify="end">
         <Col>
-          <Button type="primary">Save Changes</Button>
+          <Button onClick={() => window.location.reload()}>Cancel</Button>
         </Col>
         <Col>
-          <Button>Cancel</Button>
+          <Button type="primary" onClick={handleSave}>
+            Save Changes
+          </Button>
         </Col>
       </Row>
     </div>
   );
-};
-
-// ✅ Styles Object
-const styles = {
-  card: {
-    background: "#fff",
-    padding: 24,
-    borderRadius: 8,
-    boxShadow: "0px 1px 2px #0000000d",
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: "50%",
-    backgroundImage: "url(https://c.animaapp.com/KqNKvGAg/img/img@2x.png)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  twoFactorBox: {
-    background: "#f5f5f5",
-    padding: 16,
-    borderRadius: 8,
-  },
 };
 
 export default UserDetailsSection;
