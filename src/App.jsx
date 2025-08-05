@@ -77,7 +77,7 @@ const App = () => {
         {/* Other Features */}
         <Route path="/ListItem" element={<ListItem />} />
         <Route path="/rental-requests" element={<RentalRequestsSection />} />
-        <Route path="/dashboard-rental" element={<Rental />} />
+        <Route path="/dashboard-rental" element={<DashBoardRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/Rating" element={<Rating />} />
