@@ -134,8 +134,8 @@ const OrdersSection = () => {
                       </Col>
                       <Col>
                         <Button type="primary" onClick={() => {
-  window.location.href = `/Order-Detail?id=${order.id}`;
-}}>View Details</Button>
+                          window.location.href = `/Order-Detail?id=${order.id}`;
+                        }}>View Details</Button>
                       </Col>
                     </Row>
                   </Col>
