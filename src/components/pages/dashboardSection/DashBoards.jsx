@@ -2,12 +2,12 @@ import { Col, Row } from "antd";
 import React from "react";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
-import DashboardRental from "./DashBoardRental";
-const Request = () => {
+import DashboardSection from "./DashboardSection";
+const DashBoards = () => {
   return (
     <div
       style={{
-        width: "99vw",
+        width: "100vw",
         minHeight: "100vh",
         overflowX: "hidden",
         backgroundColor: "#fff",
@@ -22,7 +22,7 @@ const Request = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <DashboardRental />
+          <DashboardSection />
         </Col>
       </Row>
       <Row>
@@ -33,4 +33,4 @@ const Request = () => {
     </div>
   );
 };
-export default Request;
+export default DashBoards;

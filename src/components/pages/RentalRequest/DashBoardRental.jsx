@@ -74,55 +74,7 @@ const DashBoardRental = () => {
   return (
     <Layout style={{ minHeight: "100vh", overflowX: "hidden", backgroundColor: "#e8dbc4" }}>
       {/* Header */}
-      <Header
-        style={{
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #e0e0e0",
-          padding: "0 24px",
-          display: "flex",
-          alignItems: "center",
-          height: "72px",
-          justifyContent: "space-between",
-        }}
-      >
-        <Link to="/home" style={{ textDecoration: "none" }}>
-          <Row align="middle" gutter={12}>
-            <Col>
-              <Avatar src="/img/ShareDoo.png" size={48} shape="circle" />
-            </Col>
-            <Col>
-              <Text strong style={{ fontSize: "20px", color: "#1f1f1f" }}>
-                ShareDoo
-              </Text>
-            </Col>
-          </Row>
-        </Link>
-
-        <Space size="large">
-          <Link to="/home" style={{ color: "#374151", fontWeight: 500 }}>Home</Link>
-          <Link to="/rental-requests" style={{ color: "#374151", fontWeight: 500 }}>Request</Link>
-          <Link to="/ListItem" style={{ color: "#374151", fontWeight: 500 }}>Listings</Link>
-          <Link to="/ReviewPublish" style={{ color: "#374151", fontWeight: 500 }}>Review</Link>
-          <Link to="/dashboard-rental" style={{ color: "#374151", fontWeight: 500 }}>Dashboard</Link>
-        </Space>
-
-        <Space size="large">
-          <Tooltip title="Notifications">
-            <Badge dot>
-              <BellOutlined style={{ fontSize: "18px", color: "#374151" }} />
-            </Badge>
-          </Tooltip>
-          <Tooltip title="Messages">
-            <Badge count={3} size="small" offset={[-2, 2]}>
-              <MessageOutlined style={{ fontSize: "18px", color: "#374151" }} />
-            </Badge>
-          </Tooltip>
-          <Dropdown overlay={menu} placement="bottomRight">
-            <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#a1bfa7", cursor: "pointer" }} />
-          </Dropdown>
-          <CloseOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-        </Space>
-      </Header>
+     
 
       {/* Content */}
       <Content style={{ padding: "24px" }}>
@@ -317,49 +269,6 @@ const DashBoardRental = () => {
         </main>
       </Content>
 
-      {/* Footer */}
-      <Footer
-        style={{
-          backgroundColor: "#1f2937",
-          color: "#9ca3af",
-          padding: "40px 0",
-          overflowX: "hidden",
-        }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-          <Row gutter={[32, 24]} justify="space-between">
-            <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>About</Title>
-              <Text style={{ display: "block", color: "#9ca3af" }}>About Us</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>How It Works</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Careers</Text>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>Support</Title>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Help Center</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Safety Center</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Contact Us</Text>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>Legal</Title>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Terms of Service</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Privacy Policy</Text>
-              <Text style={{ display: "block", color: "#9ca3af" }}>Cookie Policy</Text>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Title level={4} style={{ color: "#fff" }}>Follow Us</Title>
-              <div style={{ display: "flex", gap: "16px", marginTop: 8 }}>
-                <FacebookOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-                <TwitterOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-                <InstagramOutlined style={{ fontSize: "20px", color: "#9ca3af" }} />
-              </div>
-            </Col>
-          </Row>
-          <Row justify="center" style={{ marginTop: "32px", borderTop: "1px solid #374151", paddingTop: "16px", textAlign: "center" }}>
-            <Text style={{ color: "#9ca3af", fontSize: "14px" }}>© 2025 ShareDoo. All rights reserved.</Text>
-          </Row>
-        </div>
-      </Footer>
     </Layout>
   );
 };
