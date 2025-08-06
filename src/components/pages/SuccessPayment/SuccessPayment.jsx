@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   BellOutlined,
   CheckCircleOutlined,
@@ -23,60 +23,63 @@ const SuccessPayment = () => {
   const [walletDepositStatus, setWalletDepositStatus] = useState(null);
   const [walletDepositMessage, setWalletDepositMessage] = useState("");
 
+  const calledRef = useRef(false);
   useEffect(() => {
+    if (calledRef.current) return;
+    calledRef.current = true;
     const urlParams = new URLSearchParams(window.location.search);
     const orderCodeParam = urlParams.get("orderCode");
     const statusParam = urlParams.get("status");
     const amountParam = urlParams.get("amount");
-    // Nhận diện giao dịch nạp tiền vào ví
     const isDeposit =
       urlParams.get("type") === "wallet" ||
       urlParams.get("isWalletDeposit") === "true" ||
       window.location.pathname.includes("wallet");
 
-    if (orderCodeParam && statusParam === "PAID" && isDeposit) {
-      setIsWalletDeposit(true);
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          "/api/wallet/credit-by-ordercode",
-          {
-            orderCode: orderCodeParam,
-            status: statusParam,
-            amount: amountParam ? Number(amountParam) : undefined,
-          },
-          {
-            withCredentials: true,
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-          }
-        )
-        .then((res) => {
-          setWalletDepositStatus("success");
-          setWalletDepositMessage(res.data || "Nạp tiền vào ví thành công!");
-        })
-        .catch((err) => {
-          setWalletDepositStatus("error");
-          setWalletDepositMessage(
-            err?.response?.data || "Có lỗi khi cộng tiền vào ví"
-          );
-        });
-    } else if (orderCodeParam && statusParam === "PAID") {
-      // Logic cũ cho thuê đồ
-      const token = localStorage.getItem("token");
-      axios
-        .post(
-          "/api/rentals/payment-status",
-          {
-            orderCode: orderCodeParam,
-            status: "PAID",
-          },
-          {
-            withCredentials: true,
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-          }
-        )
-        .then((res) => {})
-        .catch((err) => {});
+    const token = localStorage.getItem("token");
+
+    if (orderCodeParam && statusParam === "PAID") {
+      if (isDeposit) {
+        setIsWalletDeposit(true);
+        axios
+          .post(
+            "/api/wallet/credit-by-ordercode",
+            {
+              orderCode: orderCodeParam,
+              status: statusParam,
+              amount: amountParam ? Number(amountParam) : undefined,
+            },
+            {
+              withCredentials: true,
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            }
+          )
+          .then((res) => {
+            setWalletDepositStatus("success");
+            setWalletDepositMessage(res.data || "Nạp tiền vào ví thành công!");
+          })
+          .catch((err) => {
+            setWalletDepositStatus("error");
+            setWalletDepositMessage(
+              err?.response?.data || "Có lỗi khi cộng tiền vào ví"
+            );
+          });
+      } else {
+        axios
+          .post(
+            "/api/rentals/payment-status",
+            {
+              orderCode: orderCodeParam,
+              status: "PAID",
+            },
+            {
+              withCredentials: true,
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            }
+          )
+          .then((res) => {})
+          .catch((err) => {});
+      }
     }
   }, []);
 

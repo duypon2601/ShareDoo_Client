@@ -1,167 +1,77 @@
-import React from "react";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  Col,
-  Dropdown,
-  Row,
-  Space,
-  Tooltip,
-  Typography,
-} from "antd";
+
+import { Typography, Card, Row, Col } from "antd";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
-import {
-  BellOutlined,
-  CalendarOutlined,
-  ClockCircleOutlined,
-  CloseOutlined,
-  MessageOutlined,
-  StarFilled,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import OrderStatusBar from "./OrderStatusBar";
+
 const RentalRequestsSection = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/rentals/owner-list?status=paid", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          withCredentials: true,
+        });
+        setOrders(res.data);
+      } catch {
+        setError("Không thể lấy dữ liệu đơn hàng đã xác nhận.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
+
   return (
     <>
       <Header />
-      <div
-        style={{
-          minHeight: "100vh",
-          backgroundColor: "#f9f9f9",
-          padding: 0,
-          margin: 0,
-          width: "100vw",
-          overflowX: "hidden",
-        }}
-      >
-        <div style={{ padding: "24px" }}>
-          <Title level={2}>Rental Requests</Title>
-          <Text>Manage your incoming rental requests</Text>
-
-          <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
-            {[
-              {
-                name: "Sarah Mitchell",
-                rating: 4.8,
-                product: "Professional Camera",
-                price: "75.000 ₫/ngày",
-                date: "Mar 15 - Mar 18, 2025",
-                time: "Pickup at 10:00 AM",
-                status: "New",
-                image: "img-1@2x.png",
-                avatar: "img@2x.png",
-              },
-              {
-                name: "James Wilson",
-                rating: 4.5,
-                product: "Professional Drone",
-                price: "120.000 ₫/ngày",
-                date: "Mar 20 - Mar 22, 2025",
-                time: "Pickup at 2:00 PM",
-                status: "New",
-                image: "img-3@2x.png",
-                avatar: "img-2@2x.png",
-              },
-              {
-                name: "Emma Thompson",
-                rating: 4.9,
-                product: "Professional Lighting",
-                price: "95.000 ₫/ngày",
-                date: "Mar 25 - Mar 27, 2025",
-                time: "Pickup at 11:00 AM",
-                status: "Accepted",
-                image: "img-5@2x.png",
-                avatar: "img-4@2x.png",
-              },
-            ].map((item, index) => (
-              <Col key={index} xs={24} sm={12} md={8}>
-                <Card
-                  style={{ borderRadius: "10px" }}
-                  cover={
-                    <div style={{ padding: "16px" }}>
-                      <Row align="middle">
-                        <Avatar
-                          size={40}
-                          src={`https://c.animaapp.com/2TlGi7vL/${item.avatar}`}
-                        />
-                        <div style={{ marginLeft: 16 }}>
-                          <Title level={5}>{item.name}</Title>
-                          <Row align="middle">
-                            <StarFilled style={{ color: "#fadb14" }} />
-                            <Text style={{ marginLeft: 8 }}>{item.rating}</Text>
-                          </Row>
-                        </div>
-                        <Button
-                          type="primary"
-                          shape="round"
-                          style={{ marginLeft: "auto" }}
-                        >
-                          {item.status}
-                        </Button>
-                      </Row>
-                    </div>
-                  }
-                >
-                  <Card.Meta
-                    avatar={
-                      <Avatar
-                        shape="square"
-                        size={64}
-                        src={`https://c.animaapp.com/2TlGi7vL/${item.image}`}
-                      />
-                    }
-                    title="Demo Product"
-                    description={
-                      <>
-                        <Text>{item.product}</Text>
-                        <br />
-                        <Text>{item.price}</Text>
-                      </>
-                    }
-                  />
-                  <div style={{ marginTop: 16 }}>
-                    <Row align="middle">
-                      <CalendarOutlined />
-                      <Text style={{ marginLeft: 8 }}>{item.date}</Text>
-                    </Row>
-                    <Row align="middle" style={{ marginTop: 8 }}>
-                      <ClockCircleOutlined />
-                      <Text style={{ marginLeft: 8 }}>{item.time}</Text>
-                    </Row>
-                  </div>
-                  <Row justify="space-between" style={{ marginTop: 16 }}>
-                    {item.status === "Accepted" ? (
-                      <>
-                        <Button type="primary" style={{ width: "48%" }}>
-                          Message Renter
-                        </Button>
-                        <Button style={{ width: "48%" }}>
-                          View Meeting Location
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button type="primary" style={{ width: "48%" }}>
-                          Accept
-                        </Button>
-                        <Button danger style={{ width: "48%" }}>
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                  </Row>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </div>
-      </div>
+      <Row justify="center" style={{ minHeight: "60vh", alignItems: "center" }}>
+        <Col span={20}>
+          <Card style={{ marginTop: 32 }}>
+            <Title level={3}>Đơn hàng đã xác nhận cho người cho thuê</Title>
+            {loading ? (
+              <Text>Đang tải dữ liệu...</Text>
+            ) : error ? (
+              <Text type="danger">{error}</Text>
+            ) : orders.length === 0 ? (
+              <Text>Không có đơn hàng đã xác nhận.</Text>
+            ) : (
+              <>
+                {orders.map((order) => (
+  <Card key={order.id} style={{ marginBottom: 16 }}>
+    <OrderStatusBar status={order.status} />
+    <Row gutter={16}>
+      <Col span={12}>
+        <Text strong>Mã đơn:</Text> {order.id} <br />
+        <Text strong>Người thuê:</Text> {order.user?.name || order.userId} <br />
+        <Text strong>Thời gian thuê:</Text> {order.startDate} - {order.endDate} <br />
+        <Text strong>Trạng thái:</Text> {order.status}
+      </Col>
+      <Col span={12}>
+        <Text strong>Sản phẩm:</Text> {order.product?.name || order.productId} <br />
+        <Text strong>Địa điểm:</Text> {order.product?.location || "-"} <br />
+        <Text strong>Tổng tiền:</Text> {order.totalPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+      </Col>
+    </Row>
+  </Card>
+))}
+              </>
+            )}
+          </Card>
+        </Col>
+      </Row>
       <Footer />
     </>
   );
