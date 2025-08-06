@@ -1,3 +1,4 @@
+import RentalRequestsList from "./RentalRequestsList";
 import {
   AppstoreOutlined,
   BellOutlined,
@@ -156,48 +157,8 @@ const DashboardSection = () => {
           </Col>
           <Col span={24}>
             <Card title="Rental Requests">
-              <List
-                itemLayout="horizontal"
-                dataSource={[
-                  {
-                    renter: "Sarah Johnson",
-                    item: "Canon EOS R5",
-                    dates: "Mar 15 - Mar 18, 2025",
-                    amount: "$225",
-                    status: "Pending",
-                    statusColor: "orange",
-                  },
-                  {
-                    renter: "John Smith",
-                    item: "DJI Mavic Air 2",
-                    dates: "Mar 20 - Mar 22, 2025",
-                    amount: "$170",
-                    status: "Approved",
-                    statusColor: "green",
-                  },
-                ]}
-                renderItem={(item) => (
-                  <List.Item
-                    actions={[
-                      <Button type="primary" icon={<CheckCircleOutlined />}>
-                        Accept
-                      </Button>,
-                      <Button type="danger" icon={<CloseCircleOutlined />}>
-                        Decline
-                      </Button>,
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar src="/image.png" />}
-                      title={item.renter}
-                      description={item.item}
-                    />
-                    <div>{item.dates}</div>
-                    <div>{item.amount}</div>
-                    <div style={{ color: item.statusColor }}>{item.status}</div>
-                  </List.Item>
-                )}
-              />
+              {/* RentalRequest logic chuyển từ Request.jsx sang */}
+              <RentalRequestsList />
             </Card>
           </Col>
           <Col span={12}>
