@@ -32,13 +32,13 @@ const ORDER_STATUS_STEPS = [
   {
     key: "packed",
     label: "Đóng gói",
-    fullLabel: "Chờ gửi hàng",
+    fullLabel: "Chờ bàn giao",
     icon: <GiftOutlined />,
   },
   {
     key: "received",
     label: "Đã nhận",
-    fullLabel: "Đã nhận hàng",
+    fullLabel: "Đã bàn giao",
     icon: <TruckOutlined />,
   },
   {
