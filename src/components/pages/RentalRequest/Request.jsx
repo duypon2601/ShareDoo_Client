@@ -20,7 +20,7 @@ const RentalRequestsSection = () => {
       setError("");
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("/api/rentals/owner-list?status=paid", {
+        const res = await axios.get("/api/rentals/owner-list?", {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           withCredentials: true,
         });
@@ -50,23 +50,59 @@ const RentalRequestsSection = () => {
             ) : (
               <>
                 {orders.map((order) => (
-  <Card key={order.id} style={{ marginBottom: 16 }}>
-    <OrderStatusBar status={order.status} />
-    <Row gutter={16}>
-      <Col span={12}>
-        <Text strong>Mã đơn:</Text> {order.id} <br />
-        <Text strong>Người thuê:</Text> {order.user?.name || order.userId} <br />
-        <Text strong>Thời gian thuê:</Text> {order.startDate} - {order.endDate} <br />
-        <Text strong>Trạng thái:</Text> {order.status}
-      </Col>
-      <Col span={12}>
-        <Text strong>Sản phẩm:</Text> {order.product?.name || order.productId} <br />
-        <Text strong>Địa điểm:</Text> {order.product?.location || "-"} <br />
-        <Text strong>Tổng tiền:</Text> {order.totalPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-      </Col>
-    </Row>
-  </Card>
-))}
+                  <Card key={order.id} style={{ marginBottom: 16 }}>
+                    <OrderStatusBar status={order.status} />
+                    {order.status === 'received' && (
+                      <button
+                        style={{ margin: '8px 0', background: '#52c41a', color: 'white', border: 'none', borderRadius: 4, padding: '6px 16px', cursor: 'pointer' }}
+                        disabled={order.markHandoverLoading}
+                        onClick={async () => {
+                          const token = localStorage.getItem("token");
+                          if (!token) {
+                            window.alert("Bạn cần đăng nhập để thực hiện thao tác này.");
+                            return;
+                          }
+                          setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, markHandoverLoading: true } : o));
+                          try {
+                            await axios.post(
+                              `/api/rentals/mark-handover?orderCode=${order.orderCode || order.id}`,
+                              {},
+                              {
+                                headers: { Authorization: `Bearer ${token}` },
+                                withCredentials: true,
+                              }
+                            );
+                            // Refetch orders
+                            const res = await axios.get("/api/rentals/owner-list?status=paid", {
+                              headers: { Authorization: `Bearer ${token}` },
+                              withCredentials: true,
+                            });
+                            setOrders(res.data);
+                          } catch (err) {
+                            window.alert('Có lỗi khi xác nhận đã bàn giao!');
+                          } finally {
+                            setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, markHandoverLoading: false } : o));
+                          }
+                        }}
+                      >
+                        {order.markHandoverLoading ? 'Đang xác nhận...' : 'Đã bàn giao'}
+                      </button>
+                    )}
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Text strong>Mã đơn:</Text> {order.id} <br />
+                        <Text strong>Người thuê:</Text> {order.user?.name || order.userId} <br />
+                        <Text strong>Thời gian thuê:</Text> {order.startDate} - {order.endDate} <br />
+                        <Text strong>Trạng thái:</Text> {order.status}
+                      </Col>
+                      <Col span={12}>
+                        <Text strong>Sản phẩm:</Text> {order.product?.name || order.productId} <br />
+                        <Text strong>Địa điểm:</Text> {order.product?.location || "-"} <br />
+                        <Text strong>Tổng tiền:</Text> {order.totalPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                      </Col>
+                    </Row>
+                  </Card>
+                ))}
               </>
             )}
           </Card>

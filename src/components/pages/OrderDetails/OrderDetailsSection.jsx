@@ -73,6 +73,24 @@ const OrderDetailsSection = () => {
       <Row gutter={[16, 16]} style={{ padding: "0 24px" }}>
         <Col span={16}>
           {order && <OrderStatusBar status={order.status} />}
+          {order && order.status === 'packed' && (
+            <Button
+              type="primary"
+              style={{ margin: '12px 0' }}
+              onClick={async () => {
+                try {
+                  await axios.post(`/api/rentals/mark-received?orderCode=${order.orderCode || order.id}`);
+                  // Refetch order detail
+                  const res = await axios.get(`/api/rentals/detail?${order.id ? `id=${order.id}` : `orderCode=${order.orderCode}`}`);
+                  setOrder(res.data);
+                } catch (err) {
+                  window.alert('Có lỗi khi xác nhận đã nhận hàng!');
+                }
+              }}
+            >
+              Đã nhận hàng
+            </Button>
+          )}
           <Card style={{ width: "100%" }}>
             <Row gutter={[16, 16]}>
               <Col span={8}>
