@@ -7,8 +7,8 @@ import frame2 from "./frame-2.svg";
 
 const HeaderSection = () => {
   return (
-    <header className="bg-[#fffffff2] shadow-[0px_1px_2px_#0000000d]">
-      <Row align="middle" justify="space-between" style={{ padding: "0 22px" }}>
+    <header className="bg-[#fffffff2] shadow-[0px_1px_2px_#0000000d]" style={{ width: '100vw', margin: 0, boxSizing: 'border-box', overflowX: 'hidden' }}>
+      <Row align="middle" justify="space-between" style={{ width: '100%', margin: 0, padding: 0 }}>
         <Col>
           <Row align="middle">
             <Col>

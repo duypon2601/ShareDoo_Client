@@ -12,7 +12,7 @@ const { Title, Text } = Typography;
 
 const FooterSection = () => {
   return (
-    <Footer style={{ backgroundColor: "#1f1f1f", padding: "40px 50px" }}>
+    <Footer style={{ backgroundColor: "#1f1f1f", padding: "40px 0", width: '100vw', margin: 0, boxSizing: 'border-box', overflowX: 'hidden' }}>
       <Row gutter={[32, 32]}>
         <Col xs={24} sm={12} md={6}>
           <Title level={4} style={{ color: "#fff" }}>
@@ -72,6 +72,8 @@ const FooterSection = () => {
           marginTop: "40px",
           borderTop: "1px solid #333",
           paddingTop: "20px",
+          width: '100%',
+          margin: 0,
         }}
       >
         <Text style={{ color: "#bfbfbf" }}>

@@ -48,14 +48,16 @@ const OrdersSection = () => {
   return (
     <div
       style={{
-        width: "100%",
-        padding: "40px 245px",
+        width: "100vw",
+        padding: "40px 0",
         background: "linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%)",
         minHeight: "100vh",
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
       }}
     >
       <Row justify="center">
-        <Col xs={24} sm={22} md={20} lg={20} style={{ maxWidth: 1400 }}>
+        <Col xs={24} sm={24} md={24} lg={24} style={{ width: '100%', maxWidth: '100vw', margin: 0, padding: 0 }}>
           <Title
             level={2}
             style={{ color: "#1a1a1a", marginBottom: 12, fontSize: 28 }}
@@ -211,6 +213,7 @@ const OrdersSection = () => {
                             fontWeight: 500,
                             fontSize: 16,
                             transition: "all 0.3s ease",
+                            marginRight: 12,
                           }}
                           onMouseEnter={(e) => {
                             e.target.style.transform = "scale(1.05)";
@@ -224,6 +227,62 @@ const OrdersSection = () => {
                         >
                           View Details
                         </Button>
+                        {order.status === "received" && (
+                          <Button
+                            type="primary"
+                            danger
+                            loading={order.markHandoverLoading}
+                            style={{
+                              borderRadius: "10px",
+                              padding: "8px 20px",
+                              height: 44,
+                              fontWeight: 500,
+                              fontSize: 16,
+                              marginLeft: 8,
+                              background: "linear-gradient(135deg, #ff4d4f 0%, #ffb199 100%)",
+                              border: "none",
+                            }}
+                            onClick={async () => {
+                              const token = localStorage.getItem("token");
+                              if (!token) {
+                                window.alert("Bạn cần đăng nhập để thực hiện thao tác này.");
+                                return;
+                              }
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o.id === order.id ? { ...o, markHandoverLoading: true } : o
+                                )
+                              );
+                              try {
+                                await axios.post(
+                                  `/api/rentals/mark-handover?orderCode=${order.orderCode}`,
+                                  {},
+                                  {
+                                    headers: { Authorization: `Bearer ${token}` },
+                                    withCredentials: true,
+                                  }
+                                );
+                                window.alert("Đã xác nhận bàn giao thành công!");
+                                // Refresh orders list
+                                const res = await axios.get("/api/rentals/list");
+                                setOrders(res.data);
+                              } catch (err) {
+                                window.alert(
+                                  err?.response?.data?.message ||
+                                    "Có lỗi xảy ra khi xác nhận bàn giao."
+                                );
+                              } finally {
+                                setOrders((prev) =>
+                                  prev.map((o) =>
+                                    o.id === order.id ? { ...o, markHandoverLoading: false } : o
+                                  )
+                                );
+                              }
+                            }}
+                          >
+                            Đã bàn giao
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                   </Col>
