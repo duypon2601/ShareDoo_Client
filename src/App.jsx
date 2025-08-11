@@ -48,7 +48,10 @@ import ConfirmPage from "./components/pages/Confirm/ConfirmPage";
 import OrderSectioPage from "./components/pages/OrderPage/OrderSectioPage";
 import Dashboards from "./components/pages/dashboardSection/DashBoards";
 import Rental from "./components/pages/RentalRequest/Request";
-
+import Admin from "./components/pages/AdminPage/Admin";
+import WithdrawalRequestsSection from "./components/pages/AdminPage/WithdrawalRequestsSection";
+import DashboardStatsSection from "./components/pages/AdminPage/DashboardStatsSection";     
+  
 const App = () => {
   return (
     <Router>
@@ -63,6 +66,7 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboards" element={<Dashboards />} />
+        <Route path="/admin" element={<Admin />} />
 
         {/* Item Listing Flow */}
         <Route path="/ListNewItem" element={<ListNewItemPage />} />
