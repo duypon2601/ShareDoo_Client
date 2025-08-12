@@ -16,7 +16,7 @@ const CategoryList = () => {
 
   const handleCategoryClick = (categoryName) => {
     if (categoryName === "More") {
-      navigate("/products");
+      navigate("/searchItems");
     } else {
       console.log(`Navigating to ${categoryName} page`);
       // navigate(`/products?category=${categoryName.toLowerCase()}`); // nếu cần route riêng
@@ -26,7 +26,10 @@ const CategoryList = () => {
   return (
     <section className="group1-section2">
       <div className="group1-text20">Popular Categories</div>
-      <div className="group1-div15" style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+      <div
+        className="group1-div15"
+        style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}
+      >
         {categories.map((category, index) => (
           <div
             key={index}
@@ -43,7 +46,9 @@ const CategoryList = () => {
             }}
           >
             <div style={{ fontSize: "32px" }}>{category.icon}</div>
-            <div style={{ marginTop: "8px", fontWeight: "bold" }}>{category.name}</div>
+            <div style={{ marginTop: "8px", fontWeight: "bold" }}>
+              {category.name}
+            </div>
           </div>
         ))}
       </div>

@@ -52,7 +52,7 @@ const Header = () => {
 
     message.info(`Chuyển sang chế độ ${newMode ? "Quản lý" : "Người dùng"}`);
 
-    // ✅ Navigate theo chế độ mới
+    //  Navigate theo chế độ mới
     if (newMode) {
       navigate("/rental-requests"); // Admin
     } else {
@@ -80,7 +80,7 @@ const Header = () => {
     alignItems: "center",
     height: "100%",
     cursor: "pointer",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 500,
     color: "#374151",
     transition: "all 0.3s ease",
