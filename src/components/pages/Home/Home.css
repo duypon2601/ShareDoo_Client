@@ -54,17 +54,27 @@
   height: 32px;
   border-radius: 50%;
   background-color: #eee;
+  
 }
 
 /* Hero Section */
 .group1-section1 {
-  background-image: url("/assets/images/hero.jpg");
+  position: relative;
+  width: 100%;
+  height: 560px; /* hoặc cao theo thiết kế */
+  overflow: hidden;
+  margin-top: -80px;
+  margin-bottom: 10px;
+}
+.group1-div13 {
+  background-image: url("../../../../public/img/home.png");
   background-size: cover;
   background-position: center;
-  padding: 100px 40px;
+  padding: 130px 200px;
   color: white;
   text-align: center;
 }
+
 
 .group1-text10 {
   font-size: 36px;
@@ -72,7 +82,7 @@
 }
 
 .group1-text11 {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 18px;
 }
 
@@ -231,6 +241,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: left;
   padding: 15px;
+  display: flex;
+  flex-direction: column;
 }
 
 .group1-listing-image {
@@ -242,6 +254,9 @@
 
 .group1-listing-details {
   padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .group1-listing-title {
@@ -272,6 +287,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: auto;
 }
 
 .group1-rating {
