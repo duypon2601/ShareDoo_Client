@@ -6,7 +6,7 @@ const HeroSection = () => {
   const navigate = useNavigate(); //
 
   const handleExploreClick = () => {
-    navigate("/products"); // ✅ Điều hướng đến trang Product List
+    navigate("/searchItems"); //  Điều hướng đến trang Product List
   };
 
   return (
