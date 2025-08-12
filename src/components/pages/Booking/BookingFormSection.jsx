@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../config/axios";
 import { message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { decodeToken } from "/src/utils/jwt2.js";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -35,23 +36,48 @@ export const BookingFormSection = (props) => {
 
     setLoading(true);
     try {
+      // Lấy token và decode userId từ token
+      const token = localStorage.getItem("token");
+      let userId = null;
+      // Dùng decodeToken đã import ở đầu file
+      const decoded = decodeToken(token) || {};
+      userId = decoded.userId;
+      if (!userId) {
+        message.error("Không lấy được userId từ token. Vui lòng đăng nhập lại.");
+        setLoading(false);
+        return;
+      }
       const payload = {
-        userId: 4,
+        userId,
         productId: product.productId,
         startDate: startDate.format("YYYY-MM-DDTHH:mm:ss"),
         endDate: endDate.format("YYYY-MM-DDTHH:mm:ss"),
-        totalPrice: product.pricePerDay,
-        status: "pending",
+        totalPrice: Number(product.pricePerDay),
       };
 
-      const response = await api.post("/api/rentals", payload);
+      // Log payload để kiểm tra dữ liệu gửi lên
+      console.log("Booking payload:", payload);
+      // Lấy token từ localStorage
+      const response = await api.post("/api/rentals", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.data?.paymentUrl) {
         window.location.href = response.data.paymentUrl;
       } else {
         message.success("Rental created, but no payment URL found.");
       }
     } catch (err) {
-      message.error("Error during booking. Please try again.");
+      // Log chi tiết lỗi backend trả về (nếu có)
+      if (err.response) {
+        console.error("API error response:", err.response.data);
+        message.error(
+          err.response.data?.message || "Error during booking. Please try again."
+        );
+      } else {
+        message.error("Error during booking. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
