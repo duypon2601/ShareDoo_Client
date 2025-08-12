@@ -72,6 +72,7 @@ const Header = () => {
 
   const menuItems = [
     { key: "profile", label: "Profile" },
+    { key: "Wallet", label: "Wallet" },
     { key: "logout", label: "Logout" },
   ];
 
@@ -146,13 +147,10 @@ const Header = () => {
                 items: [
                   { key: "listItem", label: "List-Item" },
                   { key: "List New Item", label: "List-New-Item" },
-                  { key: "rental-requests", label: "Rental-Requests" },
                 ],
                 onClick: ({ key }) => {
                   if (key === "listItem") navigate("/listItem");
                   else if (key === "List New Item") navigate("/ListNewItem");
-                  else if (key === "rental-requests")
-                    navigate("/rental-requests");
                 },
               }}
               trigger={["hover"]}
@@ -202,7 +200,6 @@ const Header = () => {
             >
               Dashboards
             </div>
-            
           </>
         )}
       </Space>
@@ -243,12 +240,12 @@ const Header = () => {
           </Button>
         </Tooltip>
 
-        <Tooltip title="Search">
+        {/* <Tooltip title="Search">
           <SearchOutlined
             style={{ fontSize: 20, cursor: "pointer", color: "#374151" }}
             onClick={() => setShowSearch(true)}
           />
-        </Tooltip>
+        </Tooltip> */}
 
         {showSearch && (
           <div
@@ -295,23 +292,24 @@ const Header = () => {
           </div>
         )}
 
-        <Tooltip title="Notifications">
+        {/* <Tooltip title="Notifications">
           <Badge dot>
             <BellOutlined style={{ fontSize: 18, color: "#374151" }} />
           </Badge>
-        </Tooltip>
+        </Tooltip> */}
 
-        <Tooltip title="Messages">
+        {/* <Tooltip title="Messages">
           <Badge count={3} size="small" offset={[-2, 2]}>
             <MessageOutlined style={{ fontSize: 18, color: "#374151" }} />
           </Badge>
-        </Tooltip>
+        </Tooltip> */}
 
         <Dropdown
           menu={{
             items: menuItems,
             onClick: ({ key }) => {
               if (key === "profile") navigate("/profile");
+              if (key === "Wallet") navigate("/wallet");
               if (key === "logout") handleLogout();
             },
           }}
