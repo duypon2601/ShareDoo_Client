@@ -6,26 +6,26 @@ const CategoryList = () => {
   const navigate = useNavigate();
 
   const categories = [
-    { name: "Bicycles", icon: "🚲" },
-    { name: "Electronics", icon: "💻" },
-    { name: "Books", icon: "📚" },
-    { name: "Furniture", icon: "🛋️" },
-    { name: "Fashion", icon: "👕" },
-    { name: "More", icon: "⋯" },
+    { name: "Xe đạp", icon: "🚲" },
+    { name: "Điện tử", icon: "💻" },
+    { name: "Sách", icon: "📚" },
+    { name: "Nội thất", icon: "🛋️" },
+    { name: "Thời trang", icon: "👕" },
+    { name: "Xem thêm", icon: "⋯" },
   ];
 
   const handleCategoryClick = (categoryName) => {
-    if (categoryName === "More") {
+    if (categoryName === "Xem thêm") {
       navigate("/searchItems");
     } else {
-      console.log(`Navigating to ${categoryName} page`);
+      console.log(`Điều hướng đến trang danh mục ${categoryName}`);
       // navigate(`/products?category=${categoryName.toLowerCase()}`); // nếu cần route riêng
     }
   };
 
   return (
     <section className="group1-section2">
-      <div className="group1-text20">Popular Categories</div>
+      <div className="group1-text20">Danh mục phổ biến</div>
       <div
         className="group1-div15"
         style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}

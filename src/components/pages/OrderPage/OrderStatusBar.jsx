@@ -10,6 +10,15 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 
+// { key: "pending", label: "Chờ thanh toán" },
+// { key: "paid", label: "Đã thanh toán" },
+// { key: "confirmed", label: "Chờ xác nhận" },
+// { key: "packed", label: "Chờ gửi hàng" },
+// { key: "received", label: "Đã nhận hàng" },
+// { key: "return_wait", label: "Chờ gửi trả" },
+// { key: "returned", label: "Đã trả hàng" },
+// { key: "cancelled", label: "Đã hủy" },
+
 const ORDER_STATUS_STEPS = [
   {
     key: "pending",
@@ -31,40 +40,40 @@ const ORDER_STATUS_STEPS = [
   },
   {
     key: "packed",
-    label: "Đóng gói",
+    label: "Chờ gửi hàng",
     fullLabel: "Chờ bàn giao",
     icon: <GiftOutlined />,
   },
   {
     key: "received",
-    label: "Đã nhận",
+    label: "Đã nhận hàng",
     fullLabel: "Đã bàn giao",
     icon: <TruckOutlined />,
   },
   {
     key: "return_wait",
-    label: "Chờ trả",
+    label: "Chờ trả hàng",
     fullLabel: "Chờ gửi trả",
     icon: <UndoOutlined />,
   },
   {
     key: "completed",
-    label: "Hoàn tất",
+    label: "Đã trả hàng",
     fullLabel: "Đã trả hàng",
     icon: <CheckCircleOutlined />,
   },
   {
     key: "cancelled",
-    label: "Hủy",
+    label: "Đã hủy",
     fullLabel: "Đã hủy",
     icon: <CloseCircleOutlined />,
   },
-  {
-    key: "rejected",
-    label: "Từ chối",
-    fullLabel: "Bị từ chối",
-    icon: <CloseCircleOutlined />,
-  },
+  // {
+  //   key: "rejected",
+  //   label: "Từ chối",
+  //   fullLabel: "Bị từ chối",
+  //   icon: <CloseCircleOutlined />,
+  // },
 ];
 
 function getOrderStepIndex(status) {
@@ -82,11 +91,11 @@ const OrderStatusBar = ({ status }) => {
         current={current}
         style={{
           margin: "12px 0",
-          maxWidth: 1000,
-          padding: "12px 20px",
+          maxWidth: 2000,
+          padding: "12px 10px",
           background: "#fff",
           borderRadius: "10px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+          boxShadow: "0 4px 2px rgba(0, 0, 0, 0.05)",
           animation: "fadeIn 0.5s ease-in",
         }}
         items={ORDER_STATUS_STEPS.map((step, index) => ({
