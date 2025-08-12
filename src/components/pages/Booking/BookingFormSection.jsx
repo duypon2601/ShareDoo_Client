@@ -1,10 +1,19 @@
 import { CalendarOutlined, StarOutlined } from "@ant-design/icons";
-import { Button, Col, DatePicker, Input, Radio, Row, Typography } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Input,
+  Radio,
+  Row,
+  Typography,
+  message,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import api from "../../config/axios";
-import { message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { decodeToken } from "/src/utils/jwt2.js";
+import moment from "moment";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -17,6 +26,8 @@ export const BookingFormSection = (props) => {
   const [deliveryMethod, setDeliveryMethod] = useState(1);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rentalDays, setRentalDays] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +39,22 @@ export const BookingFormSection = (props) => {
     }
   }, [paramProductId, product]);
 
+  // Disable ngày trước ngày hôm nay
+  const disabledDate = (current) => {
+    return current && current < moment().startOf("day");
+  };
+
+  // Tính số ngày thuê khi startDate hoặc endDate thay đổi
+  useEffect(() => {
+    if (startDate && endDate) {
+      const days =
+        endDate.startOf("day").diff(startDate.startOf("day"), "days") + 1;
+      setRentalDays(days > 0 ? days : 0);
+    } else {
+      setRentalDays(0);
+    }
+  }, [startDate, endDate]);
+
   const handleProceedToPayment = async () => {
     if (!product || !startDate || !endDate) {
       message.error("Please complete all required fields.");
@@ -36,44 +63,47 @@ export const BookingFormSection = (props) => {
 
     setLoading(true);
     try {
-      // Lấy token và decode userId từ token
       const token = localStorage.getItem("token");
-      let userId = null;
-      // Dùng decodeToken đã import ở đầu file
       const decoded = decodeToken(token) || {};
-      userId = decoded.userId;
+      const userId = decoded.userId;
+
       if (!userId) {
-        message.error("Không lấy được userId từ token. Vui lòng đăng nhập lại.");
+        message.error(
+          "Không lấy được userId từ token. Vui lòng đăng nhập lại."
+        );
         setLoading(false);
         return;
       }
+
       const payload = {
         userId,
         productId: product.productId,
         startDate: startDate.format("YYYY-MM-DDTHH:mm:ss"),
         endDate: endDate.format("YYYY-MM-DDTHH:mm:ss"),
-        totalPrice: Number(product.pricePerDay),
+        totalPrice: Number(product.pricePerDay) * rentalDays,
+        deliveryMethod,
+        notes,
       };
 
-      // Log payload để kiểm tra dữ liệu gửi lên
       console.log("Booking payload:", payload);
-      // Lấy token từ localStorage
+
       const response = await api.post("/api/rentals", payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (response.data?.paymentUrl) {
         window.location.href = response.data.paymentUrl;
       } else {
         message.success("Rental created, but no payment URL found.");
       }
     } catch (err) {
-      // Log chi tiết lỗi backend trả về (nếu có)
       if (err.response) {
         console.error("API error response:", err.response.data);
         message.error(
-          err.response.data?.message || "Error during booking. Please try again."
+          err.response.data?.message ||
+            "Error during booking. Please try again."
         );
       } else {
         message.error("Error during booking. Please try again.");
@@ -90,6 +120,14 @@ export const BookingFormSection = (props) => {
       </Title>
     );
   }
+
+  // Tính phí dịch vụ 10% của tổng tiền thuê
+  const serviceFee =
+    rentalDays > 0 ? Math.round(product.pricePerDay * rentalDays * 0.1) : 0;
+  const rentalPrice = rentalDays > 0 ? product.pricePerDay * rentalDays : 0;
+  // Bỏ phí giao hàng
+  // const deliveryFee = deliveryMethod === 2 ? 10000 : 0;
+  const totalPrice = rentalPrice + serviceFee;
 
   return (
     <div
@@ -132,6 +170,7 @@ export const BookingFormSection = (props) => {
                     suffixIcon={<CalendarOutlined />}
                     value={startDate}
                     onChange={setStartDate}
+                    disabledDate={disabledDate}
                   />
                 </Col>
                 <Col span={12}>
@@ -141,6 +180,7 @@ export const BookingFormSection = (props) => {
                     suffixIcon={<CalendarOutlined />}
                     value={endDate}
                     onChange={setEndDate}
+                    disabledDate={disabledDate}
                   />
                 </Col>
               </Row>
@@ -160,13 +200,13 @@ export const BookingFormSection = (props) => {
                     Pick up the item from the owner's location
                   </Text>
                 </Radio>
-                <Radio style={{ display: "block" }} value={2}>
+                {/* <Radio style={{ display: "block" }} value={2}>
                   <Text strong>Delivery Service (+10.000 ₫)</Text>
                   <br />
                   <Text type="secondary">
                     Get it delivered to your doorstep
                   </Text>
-                </Radio>
+                </Radio> */}
               </Radio.Group>
             </div>
 
@@ -213,7 +253,9 @@ export const BookingFormSection = (props) => {
               }}
             >
               <Title level={3} style={{ margin: 0 }}>
-                {product?.pricePerDay || 75}
+                {product?.pricePerDay
+                  ? product.pricePerDay.toLocaleString("vi-VN") + " ₫"
+                  : "0 ₫"}
               </Title>
               <Text type="secondary" style={{ marginLeft: "8px" }}>
                 / day
@@ -268,10 +310,12 @@ export const BookingFormSection = (props) => {
               <Title level={5}>Price Breakdown</Title>
               <Row style={{ marginTop: "8px" }}>
                 <Col span={12}>
-                  <Text>3 days rental</Text>
+                  <Text>
+                    {rentalDays} day{rentalDays > 1 ? "s" : ""} rental
+                  </Text>
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>225.000 ₫</Text>
+                  <Text>{rentalPrice.toLocaleString("vi-VN")} ₫</Text>
                 </Col>
               </Row>
               <Row style={{ marginTop: "8px" }}>
@@ -279,17 +323,10 @@ export const BookingFormSection = (props) => {
                   <Text>Service fee</Text>
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>22.500 ₫</Text>
+                  <Text>{serviceFee.toLocaleString("vi-VN")} ₫</Text>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "8px" }}>
-                <Col span={12}>
-                  <Text>Delivery fee</Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>10.000 ₫</Text>
-                </Col>
-              </Row>
+              {/* Delivery fee đã bỏ, không hiển thị */}
               <Row
                 style={{
                   borderTop: "1px solid #f0f0f0",
@@ -302,7 +339,7 @@ export const BookingFormSection = (props) => {
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
                   <Title level={4} style={{ margin: 0 }}>
-                    257.500 ₫
+                    {totalPrice.toLocaleString("vi-VN")} ₫
                   </Title>
                 </Col>
               </Row>

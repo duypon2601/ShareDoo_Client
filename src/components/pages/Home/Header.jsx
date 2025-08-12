@@ -52,7 +52,7 @@ const Header = () => {
 
     message.info(`Chuyển sang chế độ ${newMode ? "Quản lý" : "Người dùng"}`);
 
-    //  Navigate theo chế độ mới
+    // Navigate theo chế độ mới
     if (newMode) {
       navigate("/rental-requests"); // Admin
     } else {
@@ -71,9 +71,9 @@ const Header = () => {
   };
 
   const menuItems = [
-    { key: "profile", label: "Profile" },
-    { key: "Wallet", label: "Wallet" },
-    { key: "logout", label: "Logout" },
+    { key: "profile", label: "Hồ Sơ" },
+    { key: "Wallet", label: "Ví" },
+    { key: "logout", label: "Đăng Xuất" },
   ];
 
   const menuItemStyle = {
@@ -132,7 +132,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Home
+              Trang Chủ
             </div>
             <div
               style={menuItemStyle}
@@ -140,13 +140,13 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Search Help
+              Tìm Kiếm
             </div>
             <Dropdown
               menu={{
                 items: [
-                  { key: "listItem", label: "List-Item" },
-                  { key: "List New Item", label: "List-New-Item" },
+                  { key: "listItem", label: "Danh Sách Sản Phẩm" },
+                  { key: "List New Item", label: "Sản Phẩm Mới" },
                 ],
                 onClick: ({ key }) => {
                   if (key === "listItem") navigate("/listItem");
@@ -161,7 +161,7 @@ const Header = () => {
                 onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
                 onMouseLeave={(e) => (e.target.style.color = "#374151")}
               >
-                Product
+                Sản Phẩm
                 <DownOutlined style={{ fontSize: 10, marginLeft: 4 }} />
               </div>
             </Dropdown>
@@ -174,7 +174,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Listings
+              Danh Sách
             </div>
             <div
               style={menuItemStyle}
@@ -182,7 +182,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Orders
+              Đơn Hàng
             </div>
             <div
               style={menuItemStyle}
@@ -190,7 +190,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Rental
+              Thuê
             </div>
             <div
               style={menuItemStyle}
@@ -198,7 +198,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Dashboards
+              Bảng Điều Khiển
             </div>
           </>
         )}
@@ -236,73 +236,11 @@ const Header = () => {
               e.target.style.boxShadow = "none";
             }}
           >
-            {isAdminView ? "Admin" : "User"}
+            {isAdminView ? "Quản Lý" : "Người Dùng"}
           </Button>
         </Tooltip>
 
-        {/* <Tooltip title="Search">
-          <SearchOutlined
-            style={{ fontSize: 20, cursor: "pointer", color: "#374151" }}
-            onClick={() => setShowSearch(true)}
-          />
-        </Tooltip> */}
-
-        {showSearch && (
-          <div
-            style={{
-              position: "absolute",
-              top: 36,
-              right: 80,
-              background: "#fff",
-              borderRadius: 24,
-              boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-              padding: "4px 12px 4px 16px",
-              display: "flex",
-              alignItems: "center",
-              zIndex: 2000,
-              minWidth: 260,
-              border: "1px solid #e0e0e0",
-            }}
-          >
-            <input
-              autoFocus
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={handleSearchInputKeyDown}
-              placeholder="Tìm kiếm..."
-              style={{
-                border: "none",
-                outline: "none",
-                fontSize: 16,
-                background: "transparent",
-                width: 180,
-                padding: "6px 0",
-              }}
-            />
-            <Button
-              icon={<CloseOutlined />}
-              onClick={() => {
-                setShowSearch(false);
-                setSearchValue("");
-              }}
-              type="text"
-              style={{ marginLeft: 4, borderRadius: "50%", color: "#888" }}
-            />
-          </div>
-        )}
-
-        {/* <Tooltip title="Notifications">
-          <Badge dot>
-            <BellOutlined style={{ fontSize: 18, color: "#374151" }} />
-          </Badge>
-        </Tooltip> */}
-
-        {/* <Tooltip title="Messages">
-          <Badge count={3} size="small" offset={[-2, 2]}>
-            <MessageOutlined style={{ fontSize: 18, color: "#374151" }} />
-          </Badge>
-        </Tooltip> */}
+        {/* (Search and Notifications commented out, keep as is or remove) */}
 
         <Dropdown
           menu={{

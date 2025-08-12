@@ -7,18 +7,18 @@ const HowItWorks = () => {
 
   const steps = [
     {
-      title: "Find & Request",
-      description: "Search & send a rental request for the items you need",
+      title: "Tìm & Yêu cầu",
+      description: "Tìm kiếm và gửi yêu cầu thuê những món bạn cần",
       icon: "🔍",
     },
     {
-      title: "Pick Up or Deliver",
-      description: "Arrange pickup or delivery with the owner",
+      title: "Nhận hàng hoặc Giao hàng",
+      description: "Sắp xếp nhận hàng hoặc giao hàng với chủ sở hữu",
       icon: "🤝",
     },
     {
-      title: "Return & Review",
-      description: "Return the item and share your experience",
+      title: "Trả hàng & Đánh giá",
+      description: "Trả lại món đồ và chia sẻ trải nghiệm của bạn",
       icon: "⭐",
     },
   ];
@@ -28,8 +28,12 @@ const HowItWorks = () => {
   };
 
   return (
-    <section className="group1-section4" onClick={handleClick} style={{ cursor: "pointer" }}>
-      <div className="group1-text42">How It Works</div>
+    <section
+      className="group1-section4"
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
+    >
+      <div className="group1-text42">Cách Thức Hoạt Động</div>
       <div className="group1-div50">
         {steps.map((step, index) => (
           <div key={index} className={`group1-div${51 + index * 2}`}>
@@ -41,7 +45,9 @@ const HowItWorks = () => {
               </div>
             </div>
             <span className={`group1-text${43 + index * 2}`}>{step.title}</span>
-            <span className={`group1-text${44 + index * 2}`}>{step.description}</span>
+            <span className={`group1-text${44 + index * 2}`}>
+              {step.description}
+            </span>
           </div>
         ))}
       </div>

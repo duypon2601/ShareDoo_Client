@@ -7,6 +7,7 @@ const FeaturedListing = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   const handleProductClick = (id) => {
     navigate(`/product/${id}`);
   };
@@ -18,15 +19,15 @@ const FeaturedListing = () => {
         console.log("API response:", response.data);
 
         if (Array.isArray(response.data.content)) {
-          // Lấy 4 sản phẩm đầu tiên
-          const topFour = response.data.content.slice(0, 5);
-          setListings(topFour);
+          // Lấy 5 sản phẩm đầu tiên
+          const topFive = response.data.content.slice(0, 5);
+          setListings(topFive);
         } else {
           console.warn("API không trả về content dạng mảng, set listings = []");
           setListings([]);
         }
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Lỗi khi lấy sản phẩm:", error);
         setListings([]);
       } finally {
         setLoading(false);
@@ -40,9 +41,9 @@ const FeaturedListing = () => {
     return (
       <section className="group1-section3">
         <div className="group1-section-header">
-          <div className="group1-text21">Featured Listings</div>
+          <div className="group1-text21">Sản phẩm nổi bật</div>
         </div>
-        <p>Loading...</p>
+        <p>Đang tải...</p>
       </section>
     );
   }
@@ -50,7 +51,7 @@ const FeaturedListing = () => {
   return (
     <section className="group1-section3">
       <div className="group1-section-header">
-        <div className="group1-text21">Featured Listings</div>
+        <div className="group1-text21">Sản phẩm nổi bật</div>
       </div>
       <div className="group1-div24">
         {listings.length > 0 ? (
@@ -68,7 +69,7 @@ const FeaturedListing = () => {
                 <div className="group1-listing-title">
                   <span>{listing.name}</span>
                   <span className="group1-price">
-                    {listing.pricePerDay?.toLocaleString()}đ/day
+                    {listing.pricePerDay?.toLocaleString()} ₫/ngày
                   </span>
                 </div>
                 <div className="group1-location">
@@ -84,7 +85,7 @@ const FeaturedListing = () => {
                       handleProductClick(listing.productId);
                     }}
                   >
-                    <span>Rent Now</span>
+                    <span>Thuê ngay</span>
                   </button>
                 </div>
               </div>
