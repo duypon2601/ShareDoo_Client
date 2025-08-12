@@ -37,3 +37,11 @@ export const requestWithdraw = (amount, description) => {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
+
+// Tạo ví cho user hiện tại
+export const createWallet = () => {
+  const token = localStorage.getItem('token');
+  return axios.post('/api/wallet/create', null, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
