@@ -48,8 +48,8 @@ const OrdersSection = () => {
   return (
     <div
       style={{
-        width: "100vw",
-        padding: "40px 0",
+        width: "99vw",
+        padding: "30px 20px",
         background: "linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%)",
         minHeight: "100vh",
         boxSizing: 'border-box',
