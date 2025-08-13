@@ -30,10 +30,16 @@ export const creditByOrderCode = ({ orderCode, status, amount, receiverUserId })
   });
 };
 
-export const requestWithdraw = (amount, description) => {
+export const requestWithdraw = (amount, description, paymentMethodId, walletId, userId) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/withdraw', null, {
-    params: { amount, description },
+  return axios.post('/api/withdrawals/request', null, {
+    params: {
+      userId,
+      walletId,
+      paymentMethodId,
+      amount,
+      description
+    },
     headers: { Authorization: `Bearer ${token}` }
   });
 };

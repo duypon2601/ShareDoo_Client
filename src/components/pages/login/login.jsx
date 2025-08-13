@@ -48,12 +48,13 @@ const Login = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/api/users", {
+      await api.post("/api/users/register", {
         name,
         email,
         address,
         username,
         password,
+        role: "USER",
       });
       alert("Đăng ký thành công!");
       setIsLogin(true);

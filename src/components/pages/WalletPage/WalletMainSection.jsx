@@ -23,6 +23,7 @@ const WalletMainSection = () => {
   const [amount, setAmount] = useState(0);
   const [desc, setDesc] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   // Thêm state cho modal liên kết tài khoản
   const [linkAccountModal, setLinkAccountModal] = useState(false);
@@ -139,13 +140,23 @@ const WalletMainSection = () => {
   };
 
   const handleWithdraw = async () => {
+    if (!selectedPaymentMethod) {
+      message.error("Vui lòng chọn tài khoản nhận tiền.");
+      return;
+    }
     setActionLoading(true);
     try {
-      await requestWithdraw(amount, desc);
+      await requestWithdraw(
+        amount,
+        desc,
+        selectedPaymentMethod,
+        wallet?.walletId || wallet?.id,
+        wallet?.userId || (wallet?.user && wallet.user.id)
+      );
       setWithdrawModal(false);
       setAmount(0);
       setDesc("");
-      await requestWithdraw(amount, desc);
+      setSelectedPaymentMethod(null);
       Modal.success({
         title: 'Withdrawal Request Sent',
         content: 'Your withdrawal request has been submitted and is pending admin approval.',
@@ -153,6 +164,7 @@ const WalletMainSection = () => {
           setWithdrawModal(false);
           setAmount(0);
           setDesc("");
+          setSelectedPaymentMethod(null);
           fetchData();
         }
       });
@@ -216,6 +228,26 @@ const WalletMainSection = () => {
         placeholder="Amount (VND)"
         style={{ marginBottom: 12 }}
       />
+      {/* Dropdown chọn phương thức thanh toán */}
+      <div style={{ marginBottom: 12 }}>
+        <label style={{ display: 'block', fontWeight: 500, marginBottom: 4 }}>Tài khoản nhận tiền</label>
+        <select
+          className="ant-input"
+          value={selectedPaymentMethod || ''}
+          onChange={e => setSelectedPaymentMethod(e.target.value)}
+          style={{ width: '100%', padding: 8 }}
+        >
+          <option value="" disabled>Chọn tài khoản ngân hàng</option>
+          {paymentMethods.map(pm => (
+            <option key={pm.id} value={pm.id}>
+              {pm.bankName} - ****{pm.accountNumber?.slice(-4)} ({pm.accountHolder})
+            </option>
+          ))}
+        </select>
+        {paymentMethods.length === 0 && (
+          <div style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Bạn chưa liên kết tài khoản ngân hàng nào.</div>
+        )}
+      </div>
       <Input.TextArea
         value={desc}
         onChange={e => setDesc(e.target.value)}

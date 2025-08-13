@@ -10,39 +10,12 @@ import {
   Table,
   Tag,
 } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getWithdrawalRequests } from "../../../api/withdrawalRequests";
 
 const { Option } = Select;
 
-const data = [
-  {
-    key: "1",
-    requestId: "#RQ-2024-001",
-    amount: 100000,
-    owner: "Sarah Connor",
-    status: "Active",
-    total: "$240.00",
-    date: "Dec 28, 2024",
-  },
-  {
-    key: "2",
-    requestId: "#RQ-2024-002",
-    amount: 20000,
-    owner: "Mike Johnson",
-    status: "Completed",
-    total: "$85.00",
-    date: "Dec 27, 2024",
-  },
-  {
-    key: "3",
-    requestId: "#RQ-2024-003",
-    amount: 30000,
-    owner: "Lisa Davis",
-    status: "Reported",
-    total: "$120.00",
-    date: "Dec 26, 2024",
-  },
-];
+
 
 const columns = [
   {
@@ -88,6 +61,26 @@ const columns = [
 ];
 
 export const WithdrawalRequestsSection = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    getWithdrawalRequests()
+      .then(res => {
+        // Map dữ liệu backend sang cấu trúc bảng FE
+        const mapped = res.data.map((item, idx) => ({
+          key: item.id || idx,
+          requestId: `#RQ-${item.id || idx}`,
+          amount: item.amount,
+          owner: item.user?.fullName || item.user?.username || 'Unknown',
+          status: item.status,
+          total: item.amount ? `${item.amount.toLocaleString()} VND` : '',
+          date: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '',
+        }));
+        setData(mapped);
+      })
+      .catch(() => setData([]));
+  }, []);
+
   return (
     <div style={{ width: "100%", position: "relative" }}>
       <Card
