@@ -8,11 +8,13 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input } from "antd";
 import React, { useEffect, useState } from "react";
-import { getWalletInfo, getWalletTransactions, createDepositWalletLink, requestWithdraw } from "../../../api/wallet";
+import { addPaymentMethod } from '../../../api/paymentMethod';
+import { getWalletInfo, getWalletTransactions, createDepositWalletLink, requestWithdraw, createWallet } from "../../../api/wallet";
 
 const { Title, Text, Paragraph } = Typography;
 
 const WalletMainSection = () => {
+  const [paymentMethods, setPaymentMethods] = useState([]);
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +23,57 @@ const WalletMainSection = () => {
   const [amount, setAmount] = useState(0);
   const [desc, setDesc] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+
+  // Thêm state cho modal liên kết tài khoản
+  const [linkAccountModal, setLinkAccountModal] = useState(false);
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
+  const [addBankLoading, setAddBankLoading] = useState(false);
+
+  console.log("WalletMainSection render, linkAccountModal:", linkAccountModal);
+
+  // Hàm xử lý xác nhận liên kết tài khoản ngân hàng
+  const handleAddBank = async () => {
+    if (!bankName || !accountNumber || !accountHolder) {
+      message.error("Vui lòng nhập đầy đủ thông tin tài khoản ngân hàng.");
+      return;
+    }
+    setAddBankLoading(true);
+    try {
+      await addPaymentMethod({
+        bankName,
+        accountNumber,
+        accountHolder,
+        walletId: wallet?.walletId || wallet?.id // lấy đúng trường id của wallet
+      });
+      message.success("Liên kết tài khoản ngân hàng thành công!");
+      setLinkAccountModal(false);
+      setBankName("");
+      setAccountNumber("");
+      setAccountHolder("");
+      fetchData();
+    } catch (e) {
+      message.error("Lỗi khi liên kết tài khoản. Vui lòng thử lại.");
+    } finally {
+      setAddBankLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
+    fetchPaymentMethods();
   }, []);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const res = await import('../../../api/paymentMethod').then(mod => mod.getPaymentMethods());
+      setPaymentMethods(res.data);
+    } catch {
+      setPaymentMethods([]);
+    }
+  }
 
   // Tự động reload khi quay lại tab
   useEffect(() => {
@@ -43,12 +92,15 @@ const WalletMainSection = () => {
     setLoading(true);
     try {
       const [walletRes, txRes] = await Promise.all([
-        getWalletInfo(),
+        getWalletInfo().catch(err => {
+          if (err.response && err.response.status === 404) return { data: null };
+          throw err;
+        }),
         getWalletTransactions(),
       ]);
       setWallet(walletRes.data);
       setTransactions(Array.isArray(txRes.data) ? txRes.data : []);
-    } catch (err) {
+    } catch {
       message.error("Failed to load wallet info");
     }
     setLoading(false);
@@ -88,13 +140,23 @@ const WalletMainSection = () => {
   };
 
   const handleWithdraw = async () => {
+    if (!selectedPaymentMethod) {
+      message.error("Vui lòng chọn tài khoản nhận tiền.");
+      return;
+    }
     setActionLoading(true);
     try {
-      await requestWithdraw(amount, desc);
+      await requestWithdraw(
+        amount,
+        desc,
+        selectedPaymentMethod,
+        wallet?.walletId || wallet?.id,
+        wallet?.userId || (wallet?.user && wallet.user.id)
+      );
       setWithdrawModal(false);
       setAmount(0);
       setDesc("");
-      await requestWithdraw(amount, desc);
+      setSelectedPaymentMethod(null);
       Modal.success({
         title: 'Withdrawal Request Sent',
         content: 'Your withdrawal request has been submitted and is pending admin approval.',
@@ -102,6 +164,7 @@ const WalletMainSection = () => {
           setWithdrawModal(false);
           setAmount(0);
           setDesc("");
+          setSelectedPaymentMethod(null);
           fetchData();
         }
       });
@@ -114,9 +177,6 @@ const WalletMainSection = () => {
     setActionLoading(false);
   };
 
-  if (loading) {
-    return <Spin size="large" style={{ margin: 40 }} />;
-  }
 
   // Popup xác nhận nạp tiền
   const DepositModal = (
@@ -168,6 +228,26 @@ const WalletMainSection = () => {
         placeholder="Amount (VND)"
         style={{ marginBottom: 12 }}
       />
+      {/* Dropdown chọn phương thức thanh toán */}
+      <div style={{ marginBottom: 12 }}>
+        <label style={{ display: 'block', fontWeight: 500, marginBottom: 4 }}>Tài khoản nhận tiền</label>
+        <select
+          className="ant-input"
+          value={selectedPaymentMethod || ''}
+          onChange={e => setSelectedPaymentMethod(e.target.value)}
+          style={{ width: '100%', padding: 8 }}
+        >
+          <option value="" disabled>Chọn tài khoản ngân hàng</option>
+          {paymentMethods.map(pm => (
+            <option key={pm.id} value={pm.id}>
+              {pm.bankName} - ****{pm.accountNumber?.slice(-4)} ({pm.accountHolder})
+            </option>
+          ))}
+        </select>
+        {paymentMethods.length === 0 && (
+          <div style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Bạn chưa liên kết tài khoản ngân hàng nào.</div>
+        )}
+      </div>
       <Input.TextArea
         value={desc}
         onChange={e => setDesc(e.target.value)}
@@ -369,9 +449,19 @@ const WalletMainSection = () => {
             <Button
               type="default"
               style={{ borderRadius: "16px", marginBottom: 16 }}
+              onClick={() => {
+                console.log("Click Link New Account");
+                setLinkAccountModal(true);
+          setTimeout(() => {
+            console.log("Sau setLinkAccountModal, state:", linkAccountModal);
+          }, 100);
+
+              }}
+              data-testid="link-new-account-btn"
             >
               Link New Account
             </Button>
+            {/* Modal được render ở đây, nhưng handleAddBank phải được khai báo phía trên trong function component */}
             <Card style={{ backgroundColor: "#e6f7ff", borderRadius: "16px" }}>
               <Row align="middle">
                 <Col>
@@ -388,8 +478,90 @@ const WalletMainSection = () => {
           </Card>
         </Col>
       </Row>
+      {/* Danh sách tài khoản ngân hàng đã liên kết */}
+      <div style={{ margin: '24px 0' }}>
+        <Title level={5}>Linked Bank Account</Title>
+        <div>
+          {paymentMethods.length === 0 ? (
+            <Text type="secondary">No linked bank account.</Text>
+          ) : (
+            paymentMethods.map((pm, idx) => (
+              <Card key={pm.id || idx} style={{ marginBottom: 12, borderRadius: 12 }}>
+                <Row align="middle">
+                  <Col>
+                    <BankOutlined style={{ fontSize: 40, color: "#1890ff" }} />
+                  </Col>
+                  <Col style={{ marginLeft: 16 }}>
+                    <Title level={5} style={{ margin: 0 }}>{pm.bankName}</Title>
+                    <Text>{pm.accountNumber ? `****${pm.accountNumber.slice(-4)}` : ''}</Text>
+                    <div><Text type="secondary">{pm.accountHolder}</Text></div>
+                  </Col>
+                  <Col style={{ marginLeft: "auto" }}>
+                    <CheckCircleOutlined style={{ fontSize: 24, color: "#52c41a" }} />
+                    <Text style={{ color: "#52c41a", marginLeft: 6 }}>Verified</Text>
+                  </Col>
+                </Row>
+              </Card>
+            ))
+          )}
+        </div>
+      </div>
+      {linkAccountModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.3)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 16,
+            padding: 32,
+            minWidth: 350,
+            boxShadow: '0 4px 32px rgba(0,0,0,0.15)',
+            position: 'relative',
+          }}>
+            <Title level={4} style={{ marginBottom: 16 }}>Liên kết tài khoản ngân hàng</Title>
+            <Input
+              placeholder="Tên ngân hàng"
+              value={bankName}
+              onChange={e => setBankName(e.target.value)}
+              style={{ marginBottom: 12 }}
+              disabled={addBankLoading}
+            />
+            <Input
+              placeholder="Số tài khoản"
+              value={accountNumber}
+              onChange={e => setAccountNumber(e.target.value)}
+              style={{ marginBottom: 12 }}
+              disabled={addBankLoading}
+            />
+            <Input
+              placeholder="Chủ tài khoản"
+              value={accountHolder}
+              onChange={e => setAccountHolder(e.target.value)}
+              style={{ marginBottom: 20 }}
+              disabled={addBankLoading}
+            />
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <Button onClick={() => setLinkAccountModal(false)} disabled={addBankLoading}>
+                Hủy
+              </Button>
+              <Button type="primary" loading={addBankLoading} onClick={handleAddBank}>
+                Xác nhận
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default WalletMainSection;

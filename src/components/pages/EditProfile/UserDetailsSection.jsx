@@ -12,8 +12,8 @@ import {
   Card,
 } from "antd";
 import { UploadOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
-import axios from "../../config/axios";
+
+import { getCurrentUser, updateUser } from "../../../api/user";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
@@ -33,27 +33,36 @@ const LocationPicker = ({ onMapClick }) => {
 };
 
 const UserDetailsSection = () => {
-  const user = useSelector((state) => state.user);
-  console.log("User Details Section - User:", user);
-
   const [formData, setFormData] = useState({
-    userId: user?.userId || null,
-    name: user?.name || "",
-    email: user?.email || "",
-    address: user?.address || "",
-    imageUrl: user?.imageUrl || "",
+    userId: null,
+    name: "",
+    email: "",
+    address: "",
+    imageUrl: "",
     lat: null,
     lng: null,
   });
 
+  useEffect(() => {
+    getCurrentUser()
+      .then((res) => {
+        const user = res.data.data;
+        setFormData((prev) => ({
+          ...prev,
+          userId: user.userId,
+          name: user.name || "",
+          email: user.email || "",
+          address: user.address || "",
+          imageUrl: user.imageUrl || "",
+        }));
+      })
+      .catch(() => {
+        setFormData((prev) => ({ ...prev, userId: null }));
+      });
+  }, []);
+
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
-  useEffect(() => {
-    if (!user?.userId || user?.userId === 0) {
-      message.warning("User ID is invalid. Please login again.");
-    }
-  }, [user]);
 
   const handleUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -108,6 +117,8 @@ const UserDetailsSection = () => {
   };
 
   const handleSave = async () => {
+    console.log('handleSave called', formData);
+
     try {
       if (!formData.userId || formData.userId === 0) {
         message.error("Invalid user ID. Cannot save.");
@@ -132,7 +143,9 @@ const UserDetailsSection = () => {
         imageUrl,
       };
 
-      await axios.put(`/api/users/${formData.userId}`, payload);
+      console.log('Sending payload:', payload);
+      await updateUser(formData.userId, payload);
+      console.log('Update success');
       message.success("Profile updated successfully.");
       setFile(null);
       setPreviewUrl(null);
