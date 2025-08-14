@@ -9,6 +9,8 @@ import {
   Image,
 } from "antd";
 import OrderStatusBar from "./OrderStatusBar";
+import ReviewModal from "./ReviewModal";
+import { getCurrentUser } from "../../../api/user";
 import React, { useEffect, useState } from "react";
 import axios from "../../config/axios";
 
@@ -17,6 +19,12 @@ const { Title, Text } = Typography;
 const OrdersSection = () => {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("ongoing");
+  const [reviewModal, setReviewModal] = useState({visible: false, productId: null});
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    getCurrentUser().then(res => setCurrentUser(res.data)).catch(() => setCurrentUser(null));
+  }, []);
 
   useEffect(() => {
     axios
@@ -87,7 +95,10 @@ const OrdersSection = () => {
           />
 
           <div style={{ marginTop: 40 }}>
-            {filteredOrders.map((order, idx) => (
+            {filteredOrders.map((order, idx) => {
+              // Kiểm tra đã review chưa
+              const reviewed = order.product?.reviews?.some(r => r.reviewerId === currentUser?.id);
+              return (
               <Card
                 key={order.id || idx}
                 style={{
@@ -283,13 +294,62 @@ const OrdersSection = () => {
                             Đã bàn giao
                           </Button>
                         )}
+                        {/* Nút đánh giá sản phẩm */}
+                        {order.status === "returned" && currentUser && !reviewed && (
+                          <Button
+                            type="primary"
+                            style={{
+                              borderRadius: "10px",
+                              padding: "8px 20px",
+                              fontWeight: 500,
+                              fontSize: 16,
+                              background: "linear-gradient(135deg, #52c41a 0%, #b7eb8f 100%)",
+                              marginTop: 16,
+                            }}
+                            onClick={() => {
+                              const productId = order.product?.id || order.productId;
+                              console.log('Opening review modal with:', { 
+                                orderId: order.id, 
+                                productId,
+                                orderProduct: order.product,
+                                hasProduct: !!order.product,
+                                productIdFromProduct: order.product?.id,
+                                productIdFromRoot: order.productId
+                              });
+                              setReviewModal({
+                                visible: true, 
+                                productId: productId,
+                                orderId: order.id
+                              });
+                            }}
+                          >
+                            Đánh giá sản phẩm
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                   </Col>
                 </Row>
               </Card>
-            ))}
+            );
+            })}
           </div>
+          <ReviewModal
+            visible={reviewModal.visible}
+            onClose={() =>
+              setReviewModal({
+                visible: false,
+                productId: null,
+                reviewerId: null,
+              })
+            }
+            productId={reviewModal.productId}
+            reviewerId={reviewModal.reviewerId}
+            onReviewSuccess={async () => {
+              const res = await axios.get("/api/rentals/list");
+              setOrders(res.data);
+            }}
+          />
         </Col>
       </Row>
     </div>
