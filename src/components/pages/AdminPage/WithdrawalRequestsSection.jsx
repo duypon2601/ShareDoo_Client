@@ -11,13 +11,15 @@ import {
   Tag,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { getWithdrawalRequests } from "../../../api/withdrawalRequests";
+import { getWithdrawalRequests, approveWithdrawal, rejectWithdrawal } from "../../../api/withdrawalRequests";
+import WithdrawalDetailPopup from "./WithdrawalDetailPopup";
 
 const { Option } = Select;
 
 
 
-const columns = [
+const columns = (onViewDetail) => [
+
   {
     title: "Request ID",
     dataIndex: "requestId",
@@ -56,22 +58,25 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    render: () => <Button type="link">View</Button>,
+    render: (_, record) => <span style={{color: '#1677ff', cursor: 'pointer'}} onClick={() => onViewDetail(record)} >View</span>,
   },
 ];
 
 export const WithdrawalRequestsSection = () => {
   const [data, setData] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [loading, setLoading] = useState(null);
 
-  useEffect(() => {
+  const fetchData = () => {
     getWithdrawalRequests()
       .then(res => {
-        // Map dữ liệu backend sang cấu trúc bảng FE
         const mapped = res.data.map((item, idx) => ({
+          ...item,
           key: item.id || idx,
           requestId: `#RQ-${item.id || idx}`,
           amount: item.amount,
-          owner: item.user?.fullName || item.user?.username || 'Unknown',
+          owner: item.userFullName || 'Unknown',
           status: item.status,
           total: item.amount ? `${item.amount.toLocaleString()} VND` : '',
           date: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '',
@@ -79,7 +84,39 @@ export const WithdrawalRequestsSection = () => {
         setData(mapped);
       })
       .catch(() => setData([]));
-  }, []);
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const handleViewDetail = (record) => {
+    setSelected(record);
+    setPopupVisible(true);
+  };
+  const handleClose = () => {
+    setPopupVisible(false);
+    setSelected(null);
+  };
+  const handleApprove = async (id) => {
+    setLoading("approve");
+    try {
+      await approveWithdrawal(id);
+      fetchData();
+      handleClose();
+    } finally {
+      setLoading(null);
+    }
+  };
+  const handleReject = async (id) => {
+    setLoading("reject");
+    try {
+      await rejectWithdrawal(id);
+      fetchData();
+      handleClose();
+    } finally {
+      setLoading(null);
+    }
+  };
+
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
@@ -225,7 +262,15 @@ export const WithdrawalRequestsSection = () => {
         </Col>
       </Row>
       <Card title="Withdrawal Requests" style={{ marginTop: 16 }}>
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table columns={columns(handleViewDetail)} dataSource={data} pagination={false} />
+<WithdrawalDetailPopup
+  visible={popupVisible}
+  onClose={handleClose}
+  withdrawal={selected}
+  onApprove={handleApprove}
+  onReject={handleReject}
+  loading={loading}
+/>
       </Card>
     </div>
   );
