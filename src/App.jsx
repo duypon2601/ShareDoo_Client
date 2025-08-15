@@ -17,6 +17,7 @@ import DashboardSection from "./components/pages/dashboardSection/DashboardSecti
 import ListNewItemPage from "./components/pages/ListNewItem/ListNewItemPage";
 import MainContentSection from "./components/pages/ListNewItem/MainContenSection";
 import SelectNewItemPage from "./components/pages/SelectNewItem/SelectNewItemPage";
+import SelectNewItem from "./components/pages/SelectNewItem/selectItem";
 import PricingPage from "./components/pages/PricingAvailability/PricingPage";
 import PricingAvailability from "./components/pages/PricingAvailability/PricingAvailabilitySection";
 import ReviewPublish from "./components/pages/ReviewPublish/ReviewPublishSection";
