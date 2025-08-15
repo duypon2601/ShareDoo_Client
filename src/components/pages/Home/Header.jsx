@@ -146,7 +146,7 @@ const Header = () => {
               menu={{
                 items: [
                   { key: "listItem", label: "Danh Sách Sản Phẩm" },
-                  { key: "List New Item", label: "Sản Phẩm Mới" },
+                  { key: "List New Item", label: "Đăng tin cho thuê" },
                 ],
                 onClick: ({ key }) => {
                   if (key === "listItem") navigate("/listItem");
@@ -174,7 +174,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Danh Sách
+              Tạo 
             </div>
             <div
               style={menuItemStyle}
@@ -186,7 +186,7 @@ const Header = () => {
             </div>
             <div
               style={menuItemStyle}
-              onClick={() => navigate("/dashboard-rental")}
+              onClick={() => navigate("/rental-requests")}
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >

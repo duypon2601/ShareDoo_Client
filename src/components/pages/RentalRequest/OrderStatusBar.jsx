@@ -36,7 +36,7 @@ const OrderStatusBar = ({ status }) => {
     <Steps
       size="small"
       current={current}
-      style={{ margin: "8px 0", maxWidth: 700 }}
+      style={{ margin: "10px 0", maxWidth: "100%" }}
       items={ORDER_STATUS_STEPS.map((step, index) => ({
         title: (
           <Tooltip title={step.fullLabel}>
