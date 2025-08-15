@@ -16,8 +16,7 @@ import DashboardSection from "./components/pages/dashboardSection/DashboardSecti
 // Item Creation Flow
 import ListNewItemPage from "./components/pages/ListNewItem/ListNewItemPage";
 import MainContentSection from "./components/pages/ListNewItem/MainContenSection";
-import SelectNewItemPage from "./components/pages/selectNewItem/SelectNewItemPage";
-import SelectNewItem from "./components/pages/selectNewItem/selectItem";
+import SelectNewItemPage from "./components/pages/SelectNewItem/SelectNewItemPage";
 import PricingPage from "./components/pages/PricingAvailability/PricingPage";
 import PricingAvailability from "./components/pages/PricingAvailability/PricingAvailabilitySection";
 import ReviewPublish from "./components/pages/ReviewPublish/ReviewPublishSection";
@@ -50,8 +49,8 @@ import Dashboards from "./components/pages/dashboardSection/DashBoards";
 import Rental from "./components/pages/RentalRequest/Request";
 import Admin from "./components/pages/AdminPage/Admin";
 import WithdrawalRequestsSection from "./components/pages/AdminPage/WithdrawalRequestsSection";
-import DashboardStatsSection from "./components/pages/AdminPage/DashboardStatsSection";     
-  
+import DashboardStatsSection from "./components/pages/AdminPage/DashboardStatsSection";
+
 const App = () => {
   return (
     <Router>
