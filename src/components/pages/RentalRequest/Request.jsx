@@ -38,8 +38,8 @@ const RentalRequestsSection = () => {
     <>
       <Header />
       <Row justify="center" style={{ minHeight: "60vh", alignItems: "center" }}>
-        <Col span={20}>
-          <Card style={{ marginTop: 32 }}>
+        <Col span={40}>
+          <Card >
             <Title level={3}>Đơn hàng đã xác nhận cho người cho thuê</Title>
             {loading ? (
               <Text>Đang tải dữ liệu...</Text>
