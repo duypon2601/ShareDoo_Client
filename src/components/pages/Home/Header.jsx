@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AppstoreOutlined,
@@ -25,17 +25,58 @@ import {
   message,
 } from "antd";
 import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { getCurrentUser } from "../../../api/user"; // Import API function
 
 const { Text } = Typography;
 
 const Header = () => {
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  // const [showSearch, setShowSearch] = useState(false);
+  // const [searchValue, setSearchValue] = useState("");
   const [isAdminView, setIsAdminView] = useState(
     localStorage.getItem("headerMode") === "admin"
   );
+  const [userId, setUserId] = useState(null); // State để lưu userId
+  const [imageUrl, setImageUrl] = useState(null); // State để lưu imageUrl từ API
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+
+  console.log("User from Redux:", user);
+
+  // Giải mã token và gọi API để lấy imageUrl
+  useEffect(() => {
+    let decodedUserId = null;
+    try {
+      if (user?.token) {
+        const decoded = jwtDecode(user.token);
+        decodedUserId = decoded.userId;
+        console.log("Decoded userId from token:", decodedUserId);
+        setUserId(decodedUserId);
+      } else {
+        console.log("No token found in Redux user");
+        message.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+      message.error("Không thể giải mã token. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    // Gọi API GET /api/users/{userId} để lấy imageUrl
+    if (decodedUserId) {
+      getCurrentUser(decodedUserId)
+        .then((res) => {
+          const userData = res.data.data;
+          console.log("User data from API:", userData);
+          setImageUrl(userData.imageUrl || null);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user data:", error);
+          message.error("Không thể lấy thông tin người dùng.");
+        });
+    }
+  }, [user?.token]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -60,15 +101,15 @@ const Header = () => {
     }
   };
 
-  const handleSearchInputKeyDown = (e) => {
-    if (e.key === "Enter" && searchValue.trim() !== "") {
-      navigate(
-        `/searchitems?keyword=${encodeURIComponent(searchValue.trim())}`
-      );
-      setShowSearch(false);
-      setSearchValue("");
-    }
-  };
+  // const handleSearchInputKeyDown = (e) => {
+  //   if (e.key === "Enter" && searchValue.trim() !== "") {
+  //     navigate(
+  //       `/searchitems?keyword=${encodeURIComponent(searchValue.trim())}`
+  //     );
+  //     setShowSearch(false);
+  //     setSearchValue("");
+  //   }
+  // };
 
   const menuItems = [
     { key: "profile", label: "Hồ Sơ" },
@@ -174,7 +215,7 @@ const Header = () => {
               onMouseEnter={(e) => (e.target.style.color = "#389e0d")}
               onMouseLeave={(e) => (e.target.style.color = "#374151")}
             >
-              Tạo 
+              Tạo
             </div>
             <div
               style={menuItemStyle}
@@ -217,7 +258,7 @@ const Header = () => {
             icon={<SwapOutlined />}
             onClick={toggleHeaderView}
             style={{
-              background: "linear-gradient(45deg, #a1bfa7,rgb(212, 195, 168))",
+              background: "linear-gradient(45deg, #a1bfa7, rgb(212, 195, 168))",
               border: "none",
               borderRadius: "20px",
               padding: "8px 16px",
@@ -240,8 +281,6 @@ const Header = () => {
           </Button>
         </Tooltip>
 
-        {/* (Search and Notifications commented out, keep as is or remove) */}
-
         <Dropdown
           menu={{
             items: menuItems,
@@ -254,10 +293,10 @@ const Header = () => {
           placement="bottomRight"
         >
           <Avatar
-            src={user.imageUrl || "/img/default-avatar.png"}
-            icon={!user.imageUrl && <UserOutlined />}
+            src={imageUrl || "/img/ShareDoo.png"} // Sử dụng imageUrl từ API
+            icon={!imageUrl && <UserOutlined />}
             style={{
-              backgroundColor: user.imageUrl ? "transparent" : "#a1bfa7",
+              backgroundColor: imageUrl ? "transparent" : "#a1bfa7",
               cursor: "pointer",
               width: 48,
               height: 48,
