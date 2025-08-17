@@ -47,7 +47,7 @@ const OrdersSection = () => {
   const cancelledStatus = ["cancelled", "rejected"];
 
   const filteredOrders = orders
-    .filter(order => currentUser && order.userId === currentUser.id)
+    .filter(order => currentUser && (order.userId === currentUser.id || order.user?.id === currentUser.id))
     .filter((order) => {
       if (activeTab === "ongoing") return ongoingStatus.includes(order.status);
       if (activeTab === "completed")
