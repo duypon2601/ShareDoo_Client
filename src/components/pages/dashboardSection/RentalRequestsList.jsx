@@ -48,7 +48,7 @@ const RentalRequestsList = () => {
     const token = localStorage.getItem('token');
     if (token) {
       setLoading(true);
-      api.get('/api/rentals/owner-list', {
+      api.get('/api/rental-requests', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
