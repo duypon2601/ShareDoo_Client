@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const baseUrl = "http://localhost:8080/";
-const baseUrl = "https://sharedoo-server.onrender.com/";
+const baseUrl = "http://localhost:8080/";
+// const baseUrl = "https://sharedoo-server.onrender.com/";
 
 // const lay api google 
 
@@ -17,6 +17,7 @@ const handleBefore = (config) => {
   if (token) {
     config.headers["Authorization"] = `Bearer ${token.replaceAll('"', "")}`;
   }
+  console.log('[Axios Request]', config);
   return config;
 };
 
@@ -26,6 +27,9 @@ const handleError = (error) => {
 };
 
 api.interceptors.request.use(handleBefore, handleError);
-api.interceptors.response.use((response) => response, handleError);
+api.interceptors.response.use((response) => {
+  console.log('[Axios Response]', response);
+  return response;
+}, handleError);
 
 export default api;
