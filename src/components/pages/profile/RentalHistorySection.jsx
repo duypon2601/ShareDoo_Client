@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -12,29 +12,64 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { getCurrentUser } from "../../../api/user";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const RentalHistorySection = () => {
   const navigate = useNavigate();
-
-  // Lấy thông tin user từ Redux store
   const user = useSelector((state) => state.user);
-
-  // Log ra console để kiểm tra
-  console.log("user", user);
-
+  const [userId, setUserId] = useState(null); // State để lưu userId
+  const [imageUrl, setImageUrl] = useState(null); // State để lưu imageUrl từ API
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [description, setDescription] = useState(
     "Computer Science student at Stanford University. Love sharing and renting items to help fellow students."
   );
   const [tempDescription, setTempDescription] = useState(description);
 
+  console.log("User from Redux:", user);
+
+  // Giải mã token và gọi API để lấy imageUrl
+  useEffect(() => {
+    let decodedUserId = null;
+    try {
+      if (user?.token) {
+        const decoded = jwtDecode(user.token);
+        decodedUserId = decoded.userId;
+        console.log("Decoded userId from token:", decodedUserId);
+        setUserId(decodedUserId);
+      } else {
+        console.log("No token found in Redux user");
+        message.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+      message.error("Không thể giải mã token. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    // Gọi API GET /api/users/{userId} để lấy imageUrl
+    if (decodedUserId) {
+      getCurrentUser(decodedUserId)
+        .then((res) => {
+          const userData = res.data.data;
+          console.log("User data from API:", userData);
+          setImageUrl(userData.imageUrl || null);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user data:", error);
+          message.error("Không thể lấy thông tin người dùng.");
+        });
+    }
+  }, [user?.token]);
+
   const handleSaveDescription = () => {
     setDescription(tempDescription);
     setIsEditingDesc(false);
-    message.success("Description updated!");
+    message.success("Cập nhật mô tả thành công!", 3);
   };
 
   const handleCancelEdit = () => {
@@ -43,7 +78,7 @@ const RentalHistorySection = () => {
   };
 
   const handleEditProfilePage = () => {
-    navigate("/edit-profile"); // 👉 chuyển hướng sang trang chỉnh sửa
+    navigate("/edit-profile");
   };
 
   return (
@@ -62,10 +97,7 @@ const RentalHistorySection = () => {
               <Image
                 width={100}
                 height={100}
-                src={
-                  user?.imageUrl ||
-                  "https://c.animaapp.com/LQrXRuVX/img/img@2x.png"
-                }
+                src={imageUrl || "/img/ShareDoo.png"}
                 style={{ borderRadius: "50%", objectFit: "cover" }}
                 preview={false}
               />
