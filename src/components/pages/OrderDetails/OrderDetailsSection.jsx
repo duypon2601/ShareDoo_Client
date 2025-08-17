@@ -3,7 +3,7 @@ import { Button, Card, Col, Image, Row, Tag, Typography } from "antd";
 import OrderStatusBar from "./OrderStatusBar";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "../../config/axios";
+import api from "../../config/axios";
 
 const { Title, Text } = Typography;
 
@@ -15,7 +15,7 @@ const OrderDetailsSection = () => {
   const [order, setOrder] = useState(null);
   useEffect(() => {
     if (id || orderCode) {
-      axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+      api.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
         .then(res => setOrder(res.data))
         .catch(() => setOrder(null));
     }
@@ -29,7 +29,7 @@ const OrderDetailsSection = () => {
     const statusParam = urlParams.get('status');
     if (orderCodeParam && statusParam === 'PAID') {
       console.log('[PAYMENT-STATUS] Gọi API cập nhật trạng thái:', { orderCode: orderCodeParam, status: 'PAID' });
-      axios.post('/api/rentals/payment-status', {
+      api.post('/api/rentals/payment-status', {
         orderCode: orderCodeParam,
         status: 'PAID'
       })
@@ -37,7 +37,7 @@ const OrderDetailsSection = () => {
         console.log('[PAYMENT-STATUS] Kết quả:', res.data);
         // Sau khi cập nhật, refetch lại đơn hàng
         if (id || orderCodeParam) {
-          axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCodeParam}`}`)
+          api.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCodeParam}`}`)
             .then(res => setOrder(res.data))
             .catch(() => setOrder(null));
         }
@@ -49,7 +49,7 @@ const OrderDetailsSection = () => {
       // Bình thường, chỉ refetch khi chuyển tab
       const handleVisibilityChange = () => {
         if (document.visibilityState === "visible" && (id || orderCode)) {
-          axios.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
+          api.get(`/api/rentals/detail?${id ? `id=${id}` : `orderCode=${orderCode}`}`)
             .then(res => setOrder(res.data))
             .catch(() => setOrder(null));
         }
@@ -79,9 +79,9 @@ const OrderDetailsSection = () => {
               style={{ margin: '12px 0' }}
               onClick={async () => {
                 try {
-                  await axios.post(`/api/rentals/mark-received?orderCode=${order.orderCode || order.id}`);
+                  await api.post(`/api/rentals/mark-received?orderCode=${order.orderCode || order.id}`);
                   // Refetch order detail
-                  const res = await axios.get(`/api/rentals/detail?${order.id ? `id=${order.id}` : `orderCode=${order.orderCode}`}`);
+                  const res = await api.get(`/api/rentals/detail?${order.id ? `id=${order.id}` : `orderCode=${order.orderCode}`}`);
                   setOrder(res.data);
                 } catch (err) {
                   window.alert('Có lỗi khi xác nhận đã nhận hàng!');

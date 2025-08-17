@@ -6,7 +6,7 @@ import Footer from "../Home/Footer";
 const { Title, Text } = Typography;
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../components/config/axios";
 import OrderStatusBar from "./OrderStatusBar";
 
 const RentalRequestsSection = () => {
@@ -20,7 +20,7 @@ const RentalRequestsSection = () => {
       setError("");
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("/api/rentals/owner-list?", {
+        const res = await api.get("/api/rentals/owner-list?", {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           withCredentials: true,
         });
@@ -64,7 +64,7 @@ const RentalRequestsSection = () => {
                           }
                           setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, markHandoverLoading: true } : o));
                           try {
-                            await axios.post(
+                            await api.post(
                               `/api/rentals/mark-handover?orderCode=${order.orderCode || order.id}`,
                               {},
                               {
@@ -73,7 +73,7 @@ const RentalRequestsSection = () => {
                               }
                             );
                             // Refetch orders
-                            const res = await axios.get("/api/rentals/owner-list?status=paid", {
+                            const res = await api.get("/api/rentals/owner-list?status=paid", {
                               headers: { Authorization: `Bearer ${token}` },
                               withCredentials: true,
                             });
@@ -99,7 +99,7 @@ const RentalRequestsSection = () => {
                               return;
                             }
                             try {
-                              await axios.post(`/api/rentals/mark-received?orderCode=${order.orderCode}`,
+                              await api.post(`/api/rentals/mark-received?orderCode=${order.orderCode}`,
                                 {},
                                 { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
                               setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, status: 'received' } : o));
@@ -120,7 +120,7 @@ const RentalRequestsSection = () => {
                               return;
                             }
                             try {
-                              await axios.post(`/api/rentals/mark-returned?orderCode=${order.orderCode}`,
+                              await api.post(`/api/rentals/mark-returned?orderCode=${order.orderCode}`,
                                 {},
                                 { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
                               setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, status: 'returned' } : o));

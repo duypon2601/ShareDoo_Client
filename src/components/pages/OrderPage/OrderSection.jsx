@@ -12,7 +12,7 @@ import OrderStatusBar from "./OrderStatusBar";
 import ReviewModal from "./ReviewModal";
 import { getCurrentUser } from "../../../api/user";
 import React, { useEffect, useState } from "react";
-import axios from "../../config/axios";
+import api from "../../config/axios";
 
 const { Title, Text } = Typography;
 
@@ -266,7 +266,7 @@ const OrdersSection = () => {
                                 )
                               );
                               try {
-                                await axios.post(
+                                await api.post(
                                   `/api/rentals/mark-handover?orderCode=${order.orderCode}`,
                                   {},
                                   {
@@ -276,7 +276,7 @@ const OrdersSection = () => {
                                 );
                                 window.alert("Đã xác nhận bàn giao thành công!");
                                 // Refresh orders list
-                                const res = await axios.get("/api/rentals/list");
+                                const res = await api.get("/api/rentals/list");
                                 setOrders(res.data);
                               } catch (err) {
                                 window.alert(
@@ -345,7 +345,7 @@ const OrdersSection = () => {
             }
             orderCode={reviewModal.orderCode}
             onReviewSuccess={async () => {
-              const res = await axios.get("/api/rentals/list");
+              const res = await api.get("/api/rentals/list");
               setOrders(res.data);
             }}
           />

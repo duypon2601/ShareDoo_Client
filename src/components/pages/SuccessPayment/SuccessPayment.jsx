@@ -13,7 +13,7 @@ import {
   Row,
   Typography,
 } from "antd";
-import axios from "axios";
+import api from "../../components/config/axios";
 
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
@@ -41,7 +41,7 @@ const SuccessPayment = () => {
     if (orderCodeParam && statusParam === "PAID") {
       if (isDeposit) {
         setIsWalletDeposit(true);
-        axios
+        api
           .post(
             "/api/wallet/credit-by-ordercode",
             {
@@ -65,7 +65,7 @@ const SuccessPayment = () => {
             );
           });
       } else {
-        axios
+        api
           .post(
             "/api/rentals/payment-status",
             {
