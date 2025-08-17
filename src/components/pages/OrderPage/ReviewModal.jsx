@@ -8,7 +8,7 @@ import { message } from "antd";
 import { createReview } from "../../../api/review.js";
 import { getCurrentUser } from "../../../api/user";
 
-const ReviewModal = ({ visible, onClose, productId, onReviewSuccess }) => {
+const ReviewModal = ({ visible, onClose, orderCode, onReviewSuccess }) => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
   const [fileList, setFileList] = useState([]);
@@ -50,7 +50,6 @@ const ReviewModal = ({ visible, onClose, productId, onReviewSuccess }) => {
   const handleOk = async () => {
     console.log('Bắt đầu xử lý gửi đánh giá...');
     console.log('Trạng thái currentUser:', currentUser);
-    console.log('productId:', productId);
     
     if (!currentUser || !currentUser.userId) {
       console.error('Lỗi: Không tìm thấy thông tin người dùng hoặc thiếu userId', {
@@ -62,11 +61,6 @@ const ReviewModal = ({ visible, onClose, productId, onReviewSuccess }) => {
       return;
     }
     
-    if (!productId) {
-      console.error('Lỗi: Không tìm thấy ID sản phẩm để đánh giá');
-      message.error('Không tìm thấy thông tin sản phẩm. Vui lòng thử lại sau!');
-      return;
-    }
 
     setLoading(true);
     let imgUrl = "";
@@ -77,7 +71,6 @@ const ReviewModal = ({ visible, onClose, productId, onReviewSuccess }) => {
     }
     
     console.log('Gửi đánh giá với dữ liệu:', { 
-      productId, 
       reviewerId: currentUser.userId, 
       rating, 
       hasImage: !!imgUrl 
@@ -86,11 +79,10 @@ const ReviewModal = ({ visible, onClose, productId, onReviewSuccess }) => {
     try {
       await createReview({
         comment,
-        productId,
         reviewerId: currentUser.userId, // Sử dụng userId từ currentUser
         rating,
         imgUrl,
-      });
+      }, orderCode);
       message.success("Đánh giá thành công!");
       setComment("");
       setRating(5);

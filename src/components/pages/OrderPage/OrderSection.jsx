@@ -317,9 +317,9 @@ const OrdersSection = () => {
                                 productIdFromRoot: order.productId
                               });
                               setReviewModal({
-                                visible: true, 
-                                productId: productId,
-                                orderId: order.id
+                                visible: true,
+                                orderCode: order.orderCode
+                                
                               });
                             }}
                           >
@@ -339,12 +339,10 @@ const OrdersSection = () => {
             onClose={() =>
               setReviewModal({
                 visible: false,
-                productId: null,
-                reviewerId: null,
+                orderCode: null,
               })
             }
-            productId={reviewModal.productId}
-            reviewerId={reviewModal.reviewerId}
+            orderCode={reviewModal.orderCode}
             onReviewSuccess={async () => {
               const res = await axios.get("/api/rentals/list");
               setOrders(res.data);
