@@ -97,7 +97,8 @@ const OrdersSection = () => {
           <div style={{ marginTop: 40 }}>
             {filteredOrders.map((order, idx) => {
               // Kiểm tra đã review chưa
-              const reviewed = order.product?.reviews?.some(r => r.reviewerId === currentUser?.id);
+              // reviewerId trên FE có thể là userId hoặc reviewerId tùy backend trả về
+              const reviewed = order.product?.reviews?.some(r => r.reviewerId === currentUser?.userId || r.userId === currentUser?.userId);
               return (
               <Card
                 key={order.id || idx}
