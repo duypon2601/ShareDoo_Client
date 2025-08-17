@@ -6,7 +6,7 @@ import Footer from "../Home/Footer";
 const { Title, Text } = Typography;
 
 import React, { useEffect, useState } from "react";
-import api from "../../config/axios";
+import api from "../components/config/axios";
 import OrderStatusBar from "./OrderStatusBar";
 
 const RentalRequestsSection = () => {
