@@ -6,7 +6,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleExploreClick = () => {
-    navigate("/searchItems"); // Điều hướng đến trang danh sách sản phẩm
+    navigate("/searchItems");
   };
 
   return (
@@ -27,7 +27,12 @@ const HeroSection = () => {
               <span className="group1-text12">Khám phá ngay</span>
             </button>
             <button className="group1-button11">
-              <span className="group1-text13">Đăng tin cho thuê</span>
+              <span
+                className="group1-text13"
+                onClick={() => navigate("/ListNewItem")}
+              >
+                Đăng tin cho thuê
+              </span>
             </button>
           </div>
         </div>
