@@ -1,5 +1,5 @@
 // service/geocoding.js
-import api from "../../components/config/axios";
+import api from "../../config/axios";
 
 export const getCoordinatesFromAddress = async (address) => {
     try {
