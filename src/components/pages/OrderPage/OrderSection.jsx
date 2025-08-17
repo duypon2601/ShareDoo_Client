@@ -27,7 +27,7 @@ const OrdersSection = () => {
   }, []);
 
   useEffect(() => {
-    axios
+    api
       .get("/api/rentals/list")
       .then((res) => setOrders(res.data))
       .catch(() => setOrders([]));
