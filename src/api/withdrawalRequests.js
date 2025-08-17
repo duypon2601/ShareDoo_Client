@@ -1,8 +1,8 @@
-import axios from 'axios';
+import api from '../components/config/axios';
 
 export const getWithdrawalRequests = () => {
   const token = localStorage.getItem('token');
-  return axios.get('/api/withdrawals/all', {
+  return api.get('/api/withdrawals/all', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -11,7 +11,7 @@ export const getWithdrawalRequests = () => {
 
 export const approveWithdrawal = (requestId) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/withdrawals/approve', null, {
+  return api.post('/api/withdrawals/approve', null, {
     params: { requestId },
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -19,7 +19,7 @@ export const approveWithdrawal = (requestId) => {
 
 export const rejectWithdrawal = (requestId) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/withdrawals/reject', null, {
+  return api.post('/api/withdrawals/reject', null, {
     params: { requestId },
     headers: { Authorization: `Bearer ${token}` }
   });
