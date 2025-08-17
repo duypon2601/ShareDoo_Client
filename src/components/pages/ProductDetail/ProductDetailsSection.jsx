@@ -171,7 +171,7 @@ export const ProductDetailsSection = ({ productId }) => {
             <Paragraph>• Pick-up and return in person</Paragraph>
           </Col>
         </Row>
-      </div>
+      {/* </div>
       <div style={{ marginTop: "32px" }}>
         <Title level={3}>User Reviews</Title>
         <div
@@ -205,15 +205,15 @@ export const ProductDetailsSection = ({ productId }) => {
             Excellent equipment! Everything was in perfect condition and Michael
             was very helpful in explaining the setup.
           </Paragraph>
-        </div>
-        <div
+        </div> */}
+        {/* <div
           style={{
             borderBottom: "1px solid #e8e8e8",
             paddingBottom: "16px",
             marginTop: "16px",
           }}
-        >
-          <Row align="middle">
+        > */}
+          {/* <Row align="middle">
             <Col>
               <Image
                 src="https://c.animaapp.com/raHFUeD0/img/img-10@2x.png"
@@ -241,7 +241,7 @@ export const ProductDetailsSection = ({ productId }) => {
             Great kit for professional shoots. The lenses were amazing and
             everything was well-maintained.
           </Paragraph>
-        </div>
+        </div> */}
       </div>
       <div style={{ marginTop: "32px" }}>
         <Title level={3}>Related Products</Title>
