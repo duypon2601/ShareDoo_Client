@@ -101,6 +101,8 @@ const WalletMainSection = () => {
       setWallet(walletRes.data);
       setTransactions(Array.isArray(txRes.data) ? txRes.data : []);
     } catch {
+      setWallet(null);
+      setTransactions([]);
       message.error("Failed to load wallet info");
     }
     setLoading(false);
@@ -259,6 +261,31 @@ const WalletMainSection = () => {
       </div>
     </Modal>
   );
+
+  if (wallet === null && !loading) {
+    return (
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
+        <Title level={3}>Bạn chưa có ví ShareDoo</Title>
+        <Paragraph>Hãy tạo ví để bắt đầu sử dụng các tính năng tài chính trên ShareDoo.</Paragraph>
+        <Button
+          type="primary"
+          size="large"
+          style={{ borderRadius: 12, marginTop: 16 }}
+          onClick={async () => {
+            try {
+              await createWallet();
+              message.success('Tạo ví thành công!');
+              fetchData();
+            } catch {
+              message.error('Không thể tạo ví. Vui lòng thử lại.');
+            }
+          }}
+        >
+          Tạo ví ngay
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: "100%", position: "relative" }}>

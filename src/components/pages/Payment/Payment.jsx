@@ -14,7 +14,7 @@ const Payment = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:8080/api/payment/payos-create-link`,
+          `https://sharedoo-server.onrender.com/api/payment/payos-create-link`,
           {
             method: "POST",
             headers: {
