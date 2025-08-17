@@ -33,6 +33,8 @@ const OrdersSection = () => {
       .catch(() => setOrders([]));
   }, []);
 
+
+
   const ongoingStatus = [
     "pending",
     "paid",
@@ -44,14 +46,16 @@ const OrdersSection = () => {
   const completedStatus = ["returned"];
   const cancelledStatus = ["cancelled", "rejected"];
 
-  const filteredOrders = orders.filter((order) => {
-    if (activeTab === "ongoing") return ongoingStatus.includes(order.status);
-    if (activeTab === "completed")
-      return completedStatus.includes(order.status);
-    if (activeTab === "cancelled")
-      return cancelledStatus.includes(order.status);
-    return true;
-  });
+  const filteredOrders = orders
+    .filter(order => currentUser && order.userId === currentUser.id)
+    .filter((order) => {
+      if (activeTab === "ongoing") return ongoingStatus.includes(order.status);
+      if (activeTab === "completed")
+        return completedStatus.includes(order.status);
+      if (activeTab === "cancelled")
+        return cancelledStatus.includes(order.status);
+      return false;
+    });
 
   return (
     <div
