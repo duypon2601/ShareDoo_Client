@@ -13,7 +13,7 @@ import {
   Row,
   Typography,
 } from "antd";
-import api from "../../components/config/axios";
+import api from "../../config/axios";
 
 const { Header, Footer, Content } = Layout;
 const { Title, Text } = Typography;
