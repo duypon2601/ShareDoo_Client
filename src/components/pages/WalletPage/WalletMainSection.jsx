@@ -6,7 +6,7 @@ import {
   DollarCircleOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input } from "antd";
+import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { addPaymentMethod } from '../../../api/paymentMethod';
 import { getWalletInfo, getWalletTransactions, createDepositWalletLink, requestWithdraw, createWallet } from "../../../api/wallet";
@@ -99,7 +99,10 @@ const WalletMainSection = () => {
         getWalletTransactions(),
       ]);
       setWallet(walletRes.data);
-      setTransactions(Array.isArray(txRes.data) ? txRes.data : []);
+      const filtered = Array.isArray(txRes.data)
+        ? txRes.data.filter(t => t && (t.status === 'SUCCESS' || t.status === 'FAILE'))
+        : [];
+      setTransactions(filtered);
     } catch {
       setWallet(null);
       setTransactions([]);
@@ -373,7 +376,7 @@ const WalletMainSection = () => {
         </Col>
         <Col span={24}>
           <Space>
-            <Button
+            {/* <Button
               type="primary"
               icon={<ArrowUpOutlined />}
               style={{ borderRadius: "16px", backgroundColor: "#a1bfa7", borderColor: "#a1bfa7" }}
@@ -388,7 +391,7 @@ const WalletMainSection = () => {
               onClick={() => setDepositModal(true)}
             >
               Add Funds
-            </Button>
+            </Button> */}
           </Space>
         </Col>
         <Col span={16}>
@@ -420,6 +423,11 @@ const WalletMainSection = () => {
                       <Col style={{ marginLeft: 16 }}>
                         <Title level={5}>{tx.description}</Title>
                         <Text type="secondary">{new Date(tx.createdAt).toLocaleString()}</Text>
+                        <div style={{ marginTop: 6 }}>
+                          <Tag color={tx.status === 'SUCCESS' ? 'green' : 'red'}>
+                            {tx.status}
+                          </Tag>
+                        </div>
                       </Col>
                       <Col style={{ marginLeft: "auto" }}>
                         <Text strong style={{ color: tx.type === "DEPOSIT" ? "#52c41a" : tx.type === "WITHDRAW" ? "#1890ff" : "#ff4d4f" }}>
