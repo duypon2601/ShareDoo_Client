@@ -9,14 +9,52 @@ const RentalRequestsList = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const handleMarkReceived = async (item) => {
+    const token = localStorage.getItem('token');
+    if (!item.orderCode) {
+      message.error('Thiếu thông tin orderCode');
+      return;
+    }
+    try {
+      await axios.post(`/api/rentals/mark-received?orderCode=${item.orderCode}`, null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRequests(reqs => reqs.map(r => r.id === item.id ? { ...r, status: 'received' } : r));
+      message.success('Đã xác nhận nhận hàng thành công');
+    } catch (e) {
+      message.error('Xác nhận nhận hàng thất bại');
+    }
+  };
+
+  const handleMarkReturned = async (item) => {
+    const token = localStorage.getItem('token');
+    if (!item.orderCode) {
+      message.error('Thiếu thông tin orderCode');
+      return;
+    }
+    try {
+      await axios.post(`/api/rentals/mark-returned?orderCode=${item.orderCode}`, null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRequests(reqs => reqs.map(r => r.id === item.id ? { ...r, status: 'returned' } : r));
+      message.success('Đã xác nhận trả hàng thành công');
+    } catch (e) {
+      message.error('Xác nhận trả hàng thất bại');
+    }
+  };
+
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setLoading(true);
-      axios.get('/api/rental-requests', {
+      axios.get('/api/rentals/owner-list', {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then(res => setRequests(res.data))
+        .then(res => {
+          console.log('RENTAL REQUESTS RESPONSE:', res.data);
+          setRequests(res.data);
+        })
         .catch(() => setRequests([]))
         .finally(() => setLoading(false));
     }
@@ -71,6 +109,20 @@ const RentalRequestsList = () => {
                 onClick={() => handleReject(item.id)}
               >
                 Decline
+              </Button>
+            ] : item.status === 'return_wait' ? [
+              <Button
+                type="primary"
+                onClick={() => handleMarkReceived(item)}
+              >
+                Đã nhận hàng
+              </Button>,
+              <Button
+                type="primary"
+                danger
+                onClick={() => handleMarkReturned(item)}
+              >
+                Đã trả hàng
               </Button>
             ] : [<Text type={item.status === 'confirmed' ? 'success' : 'danger'}>{item.status}</Text>]
           }

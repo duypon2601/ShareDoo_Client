@@ -18,6 +18,7 @@ const ProductDetail = () => {
         {id ? (
           <>
             <ProductDetailsSection productId={id} />
+            <UserReviewsSection productId={id} />
           </>
         ) : (
           <div>Product ID is missing.</div>
