@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // Auth Pages
@@ -43,6 +48,7 @@ import { ProductListSection } from "./components/pages/ProductList/ProductListSe
 import ProductDetail from "./components/pages/ProductDetail/ProductDetail";
 import Booking from "./components/pages/Booking/Booking";
 import Payment from "./components/pages/Payment/Payment";
+import SuccessPage from "./components/pages/SuccessPayment/SuccessPage";
 import SuccessPayment from "./components/pages/SuccessPayment/SuccessPayment";
 import OrdersSection from "./components/pages/OrderPage/OrderSection";
 import ConfirmPage from "./components/pages/Confirm/ConfirmPage";
@@ -121,7 +127,7 @@ const App = () => {
         <Route path="/payment" element={<Payment />} />
 
         {/* da keo api */}
-        <Route path="/successpayment" element={<SuccessPayment />} />
+        <Route path="/successpayment" element={<SuccessPage />} />
         <Route path="/orderpage" element={<OrderSectioPage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/wallet" element={<Wallet />} />
