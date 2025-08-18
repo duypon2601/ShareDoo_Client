@@ -91,27 +91,6 @@ const RentalRequestsSection = () => {
                     {order.status === 'return_wait' && (
                       <>
                         <button
-                          style={{ margin: '8px 8px 8px 0', background: '#1677ff', color: 'white', border: 'none', borderRadius: 4, padding: '6px 16px', cursor: 'pointer' }}
-                          onClick={async () => {
-                            const token = localStorage.getItem("token");
-                            if (!token) {
-                              window.alert("Bạn cần đăng nhập để thực hiện thao tác này.");
-                              return;
-                            }
-                            try {
-                              await api.post(`/api/rentals/mark-received?orderCode=${order.orderCode}`,
-                                {},
-                                { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
-                              setOrders((prev) => prev.map((o) => o.id === order.id ? { ...o, status: 'received' } : o));
-                              window.alert('Đã xác nhận nhận hàng thành công');
-                            } catch {
-                              window.alert('Xác nhận nhận hàng thất bại');
-                            }
-                          }}
-                        >
-                          Đã nhận hàng
-                        </button>
-                        <button
                           style={{ margin: '8px 0', background: '#ff4d4f', color: 'white', border: 'none', borderRadius: 4, padding: '6px 16px', cursor: 'pointer' }}
                           onClick={async () => {
                             const token = localStorage.getItem("token");

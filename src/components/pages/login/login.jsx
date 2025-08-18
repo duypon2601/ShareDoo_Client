@@ -35,12 +35,13 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       alert("Đăng nhập thành công!");
       console.log("Login response:", res.data);
-      if (res.data.role === "admin") {
+      const role = (res.data.role || "").toString().toUpperCase();
+      if (role === "ADMIN") {
         navigate("/admin");
       } else {
         navigate("/home");
       }
-    } catch (err) {
+    } catch {
       alert("Đăng nhập thất bại!");
     }
   };

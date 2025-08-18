@@ -1,6 +1,4 @@
-// Full working version of UserDetailsSection with improved UI and validation
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Col,
@@ -10,9 +8,8 @@ import {
   message,
   Typography,
   Card,
-} from "antd";
+} from "antd"; // Revert to antd
 import { UploadOutlined, DeleteOutlined } from "@ant-design/icons";
-
 import { getCurrentUser, updateUser } from "../../../api/user";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
@@ -20,6 +17,8 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { getCoordinatesFromAddress } from "../../../service/geocoding";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
 const { Title, Text } = Typography;
 
@@ -41,42 +40,103 @@ const UserDetailsSection = () => {
     imageUrl: "",
     lat: null,
     lng: null,
+    username: "",
+    password: "",
+    role: "USER",
+    createdAt: null,
+    updatedAt: null,
+    lastLoginAt: null,
+    active: true,
+    deleted: false,
+    verified: false,
   });
-
-  useEffect(() => {
-    getCurrentUser()
-      .then((res) => {
-        const user = res.data.data;
-        setFormData((prev) => ({
-          ...prev,
-          userId: user.userId,
-          name: user.name || "",
-          email: user.email || "",
-          address: user.address || "",
-          imageUrl: user.imageUrl || "",
-        }));
-      })
-      .catch(() => {
-        setFormData((prev) => ({ ...prev, userId: null }));
-      });
-  }, []);
 
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null); // Ref for file input
+  const user = useSelector((state) => state.user);
+
+  console.log("user", user);
+
+  useEffect(() => {
+    let decodedUserId = null;
+    try {
+      if (user?.token) {
+        const decoded = jwtDecode(user.token);
+        decodedUserId = decoded.userId;
+        console.log("Decoded userId from token:", decodedUserId);
+      }
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+      message.error("Invalid token.");
+    }
+
+    getCurrentUser()
+      .then((res) => {
+        const userData = res.data.data;
+        setFormData((prev) => ({
+          ...prev,
+          userId: decodedUserId || userData.userId || null,
+          name: userData.name || "",
+          email: userData.email || "",
+          address: userData.address || "",
+          imageUrl: userData.imageUrl || "",
+          username: userData.username || user.username || "",
+          password: userData.password || user.password || "",
+          role: userData.role || "USER",
+          createdAt: userData.createdAt || "2025-08-17T19:10:41.859Z",
+          updatedAt: userData.updatedAt || "2025-08-17T19:10:41.859Z",
+          lastLoginAt: userData.lastLoginAt || "2025-08-17T19:10:41.859Z",
+          active: userData.active !== undefined ? userData.active : true,
+          deleted:
+            userData.isDeleted !== undefined ? userData.isDeleted : false,
+          verified: userData.verified !== undefined ? userData.verified : false,
+        }));
+      })
+      .catch(() => {
+        setFormData((prev) => ({
+          ...prev,
+          userId: decodedUserId || null,
+          username: user.username || "",
+          password: user.password || "",
+          role: "USER",
+          createdAt: "2025-08-17T19:10:41.859Z",
+          updatedAt: "2025-08-17T19:10:41.859Z",
+          lastLoginAt: "2025-08-17T19:10:41.859Z",
+          active: true,
+          deleted: false,
+          verified: false,
+        }));
+        message.error("Failed to fetch user data.");
+      });
+  }, [user?.token]);
 
   const handleUpload = (e) => {
+    console.log("handleUpload triggered", e.target.files);
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile.size > 2 * 1024 * 1024) {
-        message.error("File size must not exceed 2MB.");
-        return;
-      }
-      setFile(selectedFile);
-      setPreviewUrl(URL.createObjectURL(selectedFile));
+    if (!selectedFile) {
+      console.log("No file selected");
+      message.error("No file selected.");
+      return;
     }
+    if (!selectedFile.type.startsWith("image/")) {
+      console.log("Invalid file type:", selectedFile.type);
+      message.error("Please select an image file.");
+      return;
+    }
+    if (selectedFile.size > 2 * 1024 * 1024) {
+      console.log("File too large:", selectedFile.size);
+      message.error("File size must not exceed 2MB.");
+      return;
+    }
+    setFile(selectedFile);
+    const preview = URL.createObjectURL(selectedFile);
+    setPreviewUrl(preview);
+    console.log("File selected:", selectedFile.name, "Preview URL:", preview);
   };
 
   const handleDeleteImage = () => {
+    console.log("handleDeleteImage triggered");
     setFile(null);
     setPreviewUrl(null);
     setFormData({ ...formData, imageUrl: "" });
@@ -92,7 +152,8 @@ const UserDetailsSection = () => {
       } else {
         message.error("Address not found!");
       }
-    } catch {
+    } catch (error) {
+      console.error("Search address error:", error);
       message.error("Failed to find address!");
     }
   };
@@ -111,28 +172,38 @@ const UserDetailsSection = () => {
           lng: latlng.lng,
         });
       }
-    } catch {
+    } catch (error) {
+      console.error("Map click error:", error);
       message.error("Failed to get address from map.");
     }
   };
 
   const handleSave = async () => {
-    console.log('handleSave called', formData);
+    console.log("handleSave called", formData);
 
     try {
       if (!formData.userId || formData.userId === 0) {
+        console.log("Invalid userId:", formData.userId);
         message.error("Invalid user ID. Cannot save.");
         return;
       }
 
       let imageUrl = formData.imageUrl;
       if (file) {
-        const storageRef = ref(
-          storage,
-          `avatars/${formData.userId}/${file.name}`
-        );
-        await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          const storageRef = ref(
+            storage,
+            `avatars/${formData.userId}/${Date.now()}_${file.name}`
+          );
+          console.log("Uploading to Firebase:", storageRef.fullPath);
+          const snapshot = await uploadBytes(storageRef, file);
+          imageUrl = await getDownloadURL(snapshot.ref);
+          console.log("Image uploaded, URL:", imageUrl);
+        } catch (error) {
+          console.error("Firebase upload error:", error);
+          message.error(`Failed to upload image: ${error.message}`);
+          return;
+        }
       }
 
       const payload = {
@@ -140,18 +211,43 @@ const UserDetailsSection = () => {
         name: formData.name,
         email: formData.email,
         address: formData.address,
-        imageUrl,
+        imageUrl: imageUrl || "",
+        location:
+          formData.lat && formData.lng
+            ? `${formData.lat},${formData.lng}`
+            : formData.location || "",
+        username: formData.username,
+        password: formData.password,
+        role: formData.role,
+        createdAt: formData.createdAt,
+        updatedAt: formData.updatedAt,
+        lastLoginAt: formData.lastLoginAt,
+        active: formData.active,
+        deleted: formData.deleted,
+        verified: formData.verified,
       };
 
-      console.log('Sending payload:', payload);
+      console.log("Sending payload to API:", payload);
       await updateUser(formData.userId, payload);
-      console.log('Update success');
+      console.log("Update success");
       message.success("Profile updated successfully.");
+      alert("Cập nhập thông tin thành công.");
       setFile(null);
       setPreviewUrl(null);
       setFormData({ ...formData, imageUrl });
-    } catch {
-      message.error("Failed to update profile.");
+    } catch (error) {
+      console.error("Save error:", error);
+      message.error(`Failed to update profile: ${error.message}`);
+    }
+  };
+
+  const triggerFileInput = () => {
+    console.log("triggerFileInput called");
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    } else {
+      console.error("File input ref is not available");
+      message.error("File input is not available.");
     }
   };
 
@@ -170,8 +266,9 @@ const UserDetailsSection = () => {
         <Row gutter={16} align="middle">
           <Col>
             <Avatar
+              key={previewUrl || formData.imageUrl}
               size={96}
-              src={previewUrl || formData.imageUrl || "/img/default-avatar.png"}
+              src={previewUrl || formData.imageUrl || "/img/ShareDoo.png"}
             />
           </Col>
           <Col>
@@ -180,19 +277,25 @@ const UserDetailsSection = () => {
               accept="image/*"
               style={{ display: "none" }}
               id="upload-image"
-              onChange={handleUpload}
+              ref={fileInputRef}
+              onChange={(e) => {
+                console.log("File input changed:", e.target.files);
+                handleUpload(e);
+              }}
             />
-            <label htmlFor="upload-image">
-              <Button icon={<UploadOutlined />} style={{ marginRight: 8 }}>
-                Upload Image
-              </Button>
-            </label>
+            <Button
+              icon={<UploadOutlined />}
+              onClick={triggerFileInput}
+              style={{ marginRight: 8 }}
+            >
+              Upload Image
+            </Button>
             <Button
               icon={<DeleteOutlined />}
               onClick={handleDeleteImage}
               danger
             >
-              Delete
+              Xóa Ảnh
             </Button>
             <Text type="secondary" style={{ display: "block", marginTop: 8 }}>
               Max size: 2MB

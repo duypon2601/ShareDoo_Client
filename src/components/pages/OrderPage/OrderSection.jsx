@@ -243,7 +243,62 @@ const OrdersSection = () => {
                         >
                           View Details
                         </Button>
-                        {order.status === "received" && (
+                        {order.status === "packed" && (
+                          <Button
+                            type="primary"
+                            loading={order.markReceivedLoading}
+                            style={{
+                              borderRadius: "10px",
+                              padding: "8px 20px",
+                              height: 44,
+                              fontWeight: 500,
+                              fontSize: 16,
+                              marginLeft: 8,
+                              background: "linear-gradient(135deg, #1890ff 0%, #40c4ff 100%)",
+                              border: "none",
+                            }}
+                            onClick={async () => {
+                              const token = localStorage.getItem("token");
+                              if (!token) {
+                                window.alert("Bạn cần đăng nhập để thực hiện thao tác này.");
+                                return;
+                              }
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o.id === order.id ? { ...o, markReceivedLoading: true } : o
+                                )
+                              );
+                              try {
+                                await api.post(
+                                  `/api/rentals/mark-received?orderCode=${order.orderCode}`,
+                                  {},
+                                  {
+                                    headers: { Authorization: `Bearer ${token}` },
+                                    withCredentials: true,
+                                  }
+                                );
+                                window.alert("Xác nhận đã nhận hàng thành công!");
+                                // Refresh orders list
+                                const res = await api.get("/api/rentals/list");
+                                setOrders(res.data);
+                              } catch (err) {
+                                window.alert(
+                                  err?.response?.data?.message ||
+                                    "Có lỗi xảy ra khi xác nhận đã nhận hàng."
+                                );
+                              } finally {
+                                setOrders((prev) =>
+                                  prev.map((o) =>
+                                    o.id === order.id ? { ...o, markReceivedLoading: false } : o
+                                  )
+                                );
+                              }
+                            }}
+                          >
+                            Đã nhận hàng
+                          </Button>
+                        )}
+                        {/* {order.status === "received" && (
                           <Button
                             type="primary"
                             danger
@@ -298,7 +353,7 @@ const OrdersSection = () => {
                           >
                             Đã bàn giao
                           </Button>
-                        )}
+                        )} */}
                         {/* Nút đánh giá sản phẩm */}
                         {order.status === "returned" && currentUser && !reviewed && (
                           <Button
