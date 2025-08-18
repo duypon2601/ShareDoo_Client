@@ -235,10 +235,82 @@ export const ProductDetailsSection = ({ productId }) => {
             </Paragraph>
           </Col>
         </Row>
-      </div>
+      {/* </div>
       <div style={{ marginTop: "32px" }}>
+<<<<<<< HEAD
+        <Title level={3}>User Reviews</Title>
+        <div
+          style={{ borderBottom: "1px solid #e8e8e8", paddingBottom: "16px" }}
+        >
+          <Row align="middle">
+            <Col>
+              <Image
+                src="https://c.animaapp.com/raHFUeD0/img/img-9@2x.png"
+                alt="Reviewer"
+                preview={false}
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  marginRight: "16px",
+                }}
+              />
+            </Col>
+            <Col>
+              <Title level={5} style={{ margin: 0 }}>
+                Sarah Johnson
+              </Title>
+              <Rate disabled defaultValue={5} style={{ fontSize: "14px" }} />
+            </Col>
+            <Col>
+              <Text type="secondary">2 weeks ago</Text>
+            </Col>
+          </Row>
+          <Paragraph style={{ marginTop: "8px" }}>
+            Excellent equipment! Everything was in perfect condition and Michael
+            was very helpful in explaining the setup.
+          </Paragraph>
+        </div> */}
+        {/* <div
+          style={{
+            borderBottom: "1px solid #e8e8e8",
+            paddingBottom: "16px",
+            marginTop: "16px",
+          }}
+        > */}
+          {/* <Row align="middle">
+            <Col>
+              <Image
+                src="https://c.animaapp.com/raHFUeD0/img/img-10@2x.png"
+                alt="Reviewer"
+                preview={false}
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  marginRight: "16px",
+                }}
+              />
+            </Col>
+            <Col>
+              <Title level={5} style={{ margin: 0 }}>
+                David Chen
+              </Title>
+              <Rate disabled defaultValue={5} style={{ fontSize: "14px" }} />
+            </Col>
+            <Col>
+              <Text type="secondary">1 month ago</Text>
+            </Col>
+          </Row>
+          <Paragraph style={{ marginTop: "8px" }}>
+            Great kit for professional shoots. The lenses were amazing and
+            everything was well-maintained.
+          </Paragraph>
+        </div> */}
+=======
         <Title level={3}>Đánh giá người dùng</Title>
         {/* User reviews section remains unchanged */}
+>>>>>>> a6c55044df7a96f02cba6ce446e52869644af4a2
       </div>
       <div style={{ marginTop: "32px" }}>
         <Title

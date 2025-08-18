@@ -5,7 +5,7 @@ import {
 import { Alert, Button, Card, Col, Input, Row, Select, Typography, message } from "antd";
 import React from "react";
 import { useLocation } from "react-router-dom";
-import axios from "../../config/axios";
+import api from "../../config/axios";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -21,7 +21,7 @@ const CancellationFormSection = () => {
       return;
     }
     try {
-      const res = await axios.post(`/api/rentals/cancel?orderCode=${orderCode}`);
+      const res = await api.post(`/api/rentals/cancel?orderCode=${orderCode}`);
       message.success(res.data || "Đã hủy đơn hàng thành công!");
       // Có thể chuyển hướng hoặc reload lại trang lịch sử đơn hàng ở đây
     } catch (err) {

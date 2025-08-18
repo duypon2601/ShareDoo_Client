@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { List, Button, Avatar, Typography, message } from "antd";
 import { CheckCircleOutlined, CloseCircleOutlined, UserOutlined } from "@ant-design/icons";
-import axios from "axios";
+import api from "../../config/axios";
 
 const { Text } = Typography;
 
@@ -16,7 +16,7 @@ const RentalRequestsList = () => {
       return;
     }
     try {
-      await axios.post(`/api/rentals/mark-received?orderCode=${item.orderCode}`, null, {
+      await api.post(`/api/rentals/mark-received?orderCode=${item.orderCode}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(reqs => reqs.map(r => r.id === item.id ? { ...r, status: 'received' } : r));
@@ -33,7 +33,7 @@ const RentalRequestsList = () => {
       return;
     }
     try {
-      await axios.post(`/api/rentals/mark-returned?orderCode=${item.orderCode}`, null, {
+      await api.post(`/api/rentals/mark-returned?orderCode=${item.orderCode}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(reqs => reqs.map(r => r.id === item.id ? { ...r, status: 'returned' } : r));
@@ -48,7 +48,7 @@ const RentalRequestsList = () => {
     const token = localStorage.getItem('token');
     if (token) {
       setLoading(true);
-      axios.get('/api/rentals/owner-list', {
+      api.get('/api/rental-requests', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
@@ -63,7 +63,7 @@ const RentalRequestsList = () => {
   const handleAccept = async (requestId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`/api/rental-requests/confirm?requestId=${requestId}`, null, {
+      await api.post(`/api/rental-requests/confirm?requestId=${requestId}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(requests => requests.map(r => r.id === requestId ? { ...r, status: 'confirmed' } : r));
@@ -76,7 +76,7 @@ const RentalRequestsList = () => {
   const handleReject = async (requestId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`/api/rental-requests/reject?requestId=${requestId}`, null, {
+      await api.post(`/api/rental-requests/reject?requestId=${requestId}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(requests => requests.map(r => r.id === requestId ? { ...r, status: 'rejected' } : r));

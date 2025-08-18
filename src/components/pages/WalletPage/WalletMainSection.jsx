@@ -6,7 +6,7 @@ import {
   DollarCircleOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input } from "antd";
+import { Button, Card, Col, Image, Row, Space, Typography, message, Spin, Modal, Input, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { addPaymentMethod } from '../../../api/paymentMethod';
 import { getWalletInfo, getWalletTransactions, createDepositWalletLink, requestWithdraw, createWallet } from "../../../api/wallet";
@@ -54,7 +54,7 @@ const WalletMainSection = () => {
       setAccountNumber("");
       setAccountHolder("");
       fetchData();
-    } catch (e) {
+    } catch {
       message.error("Lỗi khi liên kết tài khoản. Vui lòng thử lại.");
     } finally {
       setAddBankLoading(false);
@@ -99,7 +99,10 @@ const WalletMainSection = () => {
         getWalletTransactions(),
       ]);
       setWallet(walletRes.data);
-      setTransactions(Array.isArray(txRes.data) ? txRes.data : []);
+      const filtered = Array.isArray(txRes.data)
+        ? txRes.data.filter(t => t && (t.status === 'SUCCESS' || t.status === 'FAILE'))
+        : [];
+      setTransactions(filtered);
     } catch {
       setWallet(null);
       setTransactions([]);
@@ -132,7 +135,7 @@ const WalletMainSection = () => {
           fetchData();
         }
       });
-    } catch (err) {
+    } catch {
       Modal.error({
         title: 'Deposit Failed',
         content: 'Could not create deposit link. Please try again later.'
@@ -170,7 +173,7 @@ const WalletMainSection = () => {
           fetchData();
         }
       });
-    } catch (err) {
+    } catch {
       Modal.error({
         title: 'Withdrawal Failed',
         content: 'Could not request withdrawal. Please try again later.'
@@ -373,7 +376,7 @@ const WalletMainSection = () => {
         </Col>
         <Col span={24}>
           <Space>
-            <Button
+            {/* <Button
               type="primary"
               icon={<ArrowUpOutlined />}
               style={{ borderRadius: "16px", backgroundColor: "#a1bfa7", borderColor: "#a1bfa7" }}
@@ -388,7 +391,7 @@ const WalletMainSection = () => {
               onClick={() => setDepositModal(true)}
             >
               Add Funds
-            </Button>
+            </Button> */}
           </Space>
         </Col>
         <Col span={16}>
@@ -420,6 +423,11 @@ const WalletMainSection = () => {
                       <Col style={{ marginLeft: 16 }}>
                         <Title level={5}>{tx.description}</Title>
                         <Text type="secondary">{new Date(tx.createdAt).toLocaleString()}</Text>
+                        <div style={{ marginTop: 6 }}>
+                          <Tag color={tx.status === 'SUCCESS' ? 'green' : 'red'}>
+                            {tx.status}
+                          </Tag>
+                        </div>
                       </Col>
                       <Col style={{ marginLeft: "auto" }}>
                         <Text strong style={{ color: tx.type === "DEPOSIT" ? "#52c41a" : tx.type === "WITHDRAW" ? "#1890ff" : "#ff4d4f" }}>
@@ -434,68 +442,61 @@ const WalletMainSection = () => {
           </Card>
         </Col>
         <Col span={8}>
-          <Card
-            bordered={false}
-            style={{ borderRadius: "16px", boxShadow: "0px 1px 2px #0000000d" }}
-          >
+          <Card bordered={false} style={{ borderRadius: "16px", boxShadow: "0px 1px 2px #0000000d" }}>
             <Title level={4}>Linked Bank Account</Title>
-            <Card
-              style={{
-                backgroundColor: "#e3d5be",
-                borderRadius: "16px",
-                marginBottom: 16,
-              }}
-            >
-              <Row align="middle">
-                <Col>
-                  <BankOutlined style={{ fontSize: 40, color: "#1890ff" }} />
-                </Col>
-                <Col style={{ marginLeft: 16 }}>
-                  <Title level={5}>Chase Bank</Title>
-                  <Text>****1234</Text>
-                </Col>
-                <Col style={{ marginLeft: "auto" }}>
-                  <CheckCircleOutlined
-                    style={{ fontSize: 24, color: "#52c41a" }}
-                  />
-                  <Text style={{ color: "#52c41a" }}>Verified</Text>
-                </Col>
-              </Row>
-            </Card>
+            {paymentMethods.length === 0 ? (
+              <Card style={{ background: '#e3d5be', borderRadius: 16, marginBottom: 12 }}>
+                <Text type="secondary">No linked bank account.</Text>
+              </Card>
+            ) : (
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {paymentMethods.map(pm => (
+                  <Card key={pm.id} style={{ background: '#e3d5be', borderRadius: 16, marginBottom: 12 }}>
+                    <Row align="middle">
+                      <Col>
+                        <BankOutlined style={{ fontSize: 40, color: '#1890ff' }} />
+                      </Col>
+                      <Col style={{ marginLeft: 16 }}>
+                        <Title level={5} style={{ margin: 0 }}>{pm.bankName}</Title>
+                        <Text>{pm.accountNumber ? `****${pm.accountNumber.slice(-4)}` : ''}</Text>
+                        <div><Text type="secondary">{pm.accountHolder}</Text></div>
+                      </Col>
+                      <Col style={{ marginLeft: 'auto' }}>
+                        <CheckCircleOutlined style={{ fontSize: 24, color: '#52c41a' }} />
+                        <Text style={{ color: '#52c41a', marginLeft: 6 }}>Verified</Text>
+                      </Col>
+                    </Row>
+                  </Card>
+                ))}
+              </Space>
+            )}
             <Button
               type="primary"
               style={{
-                borderRadius: "16px",
+                borderRadius: 16,
                 marginBottom: 16,
-                backgroundColor: "#a1bfa7",
-                borderColor: "#a1bfa7",
+                backgroundColor: '#a1bfa7',
+                borderColor: '#a1bfa7',
+                fontWeight: 600,
               }}
             >
               Update Account
             </Button>
             <Button
               type="default"
-              style={{ borderRadius: "16px", marginBottom: 16 }}
-              onClick={() => {
-                console.log("Click Link New Account");
-                setLinkAccountModal(true);
-          setTimeout(() => {
-            console.log("Sau setLinkAccountModal, state:", linkAccountModal);
-          }, 100);
-
-              }}
+              style={{ borderRadius: 16, marginBottom: 16, fontWeight: 600 }}
+              onClick={() => setLinkAccountModal(true)}
               data-testid="link-new-account-btn"
             >
               Link New Account
             </Button>
-            {/* Modal được render ở đây, nhưng handleAddBank phải được khai báo phía trên trong function component */}
-            <Card style={{ backgroundColor: "#e6f7ff", borderRadius: "16px" }}>
+            <Card style={{ background: '#e6f7ff', borderRadius: 16 }}>
               <Row align="middle">
                 <Col>
-                  <LockOutlined style={{ fontSize: 40, color: "#1890ff" }} />
+                  <LockOutlined style={{ fontSize: 40, color: '#1890ff' }} />
                 </Col>
                 <Col style={{ marginLeft: 16 }}>
-                  <Title level={5}>Secure & Protected</Title>
+                  <Title level={5} style={{ margin: 0 }}>Secure & Protected</Title>
                   <Text>
                     Your bank information is encrypted and protected by industry-standard security measures.
                   </Text>
@@ -506,33 +507,6 @@ const WalletMainSection = () => {
         </Col>
       </Row>
       {/* Danh sách tài khoản ngân hàng đã liên kết */}
-      <div style={{ margin: '24px 0' }}>
-        <Title level={5}>Linked Bank Account</Title>
-        <div>
-          {paymentMethods.length === 0 ? (
-            <Text type="secondary">No linked bank account.</Text>
-          ) : (
-            paymentMethods.map((pm, idx) => (
-              <Card key={pm.id || idx} style={{ marginBottom: 12, borderRadius: 12 }}>
-                <Row align="middle">
-                  <Col>
-                    <BankOutlined style={{ fontSize: 40, color: "#1890ff" }} />
-                  </Col>
-                  <Col style={{ marginLeft: 16 }}>
-                    <Title level={5} style={{ margin: 0 }}>{pm.bankName}</Title>
-                    <Text>{pm.accountNumber ? `****${pm.accountNumber.slice(-4)}` : ''}</Text>
-                    <div><Text type="secondary">{pm.accountHolder}</Text></div>
-                  </Col>
-                  <Col style={{ marginLeft: "auto" }}>
-                    <CheckCircleOutlined style={{ fontSize: 24, color: "#52c41a" }} />
-                    <Text style={{ color: "#52c41a", marginLeft: 6 }}>Verified</Text>
-                  </Col>
-                </Row>
-              </Card>
-            ))
-          )}
-        </div>
-      </div>
       {linkAccountModal && (
         <div style={{
           position: 'fixed',

@@ -11,7 +11,7 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import api from "../../config/axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { decodeToken } from "/src/utils/jwt2.js";
 import moment from "moment";
 
@@ -28,7 +28,7 @@ export const BookingFormSection = (props) => {
   const [loading, setLoading] = useState(false);
   const [rentalDays, setRentalDays] = useState(0);
 
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     if (!product && paramProductId) {
@@ -75,17 +75,32 @@ export const BookingFormSection = (props) => {
         return;
       }
 
+      // Tính toán giá tiền gửi lên API: tiền thuê + phí dịch vụ (10%)
+      const pricePerDay = Number(product.pricePerDay) || 0;
+      const days = Number(rentalDays) || 0;
+      const rentalPricePayload = pricePerDay * days;
+      const serviceFeePayload = Math.round(rentalPricePayload * 0.1); // đồng bộ với UI
+      const totalPricePayload = rentalPricePayload + serviceFeePayload;
+
       const payload = {
         userId,
         productId: product.productId,
         startDate: startDate.format("YYYY-MM-DDTHH:mm:ss"),
         endDate: endDate.format("YYYY-MM-DDTHH:mm:ss"),
-        totalPrice: Number(product.pricePerDay) * rentalDays,
+        totalPrice: totalPricePayload,
         deliveryMethod,
         notes,
       };
 
-      console.log("Booking payload:", payload);
+      console.log("Booking payload:", payload, {
+        breakdown: {
+          pricePerDay,
+          rentalDays: days,
+          rentalPrice: rentalPricePayload,
+          serviceFee: serviceFeePayload,
+          total: totalPricePayload,
+        },
+      });
 
       const response = await api.post("/api/rentals", payload, {
         headers: {

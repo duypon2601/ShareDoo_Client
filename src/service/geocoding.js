@@ -1,9 +1,9 @@
 // service/geocoding.js
-import axios from "axios";
+import api from "../components/config/axios";
 
 export const getCoordinatesFromAddress = async (address) => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         "https://nominatim.openstreetmap.org/search",
         {
           params: {
@@ -27,7 +27,7 @@ export const getCoordinatesFromAddress = async (address) => {
 
 export const getAddressFromCoordinates = async (lat, lon) => {
   try {
-    const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+    const response = await api.get("https://nominatim.openstreetmap.org/reverse", {
       params: {
         lat,
         lon,

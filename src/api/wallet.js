@@ -1,14 +1,14 @@
-import axios from 'axios';
+import api from '../components/config/axios';
 
 export const getWalletInfo = () => {
   const token = localStorage.getItem('token');
-  return axios.get('/api/wallet/me', {
+  return api.get('/api/wallet/me', {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
 export const getWalletTransactions = () => {
   const token = localStorage.getItem('token');
-  return axios.get('/api/wallet/transactions', {
+  return api.get('/api/wallet/transactions', {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
@@ -16,7 +16,7 @@ export const getWalletTransactions = () => {
 // Tạo link nạp tiền vào ví (dành riêng cho ví)
 export const createDepositWalletLink = (amount, description) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/deposit-link-wallet', null, {
+  return api.post('/api/wallet/deposit-link-wallet', null, {
     params: { amount, description },
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -25,14 +25,14 @@ export const createDepositWalletLink = (amount, description) => {
 // Cộng tiền vào ví cho user nhận tiền (credit-by-ordercode)
 export const creditByOrderCode = ({ orderCode, status, amount, receiverUserId }) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/credit-by-ordercode', { orderCode, status, amount, receiverUserId }, {
+  return api.post('/api/wallet/credit-by-ordercode', { orderCode, status, amount, receiverUserId }, {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
 
 export const requestWithdraw = (amount, description, paymentMethodId, walletId, userId) => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/withdrawals/request', null, {
+  return api.post('/api/withdrawals/request', null, {
     params: {
       userId,
       walletId,
@@ -47,7 +47,7 @@ export const requestWithdraw = (amount, description, paymentMethodId, walletId, 
 // Tạo ví cho user hiện tại
 export const createWallet = () => {
   const token = localStorage.getItem('token');
-  return axios.post('/api/wallet/create', null, {
+  return api.post('/api/wallet/create', null, {
     headers: { Authorization: `Bearer ${token}` }
   });
 };

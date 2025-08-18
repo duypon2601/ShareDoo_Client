@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Auth Pages
 import LoginPage from "./components/pages/LoginPage/LoginPage";
@@ -52,6 +53,14 @@ import Admin from "./components/pages/AdminPage/Admin";
 import WithdrawalRequestsSection from "./components/pages/AdminPage/WithdrawalRequestsSection";
 import DashboardStatsSection from "./components/pages/AdminPage/DashboardStatsSection";
 
+// Guard component to restrict admin-only routes
+const AdminRoute = ({ children }) => {
+  const user = useSelector((state) => state.user);
+  const role = user?.role;
+  const isAdmin = role === "admin" || role === "ADMIN";
+  return isAdmin ? children : <Navigate to="/home" replace />;
+};
+
 const App = () => {
   return (
     <Router>
@@ -66,7 +75,14 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboards" element={<Dashboards />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+        />
 
         {/* Item Listing Flow */}
         <Route path="/ListNewItem" element={<ListNewItemPage />} />
