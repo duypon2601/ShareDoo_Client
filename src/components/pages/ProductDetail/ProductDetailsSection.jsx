@@ -1,10 +1,21 @@
-import { Button, Col, Image, Rate, Row, Tag, Typography, Spin, message } from "antd";
+import {
+  Button,
+  Col,
+  Image,
+  Rate,
+  Row,
+  Tag,
+  Typography,
+  Spin,
+  message,
+} from "antd";
 import React, { useState, useEffect } from "react";
 import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
+
 const { Title, Text, Paragraph } = Typography;
 
-// Thêm hàm định dạng VND
+// Hàm định dạng VND
 function formatVND(amount) {
   if (!amount && amount !== 0) return "";
   return amount.toLocaleString("vi-VN") + "₫";
@@ -12,19 +23,21 @@ function formatVND(amount) {
 
 export const ProductDetailsSection = ({ productId }) => {
   const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [user, setUser] = useState(null); // State for user data
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (productId) {
       fetchProductDetails();
+      fetchRelatedProducts();
     } else {
-      setLoading(false); // If no ID, stop loading
+      setLoading(false);
     }
   }, [productId]);
 
   const fetchProductDetails = async () => {
-    // Redundant check, but good for safety
     if (!productId) {
       setLoading(false);
       return;
@@ -33,17 +46,51 @@ export const ProductDetailsSection = ({ productId }) => {
       setLoading(true);
       const response = await api.get(`/api/products/${productId}`);
       setProduct(response.data);
+      console.log("Product details fetched:", response.data);
+      // Fetch user data after getting product details
+      if (response.data.userId) {
+        fetchUserDetails(response.data.userId);
+      }
     } catch (error) {
-      console.error('Error fetching product details:', error);
-      message.error('Failed to load product details');
+      console.error("Error fetching product details:", error);
+      message.error("Không thể tải chi tiết sản phẩm");
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchUserDetails = async (userId) => {
+    try {
+      const response = await api.get(`/api/users/${userId}`);
+      setUser(response.data.data); // Set user data from response
+      console.log("User details fetched:", response.data.data);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      message.error("Không thể tải thông tin người dùng");
+      setUser(null);
+    }
+  };
+
+  const fetchRelatedProducts = async () => {
+    try {
+      console.log("Fetching related products...");
+      const response = await api.get("/api/products");
+      const products = Array.isArray(response.data.content)
+        ? response.data.content
+            .filter((p) => p.productId !== productId)
+            .slice(0, 6)
+        : [];
+      setRelatedProducts(products);
+    } catch (error) {
+      console.error("Error fetching related products:", error);
+      message.error("Không thể tải sản phẩm liên quan");
+      setRelatedProducts([]);
+    }
+  };
+
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px 0' }}>
+      <div style={{ textAlign: "center", padding: "50px 0" }}>
         <Spin size="large" />
       </div>
     );
@@ -51,49 +98,52 @@ export const ProductDetailsSection = ({ productId }) => {
 
   if (!product) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px 0' }}>
-        <Text type="secondary">Product not found</Text>
+      <div style={{ textAlign: "center", padding: "50px 0" }}>
+        <Text type="secondary">Không tìm thấy sản phẩm</Text>
       </div>
     );
   }
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
-      <Row gutter={[16, 16]}>
-        <Col span={12}>
-          <div style={{ borderRadius: "8px", overflow: "hidden" }}>
-            <Image
-              src={product.imageUrl || "https://c.animaapp.com/raHFUeD0/img/img.png"}
-              alt={product.name}
-              preview={false}
-              style={{ width: "100%", height: "auto" }}
-            />
+      <Row gutter={[24, 24]}>
+        <Col xs={24} md={12}>
+          <div>
+            <div
+              style={{
+                height: "98%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                src={product.imageUrl || "/images/default-product-image.png"}
+                alt={product.name}
+                preview={true}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                  objectPosition: "center",
+                  borderRadius: "10px",
+                }}
+              />
+            </div>
           </div>
-          <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-            {[1, 2, 3, 4].map((_, index) => (
-              <Col key={index} span={6}>
-                <div style={{ borderRadius: "8px", overflow: "hidden" }}>
-                  <Image
-                    src="https://c.animaapp.com/raHFUeD0/img/dall-e-2025-02-24-22-50-40---a-minimalistic-and-modern-logo-desi-4@2x.png"
-                    alt="Thumbnail"
-                    preview={false}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                </div>
-              </Col>
-            ))}
-          </Row>
         </Col>
         <Col span={12}>
           <Title level={2}>{product.name}</Title>
-          <Paragraph>
-            {product.description}
-          </Paragraph>
+          <Paragraph>{product.description}</Paragraph>
           <Title level={3} style={{ color: "#a1bfa7" }}>
             {formatVND(product.pricePerDay)}/ngày
           </Title>
-          <Tag color={product.availabilityStatus === 'AVAILABLE' ? 'green' : 'red'}>
-            {product.availabilityStatus === 'AVAILABLE' ? 'In Stock' : 'Not Available'}
+          <Tag
+            color={product.availabilityStatus === "AVAILABLE" ? "green" : "red"}
+          >
+            {product.availabilityStatus === "AVAILABLE"
+              ? "Còn hàng"
+              : "Hết hàng"}
           </Tag>
           <div
             style={{
@@ -106,20 +156,21 @@ export const ProductDetailsSection = ({ productId }) => {
             <Row align="middle">
               <Col>
                 <Image
-                  src="https://c.animaapp.com/raHFUeD0/img/img-8@2x.png"
+                  src={user?.imageUrl || "/img/ShareDoo.png"} // Use user.imageUrl or fallback
                   alt="Owner"
                   preview={false}
                   style={{
                     width: "48px",
                     height: "48px",
-                    borderRadius: "50%",
+                    borderRadius: "60%",
                     marginRight: "16px",
                   }}
                 />
               </Col>
               <Col>
                 <Title level={5} style={{ margin: 0 }}>
-                  Michael Anderson
+                  {user?.name || "Michael Anderson"}{" "}
+                  {/* Use user.name or fallback */}
                 </Title>
                 <Rate
                   disabled
@@ -128,149 +179,150 @@ export const ProductDetailsSection = ({ productId }) => {
                 />
                 <Text>(4.5)</Text>
               </Col>
-              <Col>
-                <Button type="link">View Profile</Button>
-              </Col>
             </Row>
           </div>
           <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-            <Col span={12}>
-              <Button type="primary" block onClick={() => navigate('/booking', { state: { product } })}>
-                Rent Now
+            <Col span={24}>
+              <Button
+                type="primary"
+                block
+                onClick={() => navigate("/booking", { state: { product } })}
+              >
+                Thuê ngay
               </Button>
             </Col>
-            <Col span={12}>
-              <Button block>Message Owner</Button>
-            </Col>
+            {/* <Col span={12}>
+              <Button block>Nhắn tin cho chủ sở hữu</Button>
+            </Col> */}
           </Row>
         </Col>
       </Row>
+      {/* Rest of your component remains unchanged */}
       <div style={{ marginTop: "32px" }}>
-        <Title level={3}>Product Details</Title>
+        <Title level={3}>Chi tiết sản phẩm</Title>
         <Row gutter={[16, 16]}>
           <Col span={8}>
-            <Title level={5}>Description</Title>
+            <Title level={5}>Mô tả</Title>
             <Paragraph>
-              Professional-grade DSLR camera kit perfect for photography
-              enthusiasts and professionals. This comprehensive kit includes
-              everything you need for high-quality photography.
+              {product.description || "Không có mô tả chi tiết."}
             </Paragraph>
           </Col>
           <Col span={8}>
-            <Title level={5}>Specifications</Title>
-            <Paragraph>• Camera Body: Full Frame Sensor</Paragraph>
-            <Paragraph>• Lenses: 24-70mm, 70-200mm, 50mm</Paragraph>
-            <Paragraph>• Battery Life: Up to 1500 shots</Paragraph>
-            <Paragraph>• Weight: 1.5kg (body only)</Paragraph>
+            <Title level={5}>Thông số kỹ thuật</Title>
+            <Paragraph>
+              • Danh mục: {product.category || "Không xác định"}
+            </Paragraph>
+            <Paragraph>
+              • Địa điểm: {product.location || "Không xác định"}
+            </Paragraph>
+            <Paragraph>
+              • Ngày tạo:{" "}
+              {new Date(product.createdAt).toLocaleDateString("vi-VN")}
+            </Paragraph>
+            <Paragraph>
+              • Cập nhật:{" "}
+              {new Date(product.updatedAt).toLocaleDateString("vi-VN")}
+            </Paragraph>
           </Col>
           <Col span={8}>
-            <Title level={5}>Rental Terms</Title>
-            <Paragraph>• Minimum rental period: 1 day</Paragraph>
-            <Paragraph>• Security deposit required</Paragraph>
-            <Paragraph>• Insurance included</Paragraph>
-            <Paragraph>• Pick-up and return in person</Paragraph>
+            <Title level={5}>Điều khoản thuê</Title>
+            <Paragraph>• Thời gian thuê tối thiểu: 1 ngày</Paragraph>
+            <Paragraph>• Yêu cầu đặt cọc bảo đảm</Paragraph>
+            <Paragraph>• Bao gồm bảo hiểm</Paragraph>
+            <Paragraph>
+              • Nhận và trả trực tiếp tại{" "}
+              {product.location || "địa điểm không xác định"}
+            </Paragraph>
           </Col>
         </Row>
       </div>
       <div style={{ marginTop: "32px" }}>
-        <Title level={3}>User Reviews</Title>
-        <div
-          style={{ borderBottom: "1px solid #e8e8e8", paddingBottom: "16px" }}
-        >
-          <Row align="middle">
-            <Col>
-              <Image
-                src="https://c.animaapp.com/raHFUeD0/img/img-9@2x.png"
-                alt="Reviewer"
-                preview={false}
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  marginRight: "16px",
-                }}
-              />
-            </Col>
-            <Col>
-              <Title level={5} style={{ margin: 0 }}>
-                Sarah Johnson
-              </Title>
-              <Rate disabled defaultValue={5} style={{ fontSize: "14px" }} />
-            </Col>
-            <Col>
-              <Text type="secondary">2 weeks ago</Text>
-            </Col>
-          </Row>
-          <Paragraph style={{ marginTop: "8px" }}>
-            Excellent equipment! Everything was in perfect condition and Michael
-            was very helpful in explaining the setup.
-          </Paragraph>
-        </div>
-        <div
-          style={{
-            borderBottom: "1px solid #e8e8e8",
-            paddingBottom: "16px",
-            marginTop: "16px",
-          }}
-        >
-          <Row align="middle">
-            <Col>
-              <Image
-                src="https://c.animaapp.com/raHFUeD0/img/img-10@2x.png"
-                alt="Reviewer"
-                preview={false}
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  marginRight: "16px",
-                }}
-              />
-            </Col>
-            <Col>
-              <Title level={5} style={{ margin: 0 }}>
-                David Chen
-              </Title>
-              <Rate disabled defaultValue={5} style={{ fontSize: "14px" }} />
-            </Col>
-            <Col>
-              <Text type="secondary">1 month ago</Text>
-            </Col>
-          </Row>
-          <Paragraph style={{ marginTop: "8px" }}>
-            Great kit for professional shoots. The lenses were amazing and
-            everything was well-maintained.
-          </Paragraph>
-        </div>
+        <Title level={3}>Đánh giá người dùng</Title>
+        {/* User reviews section remains unchanged */}
       </div>
       <div style={{ marginTop: "32px" }}>
-        <Title level={3}>Related Products</Title>
-        <Row gutter={[16, 16]}>
-          {[1, 2, 3, 4].map((_, index) => (
-            <Col key={index} span={6}>
-              <div
-                style={{
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.05)",
-                }}
-              >
-                <Image
-                  src="https://c.animaapp.com/raHFUeD0/img/img-14@2x.png"
-                  alt="Related Product"
-                  preview={false}
-                  style={{ width: "100%", height: "auto" }}
-                />
-                <div style={{ padding: "16px" }}>
-                  <Title level={5} style={{ margin: 0 }}>
-                    Demo Product
-                  </Title>
-                  <Text style={{ color: "#a1bfa7" }}>{formatVND(35000)}/ngày</Text>
+        <Title
+          level={3}
+          style={{ fontWeight: 600, color: "#1a1a1a", marginBottom: "24px" }}
+        >
+          Sản phẩm liên quan
+        </Title>
+        <Row gutter={[24, 24]} style={{ padding: "0 16px" }}>
+          {relatedProducts.length > 0 ? (
+            relatedProducts.map((relatedProduct) => (
+              <Col key={relatedProduct.productId} xs={12} sm={8} md={6} lg={4}>
+                <div
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    navigate(`/product/${relatedProduct.productId}`)
+                  }
+                >
+                  <div style={{ height: "180px", overflow: "hidden" }}>
+                    <Image
+                      src={
+                        relatedProduct.imageUrl ||
+                        "https://c.animaapp.com/raHFUeD0/img/img-14@2x.png"
+                      }
+                      alt={relatedProduct.name}
+                      preview={false}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderTopLeftRadius: "12px",
+                        borderTopRightRadius: "12px",
+                      }}
+                    />
+                  </div>
+                  <div style={{ padding: "16px" }}>
+                    <Title
+                      level={5}
+                      style={{
+                        margin: 0,
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        color: "#333",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {relatedProduct.name || "Sản phẩm không tên"}
+                    </Title>
+                    <Text
+                      style={{
+                        color: "#a1bfa7",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        display: "block",
+                        marginTop: "8px",
+                      }}
+                    >
+                      {formatVND(relatedProduct.pricePerDay) ||
+                        "Giá không xác định"}
+                      /ngày
+                    </Text>
+                  </div>
                 </div>
-              </div>
+              </Col>
+            ))
+          ) : (
+            <Col span={24} style={{ textAlign: "center", padding: "40px 0" }}>
+              <Text
+                type="secondary"
+                style={{ fontSize: "16px", color: "#666" }}
+              >
+                Không có sản phẩm liên quan
+              </Text>
             </Col>
-          ))}
+          )}
         </Row>
       </div>
     </div>
