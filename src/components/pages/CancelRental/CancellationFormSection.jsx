@@ -2,10 +2,21 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { Alert, Button, Card, Col, Input, Row, Select, Typography, message } from "antd";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Select,
+  Typography,
+  message,
+} from "antd";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../config/axios";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -14,6 +25,7 @@ const CancellationFormSection = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const orderCode = params.get("orderCode");
+  const navigate = useNavigate();
 
   const handleCancel = async () => {
     if (!orderCode) {
@@ -23,6 +35,10 @@ const CancellationFormSection = () => {
     try {
       const res = await api.post(`/api/rentals/cancel?orderCode=${orderCode}`);
       message.success(res.data || "Đã hủy đơn hàng thành công!");
+      alert("Đã hủy đơn hàng thành công!");
+      // Có thể chuyển hướng hoặc reload lại trang lịch sử đơn hàng ở đây
+      navigate("/home");
+      console.log("Đã hủy đơn hàng thành công:", location);
       // Có thể chuyển hướng hoặc reload lại trang lịch sử đơn hàng ở đây
     } catch (err) {
       message.error(
@@ -48,7 +64,7 @@ const CancellationFormSection = () => {
         </Title>
 
         {/* ✅ Product Summary Card */}
-        <Card style={{ marginBottom: 24 }}>
+        {/* <Card style={{ marginBottom: 24 }}>
           <Row gutter={16} align="middle">
             <Col>
               <img
@@ -58,14 +74,16 @@ const CancellationFormSection = () => {
               />
             </Col>
             <Col flex="auto">
-              <Text strong style={{ display: "block" }}>Demo Product</Text>
+              <Text strong style={{ display: "block" }}>
+                Demo Product
+              </Text>
               <Text style={{ display: "block" }}>
                 Rental Period: Jan 15, 2025 – Feb 15, 2025
               </Text>
-              <Text style={{ display: "block" }}>
-                Order #: RNT-2025-0123
+              <Text style={{ display: "block" }}>Order #: RNT-2025-0123</Text>
+              <Text strong style={{ display: "block" }}>
+                Total: 249.990₫
               </Text>
-              <Text strong style={{ display: "block" }}>Total: 249.990 ₫</Text>
             </Col>
             <Col>
               <Button
@@ -78,7 +96,7 @@ const CancellationFormSection = () => {
               </Button>
             </Col>
           </Row>
-        </Card>
+        </Card> */}
 
         {/* ✅ Form Card */}
         <Card>

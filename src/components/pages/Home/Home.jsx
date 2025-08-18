@@ -19,7 +19,17 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-container"
+   
+      style={{
+        width: "99vw",
+        minHeight: "100vh",
+        overflowX: "hidden",
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Header onBellClick={handleShowNotifications} hasNotification={hasNotification} />
       
       <HeroSection />

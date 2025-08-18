@@ -1,21 +1,21 @@
 import { Col, Row } from "antd";
 import React from "react";
 
-import  CancellationFormSection  from "./CancellationFormSection";
-import  HeaderProfile  from "./HeaderProfile";
-import FooterProfile from "./FooterProfile";
+import CancellationFormSection from "./CancellationFormSection";
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 
 export const Div = () => {
   return (
     <Row data-model-id="31:1725">
       <Col span={24}>
-        <HeaderProfile />
+        <Header />
       </Col>
       <Col span={24}>
         <CancellationFormSection />
       </Col>
       <Col span={24}>
-        <FooterProfile />
+        <Footer />
       </Col>
     </Row>
   );
